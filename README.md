@@ -1,2 +1,3 @@
 # mnemosys-core
-Core Libraries and Frameworks for Mnemosys
+
+Core backend for the MNEMOSYS system.
