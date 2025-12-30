@@ -1,7 +1,9 @@
 # Source Code Management Guidelines v0.1
 
 This document captures the initial assumptions, constraints, and guiding principles
-for source code management within the FSIPS / RPM project family.
+for source code management within the MNEMOSYS project.
+
+> **Note on nomenclature:** This document originally referenced "FSIPS / RPM project family." The project was subsequently renamed to **MNEMOSYS**, and RPM was integrated as a core component rather than a separate extension. This document has been updated to reflect current terminology while preserving its v0.1 snapshot status.
 
 It represents a frozen **v0.1 snapshot**, intended to support:
 

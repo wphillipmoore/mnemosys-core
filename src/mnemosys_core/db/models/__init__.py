@@ -1,5 +1,5 @@
 """
-Database models for FSIPS schema.
+Database models for MNEMOSYS schema.
 
 This module exports all ORM models and enums.
 """
