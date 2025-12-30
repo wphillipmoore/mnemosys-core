@@ -212,6 +212,92 @@ def create_instrument(name, string_count):
     ...
 ```
 
+### Unit Testing Policy
+
+**Core Principle**: Code coverage should be maintained **as close to 100% as reasonably possible**.
+
+**Default Assumption**: All code is tested unless explicitly documented otherwise.
+
+#### Coverage Target
+
+- **Goal**: 100% code coverage across all production code
+- **Tool**: pytest with pytest-cov plugin
+- **Measurement**: Run `pytest --cov=src --cov-report=html --cov-report=term`
+- **CI/CD**: Coverage checks run automatically in test suite
+
+#### Untestable Code Documentation
+
+When code genuinely cannot be tested (rare but valid cases exist), it **must be clearly documented in the code** so gaps are visible during code review and maintenance.
+
+**Marking untestable code:**
+
+```python
+# ✅ Correct - clearly documented untestable code
+def handle_database_connection(config: dict) -> Connection:
+    """
+    Establish database connection with retry logic.
+
+    Note: The connection timeout branch (lines 45-48) cannot be reliably
+    tested in unit tests due to non-deterministic timing behavior.
+    Integration tests cover this scenario.
+    """
+    try:
+        return connect(config)
+    except TimeoutError:  # pragma: no cover - timing-dependent, covered in integration tests
+        logger.warning("Connection timeout, retrying...")
+        time.sleep(1)
+        return connect(config)
+
+# ❌ Wrong - untested code without documentation
+def handle_database_connection(config: dict) -> Connection:
+    try:
+        return connect(config)
+    except TimeoutError:  # No explanation why this isn't tested
+        logger.warning("Connection timeout, retrying...")
+        time.sleep(1)
+        return connect(config)
+```
+
+**Valid reasons for untestable code** (document which applies):
+- Platform-specific behavior that can't be simulated in test environment
+- Timing-dependent race conditions (covered by integration/system tests)
+- External service failures that can't be reliably mocked
+- Hardware-dependent operations
+- Defensive code for "impossible" states (still document why it's impossible)
+
+**Documentation format:**
+```python
+# pragma: no cover - <brief reason>, <where it IS tested if applicable>
+```
+
+#### Coverage Reporting
+
+**Check coverage:**
+```bash
+# Terminal report with missing lines
+pytest --cov=src --cov-report=term-missing
+
+# HTML report (opens in browser)
+pytest --cov=src --cov-report=html
+open htmlcov/index.html
+```
+
+**Coverage expectations:**
+- **New code**: Must maintain or improve overall coverage percentage
+- **Pull requests**: Coverage report must be reviewed
+- **Declining coverage**: Requires explicit justification and documentation
+
+#### Rationale
+
+100% code coverage ensures:
+1. **Confidence**: Every code path is exercised and verified
+2. **Refactoring safety**: Changes are caught by comprehensive test suite
+3. **Documentation**: Tests serve as usage examples
+4. **Bug prevention**: Edge cases are explicitly tested
+5. **Maintenance**: Clear documentation of any untested gaps
+
+**Note**: 100% coverage is a *necessary* but not *sufficient* condition for quality - tests must also be meaningful and assert correct behavior.
+
 ---
 
 ## Database Conventions
