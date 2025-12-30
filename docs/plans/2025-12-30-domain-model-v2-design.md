@@ -1,4 +1,4 @@
-# MNEMOS Domain Model v2.0 Design
+# MNEMOSYS Domain Model v2.0 Design
 
 **Date:** 2025-12-30
 **Status:** Approved for implementation
@@ -8,7 +8,7 @@
 
 ## Context
 
-This design represents a fundamental rethinking of the MNEMOS domain model. The initial implementation (6 classes: Instrument, Exercise, ExerciseState, Session, SessionBlock, BlockLog) was generated rapidly from design documents without proper discussion of relationships and domain concepts. This design session establishes the proper entity hierarchy, relationships, and architectural patterns for the system.
+This design represents a fundamental rethinking of the MNEMOSYS domain model. The initial implementation (6 classes: Instrument, Exercise, ExerciseState, Session, SessionBlock, BlockLog) was generated rapidly from design documents without proper discussion of relationships and domain concepts. This design session establishes the proper entity hierarchy, relationships, and architectural patterns for the system.
 
 **Key principle guiding this design:** Model what you can measure, infer what you cannot.
 
@@ -18,7 +18,7 @@ This design represents a fundamental rethinking of the MNEMOS domain model. The 
 
 ### What You're Maintaining
 
-MNEMOS tracks **concrete, measurable performance**:
+MNEMOSYS tracks **concrete, measurable performance**:
 - **Exercise performance** - how well you execute specific exercises
 - **Repertoire performance** - how well you play specific songs (second wave)
 
@@ -31,7 +31,7 @@ MNEMOS tracks **concrete, measurable performance**:
 
 This approach avoids abstract "skill level" metrics in favor of observable, measurable performance data.
 
-**Revised Philosophy Note:** MNEMOS is optimized for managing and maintaining a large library of material, but is ALSO about acquiring skills in the first place. Both acquisition and maintenance are core concerns.
+**Revised Philosophy Note:** MNEMOSYS is optimized for managing and maintaining a large library of material, but is ALSO about acquiring skills in the first place. Both acquisition and maintenance are core concerns.
 
 ---
 
