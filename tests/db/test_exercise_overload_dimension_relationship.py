@@ -15,7 +15,7 @@ def test_exercise_can_support_multiple_overload_dimensions() -> None:
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    exercise = Exercise(name="Chromatic Scale", domains=[], technique_tags=[])
+    exercise = Exercise(name="Chromatic Scale", domains=[])
 
     tempo = OverloadDimension(name="tempo", description="Speed in BPM")
     duration = OverloadDimension(name="duration", description="Length in minutes")
@@ -42,8 +42,8 @@ def test_overload_dimension_can_be_used_by_multiple_exercises() -> None:
 
     tempo = OverloadDimension(name="tempo", description="Speed in BPM")
 
-    exercise1 = Exercise(name="Chromatic Scale", domains=[], technique_tags=[])
-    exercise2 = Exercise(name="Alternate Picking", domains=[], technique_tags=[])
+    exercise1 = Exercise(name="Chromatic Scale", domains=[])
+    exercise2 = Exercise(name="Alternate Picking", domains=[])
 
     exercise1.overload_dimensions.append(tempo)
     exercise2.overload_dimensions.append(tempo)

@@ -10,6 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from ..base import Base
 
 if TYPE_CHECKING:
+    from .exercises import Exercise
     from .instruments import Instrument
 
 
@@ -40,6 +41,11 @@ class Technique(Base):
     instruments: Mapped[list["Instrument"]] = relationship(
         "Instrument",
         secondary="instrument_technique_association",
+        back_populates="techniques",
+    )
+    exercises: Mapped[list["Exercise"]] = relationship(
+        "Exercise",
+        secondary="exercise_technique_association",
         back_populates="techniques",
     )
 
