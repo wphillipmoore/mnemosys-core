@@ -70,6 +70,13 @@ from .instruments import (
     WindInstrument,
 )
 from .sessions import BlockLog, Session, SessionBlock
+from .tunings import (
+    KeyboardInstrumentTuning,
+    PercussionInstrumentTuning,
+    StringedInstrumentTuning,
+    Tuning,
+    WindInstrumentTuning,
+)
 
 __all__ = [
     # Enums
@@ -85,6 +92,12 @@ __all__ = [
     "KeyboardInstrument",
     "WindInstrument",
     "PercussionInstrument",
+    # Tuning models
+    "Tuning",
+    "StringedInstrumentTuning",
+    "KeyboardInstrumentTuning",
+    "WindInstrumentTuning",
+    "PercussionInstrumentTuning",
     # Other models
     "BlockLog",
     "Exercise",
