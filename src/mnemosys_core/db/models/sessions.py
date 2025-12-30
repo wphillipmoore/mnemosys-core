@@ -29,10 +29,10 @@ class Session(Base):
         total_minutes: Total session duration
     """
 
-    __tablename__ = "sessions"
+    __tablename__ = "session"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    instrument_id: Mapped[int] = mapped_column(Integer, ForeignKey("instruments.id"), nullable=False)
+    instrument_id: Mapped[int] = mapped_column(Integer, ForeignKey("instrument.id"), nullable=False)
     session_date: Mapped[date] = mapped_column(Date, nullable=False)
     session_type: Mapped[SessionType] = mapped_column(DatabaseEnum(SessionType), nullable=False)
     total_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -60,11 +60,11 @@ class SessionBlock(Base):
         duration_minutes: Block duration
     """
 
-    __tablename__ = "session_blocks"
+    __tablename__ = "session_block"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    session_id: Mapped[int] = mapped_column(Integer, ForeignKey("sessions.id"), nullable=False)
-    exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercises.id"), nullable=False)
+    session_id: Mapped[int] = mapped_column(Integer, ForeignKey("session.id"), nullable=False)
+    exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercise.id"), nullable=False)
     block_order: Mapped[int] = mapped_column(Integer, nullable=False)
     block_type: Mapped[BlockType] = mapped_column(DatabaseEnum(BlockType), nullable=False)
     duration_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -90,10 +90,10 @@ class BlockLog(Base):
         notes: Optional free text
     """
 
-    __tablename__ = "block_logs"
+    __tablename__ = "block_log"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    session_block_id: Mapped[int] = mapped_column(Integer, ForeignKey("session_blocks.id"), nullable=False)
+    session_block_id: Mapped[int] = mapped_column(Integer, ForeignKey("session_block.id"), nullable=False)
     completed: Mapped[CompletionStatus] = mapped_column(DatabaseEnum(CompletionStatus), nullable=False)
     quality: Mapped[QualityRating] = mapped_column(DatabaseEnum(QualityRating), nullable=False)
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
