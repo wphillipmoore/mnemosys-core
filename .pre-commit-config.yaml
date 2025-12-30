@@ -3,7 +3,8 @@ repos:
     hooks:
       - id: poetry-export
         name: Export requirements from Poetry
+        files: '^(pyproject\.toml|poetry\.lock)$'
         entry: |
-          bash -c '. .venv/bin/activate && poetry export -f requirements.txt --without dev -o requirements.txt && poetry export -f requirements.txt --only dev -o requirements-dev.txt'
+          bash -c '. .venv/bin/activate && poetry export -f requirements.txt --without dev --without-hashes -o requirements.txt && poetry export -f requirements.txt --only dev --without-hashes -o requirements-dev.txt'
         language: system
         pass_filenames: false
