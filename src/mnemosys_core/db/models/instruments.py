@@ -8,10 +8,10 @@ from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
-from ..types import JSONEncodedList
 
 if TYPE_CHECKING:
     from .sessions import Session
+    from .techniques import Technique
     from .tunings import StringedInstrumentTuning
 
 
@@ -21,6 +21,14 @@ stringed_instrument_tuning_association = Table(
     Base.metadata,
     Column("stringed_instrument_id", Integer, ForeignKey("stringed_instrument.id")),
     Column("stringed_instrument_tuning_id", Integer, ForeignKey("stringed_instrument_tuning.id")),
+)
+
+# Association table for Instrument ↔ Technique
+instrument_technique_association = Table(
+    "instrument_technique_association",
+    Base.metadata,
+    Column("instrument_id", Integer, ForeignKey("instrument.id")),
+    Column("technique_id", Integer, ForeignKey("technique.id")),
 )
 
 
@@ -53,6 +61,11 @@ class Instrument(Base):
     sessions: Mapped[list["Session"]] = relationship(
         "Session", back_populates="instrument", cascade="all, delete-orphan"
     )
+    techniques: Mapped[list["Technique"]] = relationship(
+        "Technique",
+        secondary=instrument_technique_association,
+        back_populates="instruments",
+    )
 
     def __repr__(self) -> str:
         return f"<Instrument(id={self.id}, name='{self.name}', type={self.instrument_type})>"
@@ -65,8 +78,8 @@ class StringedInstrument(Instrument):
     Attributes:
         string_count: Number of strings
         scale_length: Scale length in inches (e.g., 25.5)
-        tuning: References to StringedInstrumentTuning entities (many-to-many, implementation pending)
-        technique_capabilities: Supported techniques (many-to-many, implementation pending)
+        tunings: References to StringedInstrumentTuning entities (many-to-many)
+        techniques: Supported techniques (many-to-many, inherited from Instrument)
     """
 
     __tablename__ = "stringed_instrument"
@@ -74,12 +87,6 @@ class StringedInstrument(Instrument):
     id: Mapped[int] = mapped_column(Integer, ForeignKey("instrument.id"), primary_key=True)
     string_count: Mapped[int] = mapped_column(Integer, nullable=False)
     scale_length: Mapped[float | None] = mapped_column(Float, nullable=True)
-
-    # Temporary: technique_capabilities as JSON until Technique entity exists
-    # TODO: Replace with many-to-many relationship in Task 10
-    technique_capabilities: Mapped[list[str]] = mapped_column(
-        JSONEncodedList, nullable=False, default=lambda: []
-    )
 
     # Relationships
     tunings: Mapped[list["StringedInstrumentTuning"]] = relationship(
