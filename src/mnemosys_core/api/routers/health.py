@@ -6,7 +6,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import text
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session as DBSession
 
 from ..dependencies import get_db
 
@@ -20,10 +20,10 @@ def health_check() -> dict[str, str]:
 
 
 @router.get("/db")
-def database_health(db: Session = Depends(get_db)) -> dict[str, Any]:
+def database_health(db_session: DBSession = Depends(get_db)) -> dict[str, Any]:
     """Database connectivity check."""
     try:
-        db.execute(text("SELECT 1"))
+        db_session.execute(text("SELECT 1"))
         return {"status": "ok", "database": "connected"}
-    except Exception as e:
-        return {"status": "error", "database": str(e)}
+    except Exception as exception:
+        return {"status": "error", "database": str(exception)}

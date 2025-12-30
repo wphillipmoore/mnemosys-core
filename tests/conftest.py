@@ -7,7 +7,8 @@ from collections.abc import Generator
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import Engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session as DBSession
+from sqlalchemy.orm import sessionmaker
 
 from mnemosys_core.api.app import create_app
 from mnemosys_core.db.base import Base
@@ -24,13 +25,13 @@ def engine() -> Generator[Engine]:
 
 
 @pytest.fixture(scope="function")
-def session_factory(engine: Engine) -> sessionmaker[Session]:
+def session_factory(engine: Engine) -> sessionmaker[DBSession]:
     """Create session factory."""
     return sessionmaker(bind=engine)
 
 
 @pytest.fixture(scope="function")
-def db_session(session_factory: sessionmaker[Session]) -> Generator[Session]:
+def db_session(session_factory: sessionmaker[DBSession]) -> Generator[DBSession]:
     """Create database session for tests."""
     session = session_factory()
     yield session
