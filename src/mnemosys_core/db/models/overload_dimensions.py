@@ -2,10 +2,15 @@
 OverloadDimension entity - dimensions for progressive overload.
 """
 
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Integer, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
+
+if TYPE_CHECKING:
+    from .exercises import Exercise
 
 
 class OverloadDimension(Base):
@@ -26,6 +31,13 @@ class OverloadDimension(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # Relationships
+    exercises: Mapped[list["Exercise"]] = relationship(
+        "Exercise",
+        secondary="exercise_overload_dimension_association",
+        back_populates="overload_dimensions",
+    )
 
     def __repr__(self) -> str:
         return f"<OverloadDimension(id={self.id}, name='{self.name}')>"
