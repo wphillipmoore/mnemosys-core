@@ -69,6 +69,7 @@ from .instruments import (
     StringedInstrument,
     WindInstrument,
 )
+from .overload_dimensions import OverloadDimension
 from .sessions import BlockLog, Session, SessionBlock
 from .techniques import Technique
 from .tunings import (
@@ -101,6 +102,8 @@ __all__ = [
     "PercussionInstrumentTuning",
     # Technique model
     "Technique",
+    # OverloadDimension model
+    "OverloadDimension",
     # Other models
     "BlockLog",
     "Exercise",
