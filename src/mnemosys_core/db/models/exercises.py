@@ -29,7 +29,7 @@ class Exercise(Base):
         instrument_compatibility: Required instrument features
     """
 
-    __tablename__ = "exercises"
+    __tablename__ = "exercise"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
@@ -65,7 +65,7 @@ class ExerciseState(Base):
     __tablename__ = "exercise_state"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercises.id"), nullable=False, unique=True)
+    exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercise.id"), nullable=False, unique=True)
     last_practiced_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     rolling_minutes_7d: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     rolling_minutes_28d: Mapped[int] = mapped_column(Integer, default=0, nullable=False)

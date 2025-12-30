@@ -27,7 +27,7 @@ class Instrument(Base):
         scale_length: Scale length in inches (e.g., 25.5)
     """
 
-    __tablename__ = "instruments"
+    __tablename__ = "instrument"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
