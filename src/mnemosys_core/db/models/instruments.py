@@ -4,7 +4,7 @@ Instrument profile models with polymorphic hierarchy.
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Float, ForeignKey, Integer, String
+from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
@@ -12,6 +12,16 @@ from ..types import JSONEncodedList
 
 if TYPE_CHECKING:
     from .sessions import Session
+    from .tunings import StringedInstrumentTuning
+
+
+# Association table for StringedInstrument ↔ StringedInstrumentTuning
+stringed_instrument_tuning_association = Table(
+    "stringed_instrument_tuning_association",
+    Base.metadata,
+    Column("stringed_instrument_id", Integer, ForeignKey("stringed_instrument.id")),
+    Column("stringed_instrument_tuning_id", Integer, ForeignKey("stringed_instrument_tuning.id")),
+)
 
 
 class Instrument(Base):
@@ -69,6 +79,13 @@ class StringedInstrument(Instrument):
     # TODO: Replace with many-to-many relationship in Task 10
     technique_capabilities: Mapped[list[str]] = mapped_column(
         JSONEncodedList, nullable=False, default=lambda: []
+    )
+
+    # Relationships
+    tunings: Mapped[list["StringedInstrumentTuning"]] = relationship(
+        "StringedInstrumentTuning",
+        secondary=stringed_instrument_tuning_association,
+        back_populates="instruments",
     )
 
     # Polymorphic configuration
