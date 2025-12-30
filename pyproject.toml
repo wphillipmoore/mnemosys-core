@@ -9,12 +9,13 @@ description = "Core backend for the MNEMOSYS system"
 authors = ["Phillip Moore <w.phillip.moore@gmail.com>"]
 license = "LICENSE"
 readme = "README.md"
-packages = [{include = "mnemosys_core", from = "src"}]
+packages = [{ include = "mnemosys_core", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.13"
 sqlalchemy = "*"
 alembic = "*"
+requests = "^2.32.5"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "*"
@@ -24,6 +25,8 @@ pytest-mock = "*"
 pytest-cov = "*"
 pytest-xdist = "*"
 poetry = "^2"
+poetry-plugin-export = "*"
+pre-commit = "^3.7"
 
 [tool.ruff]
 line-length = 100
