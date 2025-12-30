@@ -5,7 +5,7 @@ Exercise and exercise state models.
 from datetime import date
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Date, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, Date, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
@@ -13,7 +13,26 @@ from ..types import DatabaseEnum, JSONEncodedList
 from . import FatigueProfile
 
 if TYPE_CHECKING:
-    from .sessions import SessionBlock
+    from .overload_dimensions import OverloadDimension
+    from .sessions import ExerciseInstance, SessionBlock
+    from .techniques import Technique
+
+
+# Association table for Exercise ↔ OverloadDimension
+exercise_overload_dimension_association = Table(
+    "exercise_overload_dimension_association",
+    Base.metadata,
+    Column("exercise_id", Integer, ForeignKey("exercise.id"), primary_key=True),
+    Column("overload_dimension_id", Integer, ForeignKey("overload_dimension.id"), primary_key=True),
+)
+
+# Association table for Exercise ↔ Technique
+exercise_technique_association = Table(
+    "exercise_technique_association",
+    Base.metadata,
+    Column("exercise_id", Integer, ForeignKey("exercise.id"), primary_key=True),
+    Column("technique_id", Integer, ForeignKey("technique.id"), primary_key=True),
+)
 
 
 class Exercise(Base):
@@ -34,15 +53,26 @@ class Exercise(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
     domains: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
-    technique_tags: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
-    supported_overload_dimensions: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
+    # Note: technique_tags removed - replaced with relationship below
+    # Note: supported_overload_dimensions removed - replaced with relationship below
     instrument_compatibility: Mapped[list[str] | None] = mapped_column(JSONEncodedList, nullable=True)
 
     # Relationships
-    exercise_states: Mapped[list["ExerciseState"]] = relationship(
-        "ExerciseState", back_populates="exercise", cascade="all, delete-orphan"
+    exercise_state: Mapped["ExerciseState | None"] = relationship(
+        "ExerciseState", back_populates="exercise", cascade="all, delete-orphan", uselist=False
     )
+    exercise_instances: Mapped[list["ExerciseInstance"]] = relationship("ExerciseInstance", back_populates="exercise")
     session_blocks: Mapped[list["SessionBlock"]] = relationship("SessionBlock", back_populates="exercise")
+    overload_dimensions: Mapped[list["OverloadDimension"]] = relationship(
+        "OverloadDimension",
+        secondary=exercise_overload_dimension_association,
+        back_populates="exercises",
+    )
+    techniques: Mapped[list["Technique"]] = relationship(
+        "Technique",
+        secondary=exercise_technique_association,
+        back_populates="exercises",
+    )
 
     def __repr__(self) -> str:
         return f"<Exercise(id={self.id}, name='{self.name}')>"
@@ -73,7 +103,7 @@ class ExerciseState(Base):
     last_fatigue_profile: Mapped[FatigueProfile | None] = mapped_column(DatabaseEnum(FatigueProfile), nullable=True)
 
     # Relationships
-    exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="exercise_states")
+    exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="exercise_state")
 
     def __repr__(self) -> str:
         return (

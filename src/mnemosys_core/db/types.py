@@ -47,6 +47,38 @@ class JSONEncodedList(TypeDecorator[list[str]]):
             return json.loads(value)  # type: ignore[no-any-return]
 
 
+class JSONEncodedDict(TypeDecorator[dict[str, Any]]):
+    """
+    Dictionary type that stores as PostgreSQL JSONB in production
+    and JSON string in SQLite for testing.
+    """
+
+    impl = String
+    cache_ok = True
+
+    def load_dialect_impl(self, dialect: Dialect) -> Any:
+        if dialect.name == "postgresql":
+            return dialect.type_descriptor(postgresql.JSONB())
+        else:
+            return dialect.type_descriptor(String())
+
+    def process_bind_param(self, value: dict[str, Any] | None, dialect: Dialect) -> dict[str, Any] | str | None:
+        if value is None:
+            return None
+        if dialect.name == "postgresql":
+            return value
+        else:
+            return json.dumps(value)
+
+    def process_result_value(self, value: Any, dialect: Dialect) -> dict[str, Any] | None:
+        if value is None:
+            return None
+        if dialect.name == "postgresql":
+            return value  # type: ignore[no-any-return]
+        else:
+            return json.loads(value)  # type: ignore[no-any-return]
+
+
 class DatabaseEnum(TypeDecorator[enum.Enum]):
     """
     Enum type that uses native PostgreSQL ENUM in production
