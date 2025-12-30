@@ -1,0 +1,13 @@
+{
+    "cSpell.words": [
+        "addopts",
+        "minversion",
+        "mnemosys",
+        "mypy",
+        "pytest",
+        "sqlalchemy",
+        "testpaths",
+        "xdist"
+    ],
+    "evenBetterToml.validation.enabled": false
+}
