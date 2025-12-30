@@ -22,7 +22,9 @@
       "Bash(pytest:*)",
       "Bash(git commit:*)",
       "WebSearch",
-      "WebFetch(domain:www.oreilly.com)"
+      "WebFetch(domain:www.oreilly.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl:*)"
     ]
   }
 }
