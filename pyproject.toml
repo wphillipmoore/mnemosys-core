@@ -66,6 +66,12 @@ known-first-party = ["mnemosys_core"]
     "E402",   # Module imports after code - enums must be defined before model imports
     "RUF022", # __all__ grouped logically (enums, models) rather than pure alphabetical
 ]
+"src/mnemosys_core/db/models/*.py" = [
+    "RUF012", # SQLAlchemy __mapper_args__ is a class-level dict used by the ORM framework
+]
+"tests/**/*.py" = [
+    "N806",   # sessionmaker returns factory classes conventionally named with PascalCase
+]
 
 [tool.mypy]
 python_version = "3.13"

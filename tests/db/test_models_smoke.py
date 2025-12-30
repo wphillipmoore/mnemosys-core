@@ -41,12 +41,12 @@ def test_can_import_all_enums() -> None:
 
 
 def test_instrument_instantiation(db_session: Session) -> None:
-    """Test that Instrument can be instantiated and saved."""
-    instrument = Instrument(
+    """Test that StringedInstrument can be instantiated and saved."""
+    from mnemosys_core.db.models.instruments import StringedInstrument
+
+    instrument = StringedInstrument(
         name="Test Guitar",
         string_count=6,
-        tuning=["E2", "A2", "D3", "G3", "B3", "E4"],
-        technique_capabilities=["bending"],
         scale_length=25.5,
     )
     db_session.add(instrument)
@@ -61,8 +61,6 @@ def test_exercise_instantiation(db_session: Session) -> None:
     exercise = Exercise(
         name="Chromatic Scale",
         domains=["Technique"],
-        technique_tags=["alternate-picking"],
-        supported_overload_dimensions=["tempo"],
     )
     db_session.add(exercise)
     db_session.flush()
@@ -75,10 +73,10 @@ def test_session_instantiation(db_session: Session) -> None:
     """Test that Session can be instantiated and saved."""
     from datetime import date
 
+    from mnemosys_core.db.models.instruments import StringedInstrument
+
     # Create instrument first
-    instrument = Instrument(
-        name="Test Bass", string_count=4, tuning=["E1", "A1", "D2", "G2"], technique_capabilities=[]
-    )
+    instrument = StringedInstrument(name="Test Bass", string_count=4, scale_length=34.0)
     db_session.add(instrument)
     db_session.flush()
 
@@ -94,18 +92,19 @@ def test_session_instantiation(db_session: Session) -> None:
 
 
 def test_instrument_repr(db_session: Session) -> None:
-    """Test Instrument __repr__ method."""
-    instrument = Instrument(
+    """Test StringedInstrument __repr__ method."""
+    from mnemosys_core.db.models.instruments import StringedInstrument
+
+    instrument = StringedInstrument(
         name="Test Guitar",
         string_count=6,
-        tuning=["E2", "A2", "D3", "G3", "B3", "E4"],
-        technique_capabilities=[],
+        scale_length=25.5,
     )
     db_session.add(instrument)
     db_session.flush()
 
     repr_str = repr(instrument)
-    assert "Instrument" in repr_str
+    assert "StringedInstrument" in repr_str
     assert "Test Guitar" in repr_str
     assert str(instrument.id) in repr_str
 
@@ -115,8 +114,6 @@ def test_exercise_repr(db_session: Session) -> None:
     exercise = Exercise(
         name="Chromatic Scale",
         domains=["Technique"],
-        technique_tags=[],
-        supported_overload_dimensions=[],
     )
     db_session.add(exercise)
     db_session.flush()
@@ -132,8 +129,6 @@ def test_exercise_state_repr(db_session: Session) -> None:
     exercise = Exercise(
         name="Test Exercise",
         domains=["Technique"],
-        technique_tags=[],
-        supported_overload_dimensions=[],
     )
     db_session.add(exercise)
     db_session.flush()
@@ -157,12 +152,9 @@ def test_session_repr(db_session: Session) -> None:
     """Test Session __repr__ method."""
     from datetime import date
 
-    instrument = Instrument(
-        name="Test Guitar",
-        string_count=6,
-        tuning=["E2", "A2", "D3", "G3", "B3", "E4"],
-        technique_capabilities=[],
-    )
+    from mnemosys_core.db.models.instruments import StringedInstrument
+
+    instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     db_session.add(instrument)
     db_session.flush()
 
@@ -185,20 +177,15 @@ def test_session_block_repr(db_session: Session) -> None:
     """Test SessionBlock __repr__ method."""
     from datetime import date
 
-    instrument = Instrument(
-        name="Test Guitar",
-        string_count=6,
-        tuning=["E2", "A2", "D3", "G3", "B3", "E4"],
-        technique_capabilities=[],
-    )
+    from mnemosys_core.db.models.instruments import StringedInstrument
+
+    instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     db_session.add(instrument)
     db_session.flush()
 
     exercise = Exercise(
         name="Test Exercise",
         domains=["Technique"],
-        technique_tags=[],
-        supported_overload_dimensions=[],
     )
     db_session.add(exercise)
     db_session.flush()
@@ -232,20 +219,15 @@ def test_block_log_repr(db_session: Session) -> None:
     """Test BlockLog __repr__ method."""
     from datetime import date
 
-    instrument = Instrument(
-        name="Test Guitar",
-        string_count=6,
-        tuning=["E2", "A2", "D3", "G3", "B3", "E4"],
-        technique_capabilities=[],
-    )
+    from mnemosys_core.db.models.instruments import StringedInstrument
+
+    instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     db_session.add(instrument)
     db_session.flush()
 
     exercise = Exercise(
         name="Test Exercise",
         domains=["Technique"],
-        technique_tags=[],
-        supported_overload_dimensions=[],
     )
     db_session.add(exercise)
     db_session.flush()
