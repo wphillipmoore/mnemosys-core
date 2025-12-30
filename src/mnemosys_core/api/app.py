@@ -25,7 +25,7 @@ def create_app(engine: Engine) -> FastAPI:
     """
     app = FastAPI(
         title="Mnemosys Core API",
-        description="FSIPS practice tracking API",
+        description="MNEMOSYS practice tracking API",
         version="0.1.0",
     )
 
