@@ -62,7 +62,13 @@ class QualityRating(enum.Enum):
 
 # Import models for convenience
 from .exercises import Exercise, ExerciseState
-from .instruments import Instrument
+from .instruments import (
+    Instrument,
+    KeyboardInstrument,
+    PercussionInstrument,
+    StringedInstrument,
+    WindInstrument,
+)
 from .sessions import BlockLog, Session, SessionBlock
 
 __all__ = [
@@ -73,11 +79,16 @@ __all__ = [
     "FatigueProfile",
     "QualityRating",
     "SessionType",
-    # Models
+    # Instrument models
+    "Instrument",
+    "StringedInstrument",
+    "KeyboardInstrument",
+    "WindInstrument",
+    "PercussionInstrument",
+    # Other models
     "BlockLog",
     "Exercise",
     "ExerciseState",
-    "Instrument",
     "Session",
     "SessionBlock",
 ]
