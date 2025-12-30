@@ -67,17 +67,17 @@ from .sessions import BlockLog, Session, SessionBlock
 
 __all__ = [
     # Enums
-    "DomainType",
-    "FatigueProfile",
-    "SessionType",
     "BlockType",
     "CompletionStatus",
+    "DomainType",
+    "FatigueProfile",
     "QualityRating",
+    "SessionType",
     # Models
-    "Instrument",
+    "BlockLog",
     "Exercise",
     "ExerciseState",
+    "Instrument",
     "Session",
     "SessionBlock",
-    "BlockLog",
 ]

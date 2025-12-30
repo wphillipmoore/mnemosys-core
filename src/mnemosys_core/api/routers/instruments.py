@@ -2,14 +2,13 @@
 Instrument API endpoints.
 """
 
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from ...db.models import Instrument
 from ..dependencies import get_db
 from ..schemas.instruments import InstrumentCreate, InstrumentResponse, InstrumentUpdate
-from ...db.models import Instrument
 
 router = APIRouter()
 
@@ -23,10 +22,10 @@ def create_instrument(instrument: InstrumentCreate, db: Session = Depends(get_db
     return db_instrument
 
 
-@router.get("/", response_model=List[InstrumentResponse])
+@router.get("/", response_model=list[InstrumentResponse])
 def list_instruments(
     db: Session = Depends(get_db), skip: int = 0, limit: int = 100
-) -> List[Instrument]:
+) -> list[Instrument]:
     """List all instruments."""
     return db.query(Instrument).offset(skip).limit(limit).all()
 

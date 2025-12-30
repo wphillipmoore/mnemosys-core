@@ -13,13 +13,15 @@ from mnemosys_core.db.models import (
     FatigueProfile,
     Instrument,
     QualityRating,
-    Session as PracticeSession,
     SessionBlock,
     SessionType,
 )
+from mnemosys_core.db.models import (
+    Session as PracticeSession,
+)
 
 
-def test_can_import_all_models():
+def test_can_import_all_models() -> None:
     """Test that all models can be imported."""
     assert Instrument is not None
     assert Exercise is not None
@@ -29,7 +31,7 @@ def test_can_import_all_models():
     assert BlockLog is not None
 
 
-def test_can_import_all_enums():
+def test_can_import_all_enums() -> None:
     """Test that all enums can be imported."""
     assert FatigueProfile is not None
     assert SessionType is not None
@@ -38,7 +40,7 @@ def test_can_import_all_enums():
     assert QualityRating is not None
 
 
-def test_instrument_instantiation(db_session: Session):
+def test_instrument_instantiation(db_session: Session) -> None:
     """Test that Instrument can be instantiated and saved."""
     instrument = Instrument(
         name="Test Guitar",
@@ -54,7 +56,7 @@ def test_instrument_instantiation(db_session: Session):
     assert instrument.name == "Test Guitar"
 
 
-def test_exercise_instantiation(db_session: Session):
+def test_exercise_instantiation(db_session: Session) -> None:
     """Test that Exercise can be instantiated and saved."""
     exercise = Exercise(
         name="Chromatic Scale",
@@ -69,7 +71,7 @@ def test_exercise_instantiation(db_session: Session):
     assert exercise.name == "Chromatic Scale"
 
 
-def test_session_instantiation(db_session: Session):
+def test_session_instantiation(db_session: Session) -> None:
     """Test that Session can be instantiated and saved."""
     from datetime import date
 

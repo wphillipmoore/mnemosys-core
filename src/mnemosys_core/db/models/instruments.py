@@ -2,7 +2,7 @@
 Instrument profile models.
 """
 
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -32,12 +32,12 @@ class Instrument(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     string_count: Mapped[int] = mapped_column(Integer, nullable=False)
-    tuning: Mapped[List[str]] = mapped_column(JSONEncodedList, nullable=False)
-    technique_capabilities: Mapped[List[str]] = mapped_column(JSONEncodedList, nullable=False)
-    scale_length: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    tuning: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
+    technique_capabilities: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
+    scale_length: Mapped[float | None] = mapped_column(Float, nullable=True)
 
     # Relationships
-    sessions: Mapped[List["Session"]] = relationship(
+    sessions: Mapped[list["Session"]] = relationship(
         "Session", back_populates="instrument", cascade="all, delete-orphan"
     )
 

@@ -3,7 +3,6 @@ Pydantic schemas for exercise API.
 """
 
 from datetime import date
-from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -14,10 +13,10 @@ class ExerciseBase(BaseModel):
     """Base exercise fields."""
 
     name: str = Field(..., min_length=1, max_length=200)
-    domains: List[str] = Field(..., min_length=1)
-    technique_tags: List[str] = Field(default_factory=list)
-    supported_overload_dimensions: List[str] = Field(default_factory=list)
-    instrument_compatibility: Optional[List[str]] = None
+    domains: list[str] = Field(..., min_length=1)
+    technique_tags: list[str] = Field(default_factory=list)
+    supported_overload_dimensions: list[str] = Field(default_factory=list)
+    instrument_compatibility: list[str] | None = None
 
 
 class ExerciseCreate(ExerciseBase):
@@ -29,11 +28,11 @@ class ExerciseCreate(ExerciseBase):
 class ExerciseUpdate(BaseModel):
     """Schema for updating exercises."""
 
-    name: Optional[str] = Field(None, min_length=1, max_length=200)
-    domains: Optional[List[str]] = Field(None, min_length=1)
-    technique_tags: Optional[List[str]] = None
-    supported_overload_dimensions: Optional[List[str]] = None
-    instrument_compatibility: Optional[List[str]] = None
+    name: str | None = Field(None, min_length=1, max_length=200)
+    domains: list[str] | None = Field(None, min_length=1)
+    technique_tags: list[str] | None = None
+    supported_overload_dimensions: list[str] | None = None
+    instrument_compatibility: list[str] | None = None
 
 
 class ExerciseResponse(ExerciseBase):
@@ -48,11 +47,11 @@ class ExerciseStateBase(BaseModel):
     """Base exercise state fields."""
 
     exercise_id: int
-    last_practiced_date: Optional[date] = None
+    last_practiced_date: date | None = None
     rolling_minutes_7d: int = Field(default=0, ge=0)
     rolling_minutes_28d: int = Field(default=0, ge=0)
     mastery_estimate: float = Field(default=0.0, ge=0.0, le=1.0)
-    last_fatigue_profile: Optional[FatigueProfile] = None
+    last_fatigue_profile: FatigueProfile | None = None
 
 
 class ExerciseStateCreate(ExerciseStateBase):
@@ -64,11 +63,11 @@ class ExerciseStateCreate(ExerciseStateBase):
 class ExerciseStateUpdate(BaseModel):
     """Schema for updating exercise states."""
 
-    last_practiced_date: Optional[date] = None
-    rolling_minutes_7d: Optional[int] = Field(None, ge=0)
-    rolling_minutes_28d: Optional[int] = Field(None, ge=0)
-    mastery_estimate: Optional[float] = Field(None, ge=0.0, le=1.0)
-    last_fatigue_profile: Optional[FatigueProfile] = None
+    last_practiced_date: date | None = None
+    rolling_minutes_7d: int | None = Field(None, ge=0)
+    rolling_minutes_28d: int | None = Field(None, ge=0)
+    mastery_estimate: float | None = Field(None, ge=0.0, le=1.0)
+    last_fatigue_profile: FatigueProfile | None = None
 
 
 class ExerciseStateResponse(ExerciseStateBase):

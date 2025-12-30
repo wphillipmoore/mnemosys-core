@@ -2,6 +2,8 @@
 Health check endpoints.
 """
 
+from typing import Any
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -12,13 +14,13 @@ router = APIRouter()
 
 
 @router.get("/")
-def health_check() -> dict:
+def health_check() -> dict[str, str]:
     """Basic health check."""
     return {"status": "ok"}
 
 
 @router.get("/db")
-def database_health(db: Session = Depends(get_db)) -> dict:
+def database_health(db: Session = Depends(get_db)) -> dict[str, Any]:
     """Database connectivity check."""
     try:
         db.execute(text("SELECT 1"))

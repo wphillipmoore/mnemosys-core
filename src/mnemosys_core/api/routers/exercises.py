@@ -2,11 +2,11 @@
 Exercise API endpoints.
 """
 
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from ...db.models import Exercise, ExerciseState
 from ..dependencies import get_db
 from ..schemas.exercises import (
     ExerciseCreate,
@@ -16,7 +16,6 @@ from ..schemas.exercises import (
     ExerciseStateUpdate,
     ExerciseUpdate,
 )
-from ...db.models import Exercise, ExerciseState
 
 router = APIRouter()
 
@@ -31,8 +30,8 @@ def create_exercise(exercise: ExerciseCreate, db: Session = Depends(get_db)) -> 
     return db_exercise
 
 
-@router.get("/", response_model=List[ExerciseResponse])
-def list_exercises(db: Session = Depends(get_db), skip: int = 0, limit: int = 100) -> List[Exercise]:
+@router.get("/", response_model=list[ExerciseResponse])
+def list_exercises(db: Session = Depends(get_db), skip: int = 0, limit: int = 100) -> list[Exercise]:
     """List all exercises."""
     return db.query(Exercise).offset(skip).limit(limit).all()
 
@@ -84,10 +83,10 @@ def create_exercise_state(state: ExerciseStateCreate, db: Session = Depends(get_
     return db_state
 
 
-@router.get("/states/", response_model=List[ExerciseStateResponse])
+@router.get("/states/", response_model=list[ExerciseStateResponse])
 def list_exercise_states(
     db: Session = Depends(get_db), skip: int = 0, limit: int = 100
-) -> List[ExerciseState]:
+) -> list[ExerciseState]:
     """List all exercise states."""
     return db.query(ExerciseState).offset(skip).limit(limit).all()
 

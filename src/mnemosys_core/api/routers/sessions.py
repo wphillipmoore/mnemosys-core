@@ -2,11 +2,11 @@
 Session API endpoints.
 """
 
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session as DBSession
 
+from ...db.models import BlockLog, Session, SessionBlock
 from ..dependencies import get_db
 from ..schemas.sessions import (
     BlockLogCreate,
@@ -19,7 +19,6 @@ from ..schemas.sessions import (
     SessionResponse,
     SessionUpdate,
 )
-from ...db.models import BlockLog, Session, SessionBlock
 
 router = APIRouter()
 
@@ -34,8 +33,8 @@ def create_session(session: SessionCreate, db: DBSession = Depends(get_db)) -> S
     return db_session
 
 
-@router.get("/", response_model=List[SessionResponse])
-def list_sessions(db: DBSession = Depends(get_db), skip: int = 0, limit: int = 100) -> List[Session]:
+@router.get("/", response_model=list[SessionResponse])
+def list_sessions(db: DBSession = Depends(get_db), skip: int = 0, limit: int = 100) -> list[Session]:
     """List all sessions."""
     return db.query(Session).offset(skip).limit(limit).all()
 
@@ -87,10 +86,10 @@ def create_session_block(block: SessionBlockCreate, db: DBSession = Depends(get_
     return db_block
 
 
-@router.get("/blocks/", response_model=List[SessionBlockResponse])
+@router.get("/blocks/", response_model=list[SessionBlockResponse])
 def list_session_blocks(
     db: DBSession = Depends(get_db), skip: int = 0, limit: int = 100
-) -> List[SessionBlock]:
+) -> list[SessionBlock]:
     """List all session blocks."""
     return db.query(SessionBlock).offset(skip).limit(limit).all()
 
@@ -142,8 +141,8 @@ def create_block_log(log: BlockLogCreate, db: DBSession = Depends(get_db)) -> Bl
     return db_log
 
 
-@router.get("/logs/", response_model=List[BlockLogResponse])
-def list_block_logs(db: DBSession = Depends(get_db), skip: int = 0, limit: int = 100) -> List[BlockLog]:
+@router.get("/logs/", response_model=list[BlockLogResponse])
+def list_block_logs(db: DBSession = Depends(get_db), skip: int = 0, limit: int = 100) -> list[BlockLog]:
     """List all block logs."""
     return db.query(BlockLog).offset(skip).limit(limit).all()
 

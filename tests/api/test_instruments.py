@@ -5,14 +5,14 @@ Instrument API tests.
 from fastapi.testclient import TestClient
 
 
-def test_health_check(client: TestClient):
+def test_health_check(client: TestClient) -> None:
     """Test basic health check endpoint."""
     response = client.get("/health/")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
 
-def test_create_instrument(client: TestClient):
+def test_create_instrument(client: TestClient) -> None:
     """Test POST /api/v1/instruments/."""
     response = client.post(
         "/api/v1/instruments/",
@@ -32,7 +32,7 @@ def test_create_instrument(client: TestClient):
     assert data["string_count"] == 6
 
 
-def test_list_instruments(client: TestClient):
+def test_list_instruments(client: TestClient) -> None:
     """Test GET /api/v1/instruments/."""
     # Create test data
     client.post(
@@ -52,7 +52,7 @@ def test_list_instruments(client: TestClient):
     assert data[0]["name"] == "Guitar 1"
 
 
-def test_get_instrument(client: TestClient):
+def test_get_instrument(client: TestClient) -> None:
     """Test GET /api/v1/instruments/{id}."""
     # Create instrument
     create_response = client.post(
@@ -75,13 +75,13 @@ def test_get_instrument(client: TestClient):
     assert data["string_count"] == 4
 
 
-def test_get_instrument_not_found(client: TestClient):
+def test_get_instrument_not_found(client: TestClient) -> None:
     """Test GET /api/v1/instruments/{id} with invalid ID."""
     response = client.get("/api/v1/instruments/999")
     assert response.status_code == 404
 
 
-def test_update_instrument(client: TestClient):
+def test_update_instrument(client: TestClient) -> None:
     """Test PUT /api/v1/instruments/{id}."""
     # Create instrument
     create_response = client.post(
@@ -106,7 +106,7 @@ def test_update_instrument(client: TestClient):
     assert data["string_count"] == 6  # Unchanged
 
 
-def test_delete_instrument(client: TestClient):
+def test_delete_instrument(client: TestClient) -> None:
     """Test DELETE /api/v1/instruments/{id}."""
     # Create instrument
     create_response = client.post(
