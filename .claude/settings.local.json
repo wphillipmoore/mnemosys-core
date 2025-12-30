@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(git -C /Users/pmoore/dev/mnemosys/mnemosys-core log --oneline --all --graph -20)",
+      "Bash(wc:*)",
+      "Bash(git -C /Users/pmoore/dev/mnemosys/mnemosys-core branch -a)",
+      "Bash(cat:*)",
+      "Bash(poetry lock:*)",
+      "Bash(poetry install:*)",
+      "Bash(pytest tests/:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nImplement complete SQLAlchemy ORM and FastAPI REST API for FSIPS schema\n\nThis commit implements the full database layer and API for the Functional Skill \nIntegration & Practice System, enabling practice session tracking, exercise state \nmanagement, and instrument configuration persistence.\n\nKey components:\n- SQLAlchemy 2.0 ORM models for all 6 FSIPS entities \\(Instrument, Exercise, \n  ExerciseState, Session, SessionBlock, BlockLog\\)\n- Cross-database compatibility layer \\(PostgreSQL production, SQLite tests\\)\n- FastAPI REST API with full CRUD operations and OpenAPI documentation\n- Alembic migration infrastructure for schema versioning\n- Comprehensive test suite \\(16 tests passing\\) with in-memory SQLite fixtures\n- UTC-only time handling utilities\n- Configuration system with environment-based settings\n\nArchitecture follows MNEMOSYS principles: no global state, explicit instantiation,\ndependency injection throughout, and author-independent survivability.\n\nAll tests passing. Ready for Alembic migration generation.\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
