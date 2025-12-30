@@ -8,5 +8,6 @@
         "sqlalchemy",
         "testpaths",
         "xdist"
-    ]
+    ],
+    "evenBetterToml.validation.enabled": false
 }
