@@ -14,7 +14,7 @@ from . import FatigueProfile
 
 if TYPE_CHECKING:
     from .overload_dimensions import OverloadDimension
-    from .sessions import SessionBlock
+    from .sessions import ExerciseInstance, SessionBlock
     from .techniques import Technique
 
 
@@ -61,6 +61,7 @@ class Exercise(Base):
     exercise_state: Mapped["ExerciseState | None"] = relationship(
         "ExerciseState", back_populates="exercise", cascade="all, delete-orphan", uselist=False
     )
+    exercise_instances: Mapped[list["ExerciseInstance"]] = relationship("ExerciseInstance", back_populates="exercise")
     session_blocks: Mapped[list["SessionBlock"]] = relationship("SessionBlock", back_populates="exercise")
     overload_dimensions: Mapped[list["OverloadDimension"]] = relationship(
         "OverloadDimension",

@@ -9,7 +9,7 @@ from sqlalchemy import Date, ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
-from ..types import DatabaseEnum
+from ..types import DatabaseEnum, JSONEncodedDict
 from . import BlockType, CompletionStatus, QualityRating, SessionType
 
 if TYPE_CHECKING:
@@ -39,12 +39,45 @@ class Session(Base):
 
     # Relationships
     instrument: Mapped["Instrument"] = relationship("Instrument", back_populates="sessions")
+    exercise_instances: Mapped[list["ExerciseInstance"]] = relationship(
+        "ExerciseInstance", back_populates="session", cascade="all, delete-orphan", order_by="ExerciseInstance.sequence_order"
+    )
     blocks: Mapped[list["SessionBlock"]] = relationship(
         "SessionBlock", back_populates="session", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
         return f"<Session(id={self.id}, date={self.session_date}, " f"type={self.session_type.value})>"
+
+
+class ExerciseInstance(Base):
+    """
+    Parameterized exercise for a specific practice session.
+
+    Replaces SessionBlock with cleaner semantics and parameterization support.
+
+    Attributes:
+        id: Primary key
+        session_id: Foreign key to sessions
+        exercise_id: Foreign key to exercises
+        sequence_order: Position within session (1-indexed)
+        parameters: Exercise parameters (tempo, key, pattern, duration, etc.)
+    """
+
+    __tablename__ = "exercise_instance"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    session_id: Mapped[int] = mapped_column(Integer, ForeignKey("session.id"), nullable=False)
+    exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercise.id"), nullable=False)
+    sequence_order: Mapped[int] = mapped_column(Integer, nullable=False)
+    parameters: Mapped[dict[str, str | int | float]] = mapped_column(JSONEncodedDict, nullable=False, default=dict)
+
+    # Relationships
+    session: Mapped["Session"] = relationship("Session", back_populates="exercise_instances")
+    exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="exercise_instances")
+
+    def __repr__(self) -> str:
+        return f"<ExerciseInstance(id={self.id}, sequence={self.sequence_order})>"
 
 
 class SessionBlock(Base):
