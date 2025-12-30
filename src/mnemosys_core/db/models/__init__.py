@@ -70,6 +70,7 @@ from .instruments import (
     WindInstrument,
 )
 from .sessions import BlockLog, Session, SessionBlock
+from .techniques import Technique
 from .tunings import (
     KeyboardInstrumentTuning,
     PercussionInstrumentTuning,
@@ -98,6 +99,8 @@ __all__ = [
     "KeyboardInstrumentTuning",
     "WindInstrumentTuning",
     "PercussionInstrumentTuning",
+    # Technique model
+    "Technique",
     # Other models
     "BlockLog",
     "Exercise",
