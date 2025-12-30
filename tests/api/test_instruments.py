@@ -106,6 +106,23 @@ def test_update_instrument(client: TestClient) -> None:
     assert data["string_count"] == 6  # Unchanged
 
 
+def test_update_instrument_not_found(client: TestClient) -> None:
+    """Test PUT /api/v1/instruments/{id} with invalid ID."""
+    response = client.put(
+        "/api/v1/instruments/999",
+        json={"name": "Updated"},
+    )
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Instrument not found"
+
+
+def test_delete_instrument_not_found(client: TestClient) -> None:
+    """Test DELETE /api/v1/instruments/{id} with invalid ID."""
+    response = client.delete("/api/v1/instruments/999")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Instrument not found"
+
+
 def test_delete_instrument(client: TestClient) -> None:
     """Test DELETE /api/v1/instruments/{id}."""
     # Create instrument
