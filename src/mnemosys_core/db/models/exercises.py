@@ -58,8 +58,8 @@ class Exercise(Base):
     instrument_compatibility: Mapped[list[str] | None] = mapped_column(JSONEncodedList, nullable=True)
 
     # Relationships
-    exercise_states: Mapped[list["ExerciseState"]] = relationship(
-        "ExerciseState", back_populates="exercise", cascade="all, delete-orphan"
+    exercise_state: Mapped["ExerciseState | None"] = relationship(
+        "ExerciseState", back_populates="exercise", cascade="all, delete-orphan", uselist=False
     )
     session_blocks: Mapped[list["SessionBlock"]] = relationship("SessionBlock", back_populates="exercise")
     overload_dimensions: Mapped[list["OverloadDimension"]] = relationship(
@@ -102,7 +102,7 @@ class ExerciseState(Base):
     last_fatigue_profile: Mapped[FatigueProfile | None] = mapped_column(DatabaseEnum(FatigueProfile), nullable=True)
 
     # Relationships
-    exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="exercise_states")
+    exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="exercise_state")
 
     def __repr__(self) -> str:
         return (
