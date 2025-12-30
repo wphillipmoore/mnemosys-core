@@ -22,16 +22,16 @@ if TYPE_CHECKING:
 exercise_overload_dimension_association = Table(
     "exercise_overload_dimension_association",
     Base.metadata,
-    Column("exercise_id", Integer, ForeignKey("exercise.id")),
-    Column("overload_dimension_id", Integer, ForeignKey("overload_dimension.id")),
+    Column("exercise_id", Integer, ForeignKey("exercise.id"), primary_key=True),
+    Column("overload_dimension_id", Integer, ForeignKey("overload_dimension.id"), primary_key=True),
 )
 
 # Association table for Exercise ↔ Technique
 exercise_technique_association = Table(
     "exercise_technique_association",
     Base.metadata,
-    Column("exercise_id", Integer, ForeignKey("exercise.id")),
-    Column("technique_id", Integer, ForeignKey("technique.id")),
+    Column("exercise_id", Integer, ForeignKey("exercise.id"), primary_key=True),
+    Column("technique_id", Integer, ForeignKey("technique.id"), primary_key=True),
 )
 
 

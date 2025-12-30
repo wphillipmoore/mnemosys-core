@@ -24,6 +24,7 @@ def test_overload_dimension_creation() -> None:
     retrieved = session.query(OverloadDimension).filter_by(name="tempo").first()
     assert retrieved is not None
     assert retrieved.name == "tempo"
+    assert retrieved.description is not None
     assert "beats per minute" in retrieved.description
     session.close()
 

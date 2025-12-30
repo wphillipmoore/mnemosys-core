@@ -24,6 +24,7 @@ def test_technique_creation() -> None:
     retrieved = session.query(Technique).filter_by(name="string skipping").first()
     assert retrieved is not None
     assert retrieved.name == "string skipping"
+    assert retrieved.description is not None
     assert "Skipping over" in retrieved.description
     session.close()
 
