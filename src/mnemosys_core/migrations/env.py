@@ -15,10 +15,23 @@ from mnemosys_core.db.base import Base
 from mnemosys_core.db.models import (  # noqa: F401
     BlockLog,
     Exercise,
+    ExerciseInstance,
+    ExerciseLog,
     ExerciseState,
     Instrument,
+    KeyboardInstrument,
+    KeyboardInstrumentTuning,
+    OverloadDimension,
+    PercussionInstrument,
+    PercussionInstrumentTuning,
     Session,
     SessionBlock,
+    StringedInstrument,
+    StringedInstrumentTuning,
+    Technique,
+    Tuning,
+    WindInstrument,
+    WindInstrumentTuning,
 )
 
 # Alembic Config object
