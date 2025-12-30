@@ -75,9 +75,46 @@ class ExerciseInstance(Base):
     # Relationships
     session: Mapped["Session"] = relationship("Session", back_populates="exercise_instances")
     exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="exercise_instances")
+    log: Mapped["ExerciseLog | None"] = relationship(
+        "ExerciseLog", back_populates="exercise_instance", cascade="all, delete-orphan", uselist=False
+    )
 
     def __repr__(self) -> str:
         return f"<ExerciseInstance(id={self.id}, sequence={self.sequence_order})>"
+
+
+class ExerciseLog(Base):
+    """
+    Performance record for an exercise instance.
+
+    Replaces BlockLog with cleaner semantics tied to ExerciseInstance.
+
+    Attributes:
+        id: Primary key
+        exercise_instance_id: Foreign key to exercise_instance (unique - one log per instance)
+        completion_status: Whether exercise was completed (yes/partial/no)
+        quality_rating: Subjective quality assessment (clean/acceptable/sloppy)
+        notes: Optional free text notes
+    """
+
+    __tablename__ = "exercise_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    exercise_instance_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("exercise_instance.id"), nullable=False, unique=True
+    )
+    completion_status: Mapped[CompletionStatus] = mapped_column(DatabaseEnum(CompletionStatus), nullable=False)
+    quality_rating: Mapped[QualityRating] = mapped_column(DatabaseEnum(QualityRating), nullable=False)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # Relationships
+    exercise_instance: Mapped["ExerciseInstance"] = relationship("ExerciseInstance", back_populates="log")
+
+    def __repr__(self) -> str:
+        return (
+            f"<ExerciseLog(id={self.id}, status={self.completion_status.value}, "
+            f"quality={self.quality_rating.value})>"
+        )
 
 
 class SessionBlock(Base):

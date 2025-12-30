@@ -70,7 +70,7 @@ from .instruments import (
     WindInstrument,
 )
 from .overload_dimensions import OverloadDimension
-from .sessions import BlockLog, ExerciseInstance, Session, SessionBlock
+from .sessions import BlockLog, ExerciseInstance, ExerciseLog, Session, SessionBlock
 from .techniques import Technique
 from .tunings import (
     KeyboardInstrumentTuning,
@@ -108,6 +108,7 @@ __all__ = [
     "BlockLog",
     "Exercise",
     "ExerciseInstance",
+    "ExerciseLog",
     "ExerciseState",
     "Session",
     "SessionBlock",
