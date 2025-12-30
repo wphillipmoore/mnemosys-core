@@ -15,6 +15,7 @@ from . import FatigueProfile
 if TYPE_CHECKING:
     from .overload_dimensions import OverloadDimension
     from .sessions import SessionBlock
+    from .techniques import Technique
 
 
 # Association table for Exercise ↔ OverloadDimension
@@ -23,6 +24,14 @@ exercise_overload_dimension_association = Table(
     Base.metadata,
     Column("exercise_id", Integer, ForeignKey("exercise.id")),
     Column("overload_dimension_id", Integer, ForeignKey("overload_dimension.id")),
+)
+
+# Association table for Exercise ↔ Technique
+exercise_technique_association = Table(
+    "exercise_technique_association",
+    Base.metadata,
+    Column("exercise_id", Integer, ForeignKey("exercise.id")),
+    Column("technique_id", Integer, ForeignKey("technique.id")),
 )
 
 
@@ -44,7 +53,7 @@ class Exercise(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
     domains: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
-    technique_tags: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
+    # Note: technique_tags removed - replaced with relationship below
     # Note: supported_overload_dimensions removed - replaced with relationship below
     instrument_compatibility: Mapped[list[str] | None] = mapped_column(JSONEncodedList, nullable=True)
 
@@ -56,6 +65,11 @@ class Exercise(Base):
     overload_dimensions: Mapped[list["OverloadDimension"]] = relationship(
         "OverloadDimension",
         secondary=exercise_overload_dimension_association,
+        back_populates="exercises",
+    )
+    techniques: Mapped[list["Technique"]] = relationship(
+        "Technique",
+        secondary=exercise_technique_association,
         back_populates="exercises",
     )
 
