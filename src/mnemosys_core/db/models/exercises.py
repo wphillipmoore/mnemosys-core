@@ -5,7 +5,7 @@ Exercise and exercise state models.
 from datetime import date
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Date, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, Date, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
@@ -13,7 +13,17 @@ from ..types import DatabaseEnum, JSONEncodedList
 from . import FatigueProfile
 
 if TYPE_CHECKING:
+    from .overload_dimensions import OverloadDimension
     from .sessions import SessionBlock
+
+
+# Association table for Exercise ↔ OverloadDimension
+exercise_overload_dimension_association = Table(
+    "exercise_overload_dimension_association",
+    Base.metadata,
+    Column("exercise_id", Integer, ForeignKey("exercise.id")),
+    Column("overload_dimension_id", Integer, ForeignKey("overload_dimension.id")),
+)
 
 
 class Exercise(Base):
@@ -35,7 +45,7 @@ class Exercise(Base):
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
     domains: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
     technique_tags: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
-    supported_overload_dimensions: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
+    # Note: supported_overload_dimensions removed - replaced with relationship below
     instrument_compatibility: Mapped[list[str] | None] = mapped_column(JSONEncodedList, nullable=True)
 
     # Relationships
@@ -43,6 +53,11 @@ class Exercise(Base):
         "ExerciseState", back_populates="exercise", cascade="all, delete-orphan"
     )
     session_blocks: Mapped[list["SessionBlock"]] = relationship("SessionBlock", back_populates="exercise")
+    overload_dimensions: Mapped[list["OverloadDimension"]] = relationship(
+        "OverloadDimension",
+        secondary=exercise_overload_dimension_association,
+        back_populates="exercises",
+    )
 
     def __repr__(self) -> str:
         return f"<Exercise(id={self.id}, name='{self.name}')>"
