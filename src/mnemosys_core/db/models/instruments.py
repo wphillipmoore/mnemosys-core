@@ -19,16 +19,16 @@ if TYPE_CHECKING:
 stringed_instrument_tuning_association = Table(
     "stringed_instrument_tuning_association",
     Base.metadata,
-    Column("stringed_instrument_id", Integer, ForeignKey("stringed_instrument.id")),
-    Column("stringed_instrument_tuning_id", Integer, ForeignKey("stringed_instrument_tuning.id")),
+    Column("stringed_instrument_id", Integer, ForeignKey("stringed_instrument.id"), primary_key=True),
+    Column("stringed_instrument_tuning_id", Integer, ForeignKey("stringed_instrument_tuning.id"), primary_key=True),
 )
 
 # Association table for Instrument ↔ Technique
 instrument_technique_association = Table(
     "instrument_technique_association",
     Base.metadata,
-    Column("instrument_id", Integer, ForeignKey("instrument.id")),
-    Column("technique_id", Integer, ForeignKey("technique.id")),
+    Column("instrument_id", Integer, ForeignKey("instrument.id"), primary_key=True),
+    Column("technique_id", Integer, ForeignKey("technique.id"), primary_key=True),
 )
 
 
