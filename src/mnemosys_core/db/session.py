@@ -4,13 +4,13 @@ Database session management for dependency injection.
 Provides session factory and FastAPI dependency functions.
 """
 
-from typing import Generator
+from collections.abc import Callable, Generator
 
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
 
-def create_session_factory(engine: Engine) -> sessionmaker:
+def create_session_factory(engine: Engine) -> sessionmaker[Session]:
     """
     Create a session factory bound to an engine.
 
@@ -34,7 +34,7 @@ def create_session_factory(engine: Engine) -> sessionmaker:
     )
 
 
-def get_session_dependency(session_factory: sessionmaker):
+def get_session_dependency(session_factory: sessionmaker[Session]) -> Callable[[], Generator[Session]]:
     """
     Create a FastAPI dependency that yields database sessions.
 
@@ -49,7 +49,7 @@ def get_session_dependency(session_factory: sessionmaker):
         >>> # FastAPI will call this for each request
     """
 
-    def get_session() -> Generator[Session, None, None]:
+    def get_session() -> Generator[Session]:
         session = session_factory()
         try:
             yield session

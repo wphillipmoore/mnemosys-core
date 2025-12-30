@@ -3,7 +3,7 @@ Exercise and exercise state models.
 """
 
 from datetime import date
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Date, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -33,16 +33,16 @@ class Exercise(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
-    domains: Mapped[List[str]] = mapped_column(JSONEncodedList, nullable=False)
-    technique_tags: Mapped[List[str]] = mapped_column(JSONEncodedList, nullable=False)
-    supported_overload_dimensions: Mapped[List[str]] = mapped_column(JSONEncodedList, nullable=False)
-    instrument_compatibility: Mapped[Optional[List[str]]] = mapped_column(JSONEncodedList, nullable=True)
+    domains: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
+    technique_tags: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
+    supported_overload_dimensions: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
+    instrument_compatibility: Mapped[list[str] | None] = mapped_column(JSONEncodedList, nullable=True)
 
     # Relationships
-    exercise_states: Mapped[List["ExerciseState"]] = relationship(
+    exercise_states: Mapped[list["ExerciseState"]] = relationship(
         "ExerciseState", back_populates="exercise", cascade="all, delete-orphan"
     )
-    session_blocks: Mapped[List["SessionBlock"]] = relationship("SessionBlock", back_populates="exercise")
+    session_blocks: Mapped[list["SessionBlock"]] = relationship("SessionBlock", back_populates="exercise")
 
     def __repr__(self) -> str:
         return f"<Exercise(id={self.id}, name='{self.name}')>"
@@ -66,11 +66,11 @@ class ExerciseState(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercise.id"), nullable=False, unique=True)
-    last_practiced_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    last_practiced_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     rolling_minutes_7d: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     rolling_minutes_28d: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     mastery_estimate: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
-    last_fatigue_profile: Mapped[Optional[FatigueProfile]] = mapped_column(DatabaseEnum(FatigueProfile), nullable=True)
+    last_fatigue_profile: Mapped[FatigueProfile | None] = mapped_column(DatabaseEnum(FatigueProfile), nullable=True)
 
     # Relationships
     exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="exercise_states")

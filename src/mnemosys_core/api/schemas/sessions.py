@@ -3,7 +3,6 @@ Pydantic schemas for session API.
 """
 
 from datetime import date
-from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -28,10 +27,10 @@ class SessionCreate(SessionBase):
 class SessionUpdate(BaseModel):
     """Schema for updating sessions."""
 
-    instrument_id: Optional[int] = None
-    session_date: Optional[date] = None
-    session_type: Optional[SessionType] = None
-    total_minutes: Optional[int] = Field(None, ge=1)
+    instrument_id: int | None = None
+    session_date: date | None = None
+    session_type: SessionType | None = None
+    total_minutes: int | None = Field(None, ge=1)
 
 
 class SessionResponse(SessionBase):
@@ -61,10 +60,10 @@ class SessionBlockCreate(SessionBlockBase):
 class SessionBlockUpdate(BaseModel):
     """Schema for updating session blocks."""
 
-    exercise_id: Optional[int] = None
-    block_order: Optional[int] = Field(None, ge=0)
-    block_type: Optional[BlockType] = None
-    duration_minutes: Optional[int] = Field(None, ge=1)
+    exercise_id: int | None = None
+    block_order: int | None = Field(None, ge=0)
+    block_type: BlockType | None = None
+    duration_minutes: int | None = Field(None, ge=1)
 
 
 class SessionBlockResponse(SessionBlockBase):
@@ -81,7 +80,7 @@ class BlockLogBase(BaseModel):
     session_block_id: int
     completed: CompletionStatus
     quality: QualityRating
-    notes: Optional[str] = None
+    notes: str | None = None
 
 
 class BlockLogCreate(BlockLogBase):
@@ -93,9 +92,9 @@ class BlockLogCreate(BlockLogBase):
 class BlockLogUpdate(BaseModel):
     """Schema for updating block logs."""
 
-    completed: Optional[CompletionStatus] = None
-    quality: Optional[QualityRating] = None
-    notes: Optional[str] = None
+    completed: CompletionStatus | None = None
+    quality: QualityRating | None = None
+    notes: str | None = None
 
 
 class BlockLogResponse(BlockLogBase):

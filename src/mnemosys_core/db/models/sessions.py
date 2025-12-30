@@ -3,9 +3,9 @@ Session, block, and logging models.
 """
 
 from datetime import date
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING
 
-from sqlalchemy import Date, ForeignKey, Integer, String, Text
+from sqlalchemy import Date, ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
@@ -39,7 +39,7 @@ class Session(Base):
 
     # Relationships
     instrument: Mapped["Instrument"] = relationship("Instrument", back_populates="sessions")
-    blocks: Mapped[List["SessionBlock"]] = relationship(
+    blocks: Mapped[list["SessionBlock"]] = relationship(
         "SessionBlock", back_populates="session", cascade="all, delete-orphan"
     )
 
@@ -72,7 +72,7 @@ class SessionBlock(Base):
     # Relationships
     session: Mapped["Session"] = relationship("Session", back_populates="blocks")
     exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="session_blocks")
-    logs: Mapped[List["BlockLog"]] = relationship("BlockLog", back_populates="session_block", cascade="all, delete-orphan")
+    logs: Mapped[list["BlockLog"]] = relationship("BlockLog", back_populates="session_block", cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
         return f"<SessionBlock(id={self.id}, order={self.block_order}, " f"type={self.block_type.value})>"
@@ -96,7 +96,7 @@ class BlockLog(Base):
     session_block_id: Mapped[int] = mapped_column(Integer, ForeignKey("session_block.id"), nullable=False)
     completed: Mapped[CompletionStatus] = mapped_column(DatabaseEnum(CompletionStatus), nullable=False)
     quality: Mapped[QualityRating] = mapped_column(DatabaseEnum(QualityRating), nullable=False)
-    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relationships
     session_block: Mapped["SessionBlock"] = relationship("SessionBlock", back_populates="logs")

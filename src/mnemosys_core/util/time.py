@@ -2,7 +2,7 @@
 UTC-only time helpers.
 """
 
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 
 
 def utc_now() -> datetime:
@@ -12,7 +12,7 @@ def utc_now() -> datetime:
     Returns:
         Timezone-aware datetime in UTC
     """
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def today_utc() -> date:
@@ -37,5 +37,5 @@ def to_utc(dt: datetime) -> datetime:
     """
     if dt.tzinfo is None:
         # Assume naive datetime is UTC
-        return dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc)
+        return dt.replace(tzinfo=UTC)
+    return dt.astimezone(UTC)
