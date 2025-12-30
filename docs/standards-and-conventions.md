@@ -4,6 +4,39 @@ This document captures coding standards, naming conventions, and architectural p
 
 ---
 
+## Project Terminology
+
+### Official Project Name
+
+**MNEMOSYS** (pronounced "NEE-moss")
+
+This is the canonical name for the project and must be used consistently across all:
+- Code (comments, docstrings, API descriptions)
+- Documentation (design docs, user guides, README files)
+- Repository metadata (package names, project descriptions)
+- External communications
+
+### Deprecated Names
+
+The following names are **deprecated** and should not be used in new code or documentation:
+
+- **FSIPS** (Functional Skill Integration & Practice System) - Original working name, replaced by MNEMOSYS
+- **RPM** (Recall, Practice, Maintenance) - Originally conceived as a separate extension, now integrated as core MNEMOSYS functionality
+
+### Name Rationale
+
+From the Greek root **μνήμη (mnēmē)** meaning "memory, remembrance."
+
+The name reflects the system's core thesis: **skills are memory structures with half-lives** that require deliberate recall to survive. MNEMOSYS optimizes for long-term retention and memory survival, not short-term acquisition.
+
+See `docs/design/Philosophy_v0.3.md` for complete philosophical foundation.
+
+### Usage in Historical Documents
+
+Early design documents (v0.1 snapshots) may reference deprecated names in their original context. When updating these documents, add a nomenclature note explaining the name evolution while preserving the historical snapshot.
+
+---
+
 ## Python Coding Standards
 
 ### Philosophy
