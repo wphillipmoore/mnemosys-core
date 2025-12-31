@@ -29,7 +29,7 @@ From the Greek root **μνήμη (mnēmē)** meaning "memory, remembrance."
 
 The name reflects the system's core thesis: **skills are memory structures with half-lives** that require deliberate recall to survive. MNEMOSYS optimizes for long-term retention and memory survival, not short-term acquisition.
 
-See `docs/design/Philosophy_v0.3.md` for complete philosophical foundation.
+See `docs/project/final/Philosophy.md` for complete philosophical foundation.
 
 ### Usage in Historical Documents
 
@@ -341,22 +341,33 @@ open htmlcov/index.html
 
 **Rationale**: The CI/CD pipeline is a backstop, not a substitute for developer diligence. Submitting failing PRs wastes reviewer time, pollutes the PR history, and undermines confidence in the codebase.
 
+#### Pre-Submission Requirements
+
+Before creating a pull request, **ALL** of the following requirements must be met:
+
+1. **100% unit test success** - ALL tests must pass
+2. **100% code coverage** - Coverage must not decrease, aspire to 100%
+3. **All code quality checks must pass** - ruff and mypy must report no errors
+
 #### Pre-Submission Checklist
 
 Before creating a pull request, **ALL** of the following must pass:
 
-**1. Full Test Suite**
+**1. Full Test Suite (REQUIRED: 100% Success)**
 ```bash
 # Run complete test suite (not just a subset)
 poetry run pytest
 
-# Expected output: "=== X passed in Y.YYs ==="
-# NOT: "=== X passed, Y failed in Z.ZZs ==="
+# REQUIRED: "=== X passed in Y.YYs ==="
+# FORBIDDEN: "=== X passed, Y failed in Z.ZZs ==="
+# FORBIDDEN: "=== X passed, Y skipped in Z.ZZs ===" (fix skipped tests)
 ```
 
-**Critical**: Running only a subset (e.g., `pytest tests/db/`) is **not sufficient**. Changes to one area often break tests in another area (as demonstrated by the Session → Practice rename breaking API tests).
+**Critical**:
+- Running only a subset (e.g., `pytest tests/db/`) is **not sufficient**. Changes to one area often break tests in another area (as demonstrated by the Session → Practice rename breaking API tests).
+- **ALL tests must pass**. Zero failures, zero skips (unless explicitly documented).
 
-**2. Code Quality Checks**
+**2. Code Quality Checks (REQUIRED: Zero Errors)**
 ```bash
 # Linting
 poetry run ruff check
@@ -364,16 +375,23 @@ poetry run ruff check
 # Type checking
 poetry run mypy
 
-# Both must report: No errors
+# REQUIRED: Both must report "No errors" or "Success: no issues found"
 ```
 
-**3. Code Coverage** (if applicable)
+**3. Code Coverage (REQUIRED: 100% Coverage Goal)**
 ```bash
-# Verify coverage hasn't decreased
+# Verify coverage is at 100% or document exceptions
 poetry run pytest --cov=src --cov-report=term-missing
 
-# Check that changed files maintain coverage
+# REQUIRED: Coverage must not decrease from current levels
+# GOAL: Maintain or improve toward 100% coverage
+# Any untestable code must be documented with `# pragma: no cover` and explanation
 ```
+
+**Coverage Requirements:**
+- New code must maintain or improve overall coverage percentage
+- Any decrease in coverage requires explicit justification in the PR description
+- Untestable code must be marked with `# pragma: no cover` and documented (see Unit Testing Policy above)
 
 #### What to Do When Checks Fail
 
