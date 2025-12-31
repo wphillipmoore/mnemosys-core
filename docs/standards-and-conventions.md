@@ -457,6 +457,172 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 
 **Until CI/CD is implemented**: Developer discipline is the **only** enforcement mechanism.
 
+### Pull Request Finalization Process
+
+**Core Principle**: PRs must be properly finalized after merging to maintain a clean repository state and ensure the main branch remains validated.
+
+**Critical Rule**: **NEVER reuse old branch names**. Always create fresh branches for new work, even if a previous branch with a similar name was already merged and deleted.
+
+#### The Three-Step Finalization Process
+
+After your PR is approved and ready to merge, follow these steps **in order**:
+
+**Step 1: Merge the PR**
+```bash
+# Merge using squash merge and auto-delete the remote branch
+gh pr merge <PR_NUMBER> --squash --delete-branch
+
+# Example:
+gh pr merge 14 --squash --delete-branch
+```
+
+**Why squash merge?**
+- Creates a single, clean commit on the target branch
+- Preserves detailed commit history in the PR for reference
+- Keeps main branch history readable
+
+**Step 2: Update Local Copy of Target Branch**
+```bash
+# Switch to the target branch (usually develop)
+git checkout develop
+
+# Verify you're up to date
+git status
+
+# Expected output: "Your branch is up to date with 'origin/develop'"
+```
+
+**Step 3: Clean Up and Run FINAL Validation**
+```bash
+# Delete local feature branch (if not already deleted)
+git branch -d <branch-name>
+
+# Run FINAL validation on target branch
+poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
+poetry run ruff check
+poetry run mypy src/
+
+# ALL checks must pass:
+# ✅ 100% tests passing
+# ✅ 100% line and branch coverage maintained
+# ✅ Ruff: All checks passed
+# ✅ Mypy: Success, no issues found
+```
+
+**Why final validation?**
+- Confirms merge was successful
+- Verifies no integration issues
+- Ensures develop branch is in perfect state
+- Catches any problems before starting next feature
+
+#### Complete Workflow: Start to Finish
+
+**Proper workflow for a feature:**
+
+```bash
+# 1. Start from clean develop
+git checkout develop
+git pull origin develop
+
+# 2. Create NEW branch with descriptive name
+git checkout -b feat/add-user-authentication
+
+# 3. Do your work, make commits
+# ... work, work, work ...
+git add .
+git commit -m "feat: implement user authentication"
+
+# 4. Push branch
+git push -u origin feat/add-user-authentication
+
+# 5. Create PR
+gh pr create --title "Add user authentication" --body "..." --base develop
+
+# 6. After approval, merge and finalize (three-step process above)
+gh pr merge <PR#> --squash --delete-branch
+git checkout develop
+# Run final validation
+poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
+poetry run ruff check && poetry run mypy src/
+
+# 7. Start next feature from clean develop (back to step 1)
+git checkout develop
+git pull origin develop
+git checkout -b feat/add-password-reset
+```
+
+#### Branch Naming Anti-Patterns
+
+**❌ WRONG - Reusing old branch names:**
+```bash
+# PR #12 merged from branch "fix/api-issues"
+# Later, trying to fix more API issues:
+git checkout -b fix/api-issues  # ❌ BAD! Reusing old name
+
+# Problems:
+# - Confusing: Is this the old branch or new work?
+# - Git history pollution
+# - Potential conflicts with stale remote branches
+```
+
+**✅ CORRECT - Always use fresh, descriptive names:**
+```bash
+# PR #12 merged from branch "fix/api-issues"
+# Later, fixing more API issues:
+git checkout -b fix/api-schema-validation  # ✅ GOOD! New specific name
+git checkout -b fix/api-error-handling     # ✅ GOOD! Describes the work
+```
+
+#### Common Mistakes
+
+**Mistake 1: Skipping final validation**
+```bash
+# ❌ WRONG
+gh pr merge 14 --squash --delete-branch
+git checkout develop
+# ... immediately start new work without validating
+
+# ✅ CORRECT
+gh pr merge 14 --squash --delete-branch
+git checkout develop
+# Run full validation first!
+poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
+poetry run ruff check && poetry run mypy src/
+# NOW start new work
+```
+
+**Mistake 2: Reusing branch names**
+```bash
+# ❌ WRONG
+git checkout -b fix/test-failures  # Used this name before
+
+# ✅ CORRECT
+git checkout -b fix/test-timeout-in-api-layer  # Fresh, descriptive name
+```
+
+**Mistake 3: Not switching to develop before starting new work**
+```bash
+# ❌ WRONG
+# Still on feature branch after PR merge
+git checkout -b feat/new-feature  # Branching from wrong base!
+
+# ✅ CORRECT
+git checkout develop
+git pull origin develop
+git checkout -b feat/new-feature  # Branching from clean develop
+```
+
+#### Rationale
+
+**Why this process matters:**
+1. **Clean history**: Ensures repository state is always known-good
+2. **Catch integration issues**: Final validation catches problems before they compound
+3. **Prevent confusion**: Fresh branch names make it clear what work is happening
+4. **Enable collaboration**: Team members always know develop branch works
+5. **Reduce debugging time**: Problems caught immediately, not days later
+
+**The 30-second investment in final validation saves hours of debugging later.**
+
 ---
 
 ## Database Conventions
