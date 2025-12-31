@@ -1,11 +1,11 @@
 """Tests for Instrument-Technique many-to-many relationship."""
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session as DBSession
 
 from mnemosys_core.db.base import Base
-from mnemosys_core.db.models.instruments import StringedInstrument
-from mnemosys_core.db.models.techniques import Technique
+from mnemosys_core.db.models.instrument import StringedInstrument
+from mnemosys_core.db.models.technique import Technique
 
 
 def test_instrument_can_support_multiple_techniques() -> None:
