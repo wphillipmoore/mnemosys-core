@@ -13,9 +13,10 @@ from ..types import DatabaseEnum, JSONEncodedList
 from . import FatigueProfile
 
 if TYPE_CHECKING:
-    from .overload_dimensions import OverloadDimension
-    from .sessions import ExerciseInstance, SessionBlock
-    from .techniques import Technique
+    from .exercise_instance import ExerciseInstance
+    from .overload_dimension import OverloadDimension
+    from .practice_block import PracticeBlock
+    from .technique import Technique
 
 
 # Association table for Exercise ↔ OverloadDimension
@@ -62,7 +63,7 @@ class Exercise(Base):
         "ExerciseState", back_populates="exercise", cascade="all, delete-orphan", uselist=False
     )
     exercise_instances: Mapped[list["ExerciseInstance"]] = relationship("ExerciseInstance", back_populates="exercise")
-    session_blocks: Mapped[list["SessionBlock"]] = relationship("SessionBlock", back_populates="exercise")
+    practice_blocks: Mapped[list["PracticeBlock"]] = relationship("PracticeBlock", back_populates="exercise")
     overload_dimensions: Mapped[list["OverloadDimension"]] = relationship(
         "OverloadDimension",
         secondary=exercise_overload_dimension_association,
