@@ -59,6 +59,34 @@ This project follows a **database-first architecture** with explicit structural 
 
 The 30 seconds spent reading documentation prevents hours of cleanup work.
 
+### User Confirmation Checkpoints
+
+**CRITICAL**: Always pause and request user confirmation at these checkpoints in the workflow. Never proceed automatically.
+
+**Checkpoint: Before Creating Pull Request**
+
+After completing work and committing to your feature branch, **STOP** and ask:
+
+```
+Create PR?
+```
+
+**What this gives the user:**
+- Opportunity to review the work before it becomes a PR
+- Chance to decide if the work is actually complete
+- Ability to request additional changes before PR creation
+- Control over the workflow pace
+
+**Only proceed with PR creation after explicit user approval.**
+
+**Workflow sequence:**
+1. Complete work on feature branch
+2. Commit changes locally
+3. ⏸️ **PAUSE** - Ask: "Create PR?"
+4. Wait for user response
+5. If approved: Push branch and create PR
+6. If not approved: Make requested changes, go back to step 2
+
 ## Project Structure
 
 ```
