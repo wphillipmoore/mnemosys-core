@@ -10,9 +10,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from ..base import Base
 
 if TYPE_CHECKING:
-    from .sessions import Session
-    from .techniques import Technique
-    from .tunings import StringedInstrumentTuning
+    from .practice import Practice
+    from .technique import Technique
+    from .tuning import StringedInstrumentTuning
 
 
 # Association table for StringedInstrument ↔ StringedInstrumentTuning
@@ -58,8 +58,8 @@ class Instrument(Base):
     }
 
     # Relationships
-    sessions: Mapped[list["Session"]] = relationship(
-        "Session", back_populates="instrument", cascade="all, delete-orphan"
+    practices: Mapped[list["Practice"]] = relationship(
+        "Practice", back_populates="instrument", cascade="all, delete-orphan"
     )
     techniques: Mapped[list["Technique"]] = relationship(
         "Technique",

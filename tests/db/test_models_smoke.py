@@ -5,19 +5,17 @@ Model smoke tests.
 from sqlalchemy.orm import Session
 
 from mnemosys_core.db.models import (
-    BlockLog,
     BlockType,
     CompletionStatus,
     Exercise,
     ExerciseState,
     FatigueProfile,
     Instrument,
+    Practice,
+    PracticeBlock,
+    PracticeBlockLog,
     QualityRating,
-    SessionBlock,
     SessionType,
-)
-from mnemosys_core.db.models import (
-    Session as PracticeSession,
 )
 
 
@@ -26,9 +24,9 @@ def test_can_import_all_models() -> None:
     assert Instrument is not None
     assert Exercise is not None
     assert ExerciseState is not None
-    assert PracticeSession is not None
-    assert SessionBlock is not None
-    assert BlockLog is not None
+    assert Practice is not None
+    assert PracticeBlock is not None
+    assert PracticeBlockLog is not None
 
 
 def test_can_import_all_enums() -> None:
@@ -42,7 +40,7 @@ def test_can_import_all_enums() -> None:
 
 def test_instrument_instantiation(db_session: Session) -> None:
     """Test that StringedInstrument can be instantiated and saved."""
-    from mnemosys_core.db.models.instruments import StringedInstrument
+    from mnemosys_core.db.models.instrument import StringedInstrument
 
     instrument = StringedInstrument(
         name="Test Guitar",
@@ -73,7 +71,7 @@ def test_session_instantiation(db_session: Session) -> None:
     """Test that Session can be instantiated and saved."""
     from datetime import date
 
-    from mnemosys_core.db.models.instruments import StringedInstrument
+    from mnemosys_core.db.models.instrument import StringedInstrument
 
     # Create instrument first
     instrument = StringedInstrument(name="Test Bass", string_count=4, scale_length=34.0)
@@ -81,7 +79,7 @@ def test_session_instantiation(db_session: Session) -> None:
     db_session.flush()
 
     # Create session
-    session = PracticeSession(
+    session = Practice(
         instrument_id=instrument.id, session_date=date.today(), session_type=SessionType.NORMAL, total_minutes=30
     )
     db_session.add(session)
@@ -93,7 +91,7 @@ def test_session_instantiation(db_session: Session) -> None:
 
 def test_instrument_repr(db_session: Session) -> None:
     """Test StringedInstrument __repr__ method."""
-    from mnemosys_core.db.models.instruments import StringedInstrument
+    from mnemosys_core.db.models.instrument import StringedInstrument
 
     instrument = StringedInstrument(
         name="Test Guitar",
@@ -152,13 +150,13 @@ def test_session_repr(db_session: Session) -> None:
     """Test Session __repr__ method."""
     from datetime import date
 
-    from mnemosys_core.db.models.instruments import StringedInstrument
+    from mnemosys_core.db.models.instrument import StringedInstrument
 
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     db_session.add(instrument)
     db_session.flush()
 
-    session = PracticeSession(
+    session = Practice(
         instrument_id=instrument.id,
         session_date=date(2025, 1, 15),
         session_type=SessionType.NORMAL,
@@ -168,16 +166,16 @@ def test_session_repr(db_session: Session) -> None:
     db_session.flush()
 
     repr_str = repr(session)
-    assert "Session" in repr_str
+    assert "Practice" in repr_str
     assert "2025-01-15" in repr_str
     assert "normal" in repr_str
 
 
 def test_session_block_repr(db_session: Session) -> None:
-    """Test SessionBlock __repr__ method."""
+    """Test PracticeBlock __repr__ method."""
     from datetime import date
 
-    from mnemosys_core.db.models.instruments import StringedInstrument
+    from mnemosys_core.db.models.instrument import StringedInstrument
 
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     db_session.add(instrument)
@@ -190,7 +188,7 @@ def test_session_block_repr(db_session: Session) -> None:
     db_session.add(exercise)
     db_session.flush()
 
-    session = PracticeSession(
+    session = Practice(
         instrument_id=instrument.id,
         session_date=date.today(),
         session_type=SessionType.NORMAL,
@@ -199,8 +197,8 @@ def test_session_block_repr(db_session: Session) -> None:
     db_session.add(session)
     db_session.flush()
 
-    block = SessionBlock(
-        session_id=session.id,
+    block = PracticeBlock(
+        practice_id=session.id,
         exercise_id=exercise.id,
         block_order=1,
         block_type=BlockType.WARMUP,
@@ -210,16 +208,16 @@ def test_session_block_repr(db_session: Session) -> None:
     db_session.flush()
 
     repr_str = repr(block)
-    assert "SessionBlock" in repr_str
+    assert "PracticeBlock" in repr_str
     assert "order=1" in repr_str
     assert "Warmup" in repr_str
 
 
 def test_block_log_repr(db_session: Session) -> None:
-    """Test BlockLog __repr__ method."""
+    """Test PracticeBlockLog __repr__ method."""
     from datetime import date
 
-    from mnemosys_core.db.models.instruments import StringedInstrument
+    from mnemosys_core.db.models.instrument import StringedInstrument
 
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     db_session.add(instrument)
@@ -232,7 +230,7 @@ def test_block_log_repr(db_session: Session) -> None:
     db_session.add(exercise)
     db_session.flush()
 
-    session = PracticeSession(
+    session = Practice(
         instrument_id=instrument.id,
         session_date=date.today(),
         session_type=SessionType.NORMAL,
@@ -241,8 +239,8 @@ def test_block_log_repr(db_session: Session) -> None:
     db_session.add(session)
     db_session.flush()
 
-    block = SessionBlock(
-        session_id=session.id,
+    block = PracticeBlock(
+        practice_id=session.id,
         exercise_id=exercise.id,
         block_order=1,
         block_type=BlockType.WARMUP,
@@ -251,8 +249,8 @@ def test_block_log_repr(db_session: Session) -> None:
     db_session.add(block)
     db_session.flush()
 
-    log = BlockLog(
-        session_block_id=block.id,
+    log = PracticeBlockLog(
+        practice_block_id=block.id,
         completed=CompletionStatus.YES,
         quality=QualityRating.CLEAN,
         notes="Test notes",
@@ -261,6 +259,6 @@ def test_block_log_repr(db_session: Session) -> None:
     db_session.flush()
 
     repr_str = repr(log)
-    assert "BlockLog" in repr_str
+    assert "PracticeBlockLog" in repr_str
     assert "yes" in repr_str
     assert "clean" in repr_str

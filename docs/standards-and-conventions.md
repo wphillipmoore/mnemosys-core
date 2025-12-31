@@ -356,6 +356,122 @@ class Instrument(Base):
     # ...
 ```
 
+### Model File Organization
+
+**Context**: As the MNEMOSYS data model scales (projected 10-20x growth from current state), maintaining comprehensible file organization is critical. These rules balance "easy to find" (one table = one file) with "easy to understand" (related tables stay together).
+
+**Core Principle**: File organization follows a multi-dimensional namespace (lifecycle coupling, conceptual domains, hierarchy) mapped onto a single-dimensional filesystem. Perfect consistency is impossible - these rules minimize judgment calls while acknowledging exceptions.
+
+#### Rules
+
+**[Rule 1] One File Per Database Table (Default)**
+
+Each database table gets its own Python file named after the table:
+
+```python
+# ✅ Correct
+models/practice.py              # Practice table
+models/exercise_instance.py     # ExerciseInstance table
+models/technique.py             # Technique table
+```
+
+**[Rule 2] Tightly Coupled 1:1 Tables May Bundle With Parent**
+
+When a table has a 1:1 relationship (enforced by unique foreign key) with a parent and they're always used together, they may be bundled:
+
+```python
+# ✅ Correct - ExerciseLog is 1:1 with ExerciseInstance
+# models/exercise_instance.py
+class ExerciseInstance(Base):
+    __tablename__ = "exercise_instance"
+    # ...
+
+class ExerciseLog(Base):
+    __tablename__ = "exercise_log"
+    exercise_instance_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("exercise_instance.id"), unique=True  # 1:1 enforced
+    )
+```
+
+**[Rule 3] Association Tables Use Alphanumeric Ordering**
+
+Many-to-many association tables are named alphanumerically and placed in the alphabetically-first entity's file:
+
+```python
+# ✅ Correct - "exercise" comes before "technique" alphabetically
+# models/exercise.py
+class ExerciseTechniqueAssociation(Base):
+    __tablename__ = "exercise_technique_association"  # Not technique_exercise
+    # ...
+
+# ❌ Wrong
+# models/technique.py
+class TechniqueExerciseAssociation(Base):  # Wrong order and wrong file
+    __tablename__ = "technique_exercise_association"
+```
+
+**Rationale**: Eliminates arbitrary judgment calls about which entity is "more significant" - alphabetical ordering is objective and discoverable.
+
+**[Rule 4] Gray Areas Require Explicit Discussion**
+
+Any case not obviously covered by Rules 1-3 should be discussed and decided explicitly. Document the decision in code comments if non-obvious.
+
+Examples of gray areas:
+- Polymorphic inheritance (separate tables via joined-table inheritance)
+- 1:many relationships that are conceptually tightly coupled
+- Legacy tables being deprecated together
+
+#### Current Decisions
+
+These are judgment calls made for the current codebase. They may evolve as the model scales.
+
+**Polymorphic Inheritance (Joined-Table Inheritance)**
+
+Subclass tables created by SQLAlchemy's joined-table inheritance are bundled with the parent:
+
+```python
+# models/instrument.py
+class Instrument(Base):
+    __tablename__ = "instrument"
+    # ...
+
+class StringedInstrument(Instrument):
+    __tablename__ = "stringed_instrument"  # Separate table, same file
+    # ...
+
+class KeyboardInstrument(Instrument):
+    __tablename__ = "keyboard_instrument"  # Separate table, same file
+    # ...
+```
+
+**Rationale**: Inheritance hierarchies are read together. If individual subclass files grow large (>500 lines), revisit this decision.
+
+**Tightly Coupled Legacy Pairs**
+
+Tables that will likely be deprecated together may be bundled even if 1:many:
+
+```python
+# models/practice_block.py
+class PracticeBlock(Base):
+    __tablename__ = "practice_block"
+    # ...
+
+class PracticeBlockLog(Base):
+    __tablename__ = "practice_block_log"  # 1:many, but bundled
+    # ...
+```
+
+**Rationale**: These are tightly coupled conceptually. Bundling makes their relationship obvious and future removal easier.
+
+#### Revisiting These Rules
+
+**When to revisit:**
+- Individual files exceed ~500 lines (split per Rule 1)
+- Constantly jumping between files that should be together (bundle per Rule 2)
+- Outsider feedback indicates confusion (test: comprehensibility to non-authors)
+
+**Test for success**: Can someone unfamiliar with the codebase find what they're looking for without deep system knowledge?
+
 ---
 
 ## To Be Organized

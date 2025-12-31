@@ -1,10 +1,10 @@
 """Tests for OverloadDimension entity."""
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session as DBSession
 
 from mnemosys_core.db.base import Base
-from mnemosys_core.db.models.overload_dimensions import OverloadDimension
+from mnemosys_core.db.models.overload_dimension import OverloadDimension
 
 
 def test_overload_dimension_creation() -> None:
