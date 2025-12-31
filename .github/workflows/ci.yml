@@ -1,1 +1,78 @@
-# CI pipeline placeholder
+name: CI - Test and Validate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+      - main
+      - 'release/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-validate:
+    name: test-and-validate
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.13", "3.14", "3.15"]
+      fail-fast: false
+    continue-on-error: ${{ matrix.python-version != '3.13' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache Poetry installation
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.local/share/pypoetry
+            ~/.local/bin/poetry
+          key: poetry-install-${{ runner.os }}-${{ matrix.python-version }}
+
+      - name: Install Poetry
+        run: |
+          if ! command -v poetry &> /dev/null; then
+            curl -sSL https://install.python-poetry.org | python3 -
+            echo "$HOME/.local/bin" >> $GITHUB_PATH
+          fi
+          poetry --version
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            poetry-${{ runner.os }}-py${{ matrix.python-version }}-
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Run tests with coverage
+        run: |
+          poetry run pytest \
+            --cov=mnemosys_core \
+            --cov-report=term-missing \
+            --cov-branch \
+            --cov-report=xml \
+            --cov-fail-under=100
+
+      - name: Upload coverage report
+        if: matrix.python-version == '3.13'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml

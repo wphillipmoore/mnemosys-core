@@ -147,7 +147,7 @@ After completing work and committing to your feature branch, you MUST validate t
 
 **REQUIRED PRE-PUSH VALIDATION:**
 
-Before pushing the branch or creating a PR, you MUST run and pass the full test suite:
+Before pushing the branch or creating a PR, you MUST run and pass the full test suite locally:
 
 ```bash
 # Run full test suite with coverage (includes code quality checks)
@@ -157,6 +157,14 @@ poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
 **All checks must pass with:**
 - ✅ 100% test success (no failures, no errors)
 - ✅ 100% line and branch coverage (includes all source files)
+
+**Automated CI Enforcement:**
+
+GitHub Actions automatically runs these same checks when you push your branch and create a PR. The CI workflow:
+- Runs on PRs and pushes to eternal branches (develop, main, release/**)
+- Tests on Python 3.13 (required to pass), 3.14, 3.15 (informational)
+- Enforces 100% coverage - PRs cannot merge if checks fail
+- Branch protection requires the `test-and-validate (3.13)` status check
 
 **Note:** The test suite includes `test_code_compliance.py` which validates:
 - ruff check (zero violations)
