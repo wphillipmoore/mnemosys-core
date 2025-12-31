@@ -463,7 +463,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 
 **Critical Rule**: **NEVER reuse old branch names**. Always create fresh branches for new work, even if a previous branch with a similar name was already merged and deleted.
 
-#### The Three-Step Finalization Process
+#### The Four-Step Finalization Process
 
 After your PR is approved and ready to merge, follow these steps **in order**:
 
@@ -492,7 +492,23 @@ git status
 # Expected output: "Your branch is up to date with 'origin/develop'"
 ```
 
-**Step 3: Clean Up and Run FINAL Validation**
+**Step 3: Verify Virtual Environment is Clean**
+```bash
+# CRITICAL: Sync .venv with dependency specification
+# This prevents test failures from stale or conflicting dependencies
+poetry install --sync
+
+# Expected output: "Installing dependencies from lock file"
+# If dependencies are already synced: "No dependencies to install or update"
+```
+
+**Why verify .venv?**
+- Prevents test failures from stale dependencies
+- Catches dependency changes that weren't properly synchronized
+- Ensures clean state before validation (tests can "implode" with unhealthy .venv)
+- Sanity check that dependency specifications are internally consistent
+
+**Step 4: Clean Up and Run FINAL Validation**
 ```bash
 # Delete local feature branch (if not already deleted)
 git branch -d <branch-name>
@@ -538,9 +554,11 @@ git push -u origin feat/add-user-authentication
 # 5. Create PR
 gh pr create --title "Add user authentication" --body "..." --base develop
 
-# 6. After approval, merge and finalize (three-step process above)
+# 6. After approval, merge and finalize (four-step process above)
 gh pr merge <PR#> --squash --delete-branch
 git checkout develop
+# Verify .venv is clean
+poetry install --sync
 # Run final validation
 poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
 poetry run ruff check && poetry run mypy src/
@@ -575,17 +593,19 @@ git checkout -b fix/api-error-handling     # ✅ GOOD! Describes the work
 
 #### Common Mistakes
 
-**Mistake 1: Skipping final validation**
+**Mistake 1: Skipping .venv verification and final validation**
 ```bash
 # ❌ WRONG
 gh pr merge 14 --squash --delete-branch
 git checkout develop
-# ... immediately start new work without validating
+# ... immediately start new work without verifying .venv or validating
 
 # ✅ CORRECT
 gh pr merge 14 --squash --delete-branch
 git checkout develop
-# Run full validation first!
+# Verify .venv is clean first!
+poetry install --sync
+# Then run full validation!
 poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
 poetry run ruff check && poetry run mypy src/
 # NOW start new work
@@ -616,12 +636,13 @@ git checkout -b feat/new-feature  # Branching from clean develop
 
 **Why this process matters:**
 1. **Clean history**: Ensures repository state is always known-good
-2. **Catch integration issues**: Final validation catches problems before they compound
-3. **Prevent confusion**: Fresh branch names make it clear what work is happening
-4. **Enable collaboration**: Team members always know develop branch works
-5. **Reduce debugging time**: Problems caught immediately, not days later
+2. **Clean environment**: .venv verification prevents dependency-related test failures
+3. **Catch integration issues**: Final validation catches problems before they compound
+4. **Prevent confusion**: Fresh branch names make it clear what work is happening
+5. **Enable collaboration**: Team members always know develop branch works
+6. **Reduce debugging time**: Problems caught immediately, not days later
 
-**The 30-second investment in final validation saves hours of debugging later.**
+**The 45-second investment in .venv verification and final validation saves hours of debugging later.**
 
 ---
 
