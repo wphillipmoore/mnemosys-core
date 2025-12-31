@@ -1,7 +1,7 @@
 """Tests for polymorphic Tuning hierarchy."""
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session as DBSession
 
 from mnemosys_core.db.base import Base
 from mnemosys_core.db.models.tuning import (

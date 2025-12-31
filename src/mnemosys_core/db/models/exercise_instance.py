@@ -16,7 +16,7 @@ from . import CompletionStatus, QualityRating
 
 if TYPE_CHECKING:
     from .exercise import Exercise
-    from .session import Session
+    from .practice import Practice
 
 
 class ExerciseInstance(Base):
@@ -27,22 +27,22 @@ class ExerciseInstance(Base):
 
     Attributes:
         id: Primary key
-        session_id: Foreign key to sessions
+        practice_id: Foreign key to practices
         exercise_id: Foreign key to exercises
-        sequence_order: Position within session (1-indexed)
+        sequence_order: Position within practice session (1-indexed)
         parameters: Exercise parameters (tempo, key, pattern, duration, etc.)
     """
 
     __tablename__ = "exercise_instance"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    session_id: Mapped[int] = mapped_column(Integer, ForeignKey("session.id"), nullable=False)
+    practice_id: Mapped[int] = mapped_column(Integer, ForeignKey("practice.id"), nullable=False)
     exercise_id: Mapped[int] = mapped_column(Integer, ForeignKey("exercise.id"), nullable=False)
     sequence_order: Mapped[int] = mapped_column(Integer, nullable=False)
     parameters: Mapped[dict[str, str | int | float]] = mapped_column(JSONEncodedDict, nullable=False, default=dict)
 
     # Relationships
-    session: Mapped["Session"] = relationship("Session", back_populates="exercise_instances")
+    practice: Mapped["Practice"] = relationship("Practice", back_populates="exercise_instances")
     exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="exercise_instances")
     log: Mapped["ExerciseLog | None"] = relationship(
         "ExerciseLog", back_populates="exercise_instance", cascade="all, delete-orphan", uselist=False

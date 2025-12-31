@@ -3,14 +3,14 @@
 from datetime import date
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session as DBSession
 
 from mnemosys_core.db.base import Base
 from mnemosys_core.db.models import CompletionStatus, QualityRating, SessionType
 from mnemosys_core.db.models.exercise import Exercise
 from mnemosys_core.db.models.exercise_instance import ExerciseInstance, ExerciseLog
 from mnemosys_core.db.models.instrument import StringedInstrument
-from mnemosys_core.db.models.session import Session
+from mnemosys_core.db.models.practice import Practice
 
 
 def test_exercise_log_creation() -> None:
@@ -23,14 +23,14 @@ def test_exercise_log_creation() -> None:
     # Create dependencies
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     exercise = Exercise(name="Chromatic Scale", domains=["technique"])
-    practice_session = Session(
+    practice_session = Practice(
         instrument=instrument,
         session_date=date(2025, 12, 30),
         session_type=SessionType.NORMAL,
         total_minutes=60,
     )
     instance = ExerciseInstance(
-        session=practice_session,
+        practice=practice_session,
         exercise=exercise,
         sequence_order=1,
         parameters={"tempo": 120},
@@ -66,14 +66,14 @@ def test_exercise_log_notes_optional() -> None:
 
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     exercise = Exercise(name="Warmup", domains=["warmup"])
-    practice_session = Session(
+    practice_session = Practice(
         instrument=instrument,
         session_date=date(2025, 12, 30),
         session_type=SessionType.LIGHT,
         total_minutes=30,
     )
     instance = ExerciseInstance(
-        session=practice_session,
+        practice=practice_session,
         exercise=exercise,
         sequence_order=1,
         parameters={},
@@ -103,14 +103,14 @@ def test_exercise_instance_has_log() -> None:
 
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     exercise = Exercise(name="Test Exercise", domains=["test"])
-    practice_session = Session(
+    practice_session = Practice(
         instrument=instrument,
         session_date=date(2025, 12, 30),
         session_type=SessionType.NORMAL,
         total_minutes=60,
     )
     instance = ExerciseInstance(
-        session=practice_session,
+        practice=practice_session,
         exercise=exercise,
         sequence_order=1,
         parameters={},
@@ -142,14 +142,14 @@ def test_exercise_log_repr() -> None:
 
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     exercise = Exercise(name="Test", domains=["test"])
-    practice_session = Session(
+    practice_session = Practice(
         instrument=instrument,
         session_date=date(2025, 12, 30),
         session_type=SessionType.NORMAL,
         total_minutes=60,
     )
     instance = ExerciseInstance(
-        session=practice_session,
+        practice=practice_session,
         exercise=exercise,
         sequence_order=1,
         parameters={},
