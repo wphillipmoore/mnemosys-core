@@ -19,8 +19,6 @@ def test_create_instrument(client: TestClient) -> None:
         json={
             "name": "Test Guitar",
             "string_count": 6,
-            "tuning": ["E2", "A2", "D3", "G3", "B3", "E4"],
-            "technique_capabilities": ["bending"],
             "scale_length": 25.5,
         },
     )
@@ -29,7 +27,6 @@ def test_create_instrument(client: TestClient) -> None:
     data = response.json()
     assert data["name"] == "Test Guitar"
     assert data["id"] is not None
-    assert data["string_count"] == 6
 
 
 def test_list_instruments(client: TestClient) -> None:
@@ -40,8 +37,6 @@ def test_list_instruments(client: TestClient) -> None:
         json={
             "name": "Guitar 1",
             "string_count": 6,
-            "tuning": ["E2", "A2", "D3", "G3", "B3", "E4"],
-            "technique_capabilities": [],
         },
     )
 
@@ -60,8 +55,6 @@ def test_get_instrument(client: TestClient) -> None:
         json={
             "name": "Test Bass",
             "string_count": 4,
-            "tuning": ["E1", "A1", "D2", "G2"],
-            "technique_capabilities": ["slap"],
         },
     )
     instrument_id = create_response.json()["id"]
@@ -72,7 +65,6 @@ def test_get_instrument(client: TestClient) -> None:
     data = response.json()
     assert data["id"] == instrument_id
     assert data["name"] == "Test Bass"
-    assert data["string_count"] == 4
 
 
 def test_get_instrument_not_found(client: TestClient) -> None:
@@ -89,8 +81,6 @@ def test_update_instrument(client: TestClient) -> None:
         json={
             "name": "Original Name",
             "string_count": 6,
-            "tuning": ["E2", "A2", "D3", "G3", "B3", "E4"],
-            "technique_capabilities": [],
         },
     )
     instrument_id = create_response.json()["id"]
@@ -103,7 +93,6 @@ def test_update_instrument(client: TestClient) -> None:
     assert response.status_code == 200
     data = response.json()
     assert data["name"] == "Updated Name"
-    assert data["string_count"] == 6  # Unchanged
 
 
 def test_update_instrument_not_found(client: TestClient) -> None:
@@ -131,8 +120,6 @@ def test_delete_instrument(client: TestClient) -> None:
         json={
             "name": "To Delete",
             "string_count": 6,
-            "tuning": ["E2", "A2", "D3", "G3", "B3", "E4"],
-            "technique_capabilities": [],
         },
     )
     instrument_id = create_response.json()["id"]

@@ -7,13 +7,12 @@ from pydantic import BaseModel, Field
 
 
 class InstrumentBase(BaseModel):
-    """Base instrument fields."""
+    """Base instrument fields for StringedInstrument."""
 
     name: str = Field(..., min_length=1, max_length=100)
     string_count: int = Field(..., ge=1, le=12)
-    tuning: list[str] = Field(..., min_length=1)
-    technique_capabilities: list[str] = Field(default_factory=list)
     scale_length: float | None = Field(None, ge=1.0, le=40.0)
+    # Note: tunings and techniques are relationships, not direct fields
 
 
 class InstrumentCreate(InstrumentBase):
@@ -27,8 +26,6 @@ class InstrumentUpdate(BaseModel):
 
     name: str | None = Field(None, min_length=1, max_length=100)
     string_count: int | None = Field(None, ge=1, le=12)
-    tuning: list[str] | None = Field(None, min_length=1)
-    technique_capabilities: list[str] | None = None
     scale_length: float | None = Field(None, ge=1.0, le=40.0)
 
 
