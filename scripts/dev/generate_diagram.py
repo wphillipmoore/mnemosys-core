@@ -14,7 +14,7 @@ from sqlalchemy.orm import RelationshipProperty
 
 # Import all models to register them with Base
 from mnemosys_core.db.base import Base
-from mnemosys_core.db.models import (
+from mnemosys_core.db.models import (  # noqa: F401 - imports needed for SQLAlchemy model registration
     Exercise,
     ExerciseInstance,
     ExerciseLog,
@@ -232,7 +232,7 @@ def main():
     output_path = Path(__file__).parent.parent.parent / 'docs' / 'diagrams' / 'data-model.md'
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(output_path, 'w') as f:
+    with output_path.open('w') as f:
         f.write('# MNEMOSYS Data Model\n\n')
         f.write('Auto-generated diagram showing entity relationships.\n\n')
         f.write(mermaid_code)
