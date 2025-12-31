@@ -7,7 +7,7 @@ from collections.abc import Generator
 from fastapi import FastAPI
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session as DBSession
-from sqlalchemy.orm import sessionmaker, Session as DBSession
+from sqlalchemy.orm import sessionmaker
 
 from ..db.session import create_session_factory, get_session_dependency
 
