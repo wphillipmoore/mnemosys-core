@@ -114,3 +114,7 @@ filterwarnings = [
     "ignore:unclosed database:ResourceWarning",
     "ignore::ResourceWarning",
 ]
+
+[tool.coverage.run]
+source = ["src/mnemosys_core"]
+branch = true
