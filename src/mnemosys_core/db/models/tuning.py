@@ -11,7 +11,7 @@ from ..base import Base
 from ..types import JSONEncodedList
 
 if TYPE_CHECKING:
-    from .instruments import StringedInstrument
+    from .instrument import StringedInstrument
 
 
 class Tuning(Base):

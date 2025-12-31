@@ -4,8 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from mnemosys_core.db.base import Base
-from mnemosys_core.db.models.instruments import StringedInstrument
-from mnemosys_core.db.models.tunings import StringedInstrumentTuning
+from mnemosys_core.db.models.instrument import StringedInstrument
+from mnemosys_core.db.models.tuning import StringedInstrumentTuning
 
 
 def test_stringed_instrument_can_have_multiple_tunings() -> None:

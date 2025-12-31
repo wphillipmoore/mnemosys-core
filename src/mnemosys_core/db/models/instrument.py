@@ -10,9 +10,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from ..base import Base
 
 if TYPE_CHECKING:
-    from .sessions import Session
-    from .techniques import Technique
-    from .tunings import StringedInstrumentTuning
+    from .session import Session
+    from .technique import Technique
+    from .tuning import StringedInstrumentTuning
 
 
 # Association table for StringedInstrument ↔ StringedInstrumentTuning
