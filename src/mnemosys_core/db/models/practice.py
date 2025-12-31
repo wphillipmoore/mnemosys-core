@@ -15,10 +15,10 @@ from . import SessionType
 if TYPE_CHECKING:
     from .exercise_instance import ExerciseInstance
     from .instrument import Instrument
-    from .session_block import SessionBlock
+    from .practice_block import PracticeBlock
 
 
-class Session(Base):
+class Practice(Base):
     """
     Practice session record.
 
@@ -30,7 +30,7 @@ class Session(Base):
         total_minutes: Total session duration
     """
 
-    __tablename__ = "session"
+    __tablename__ = "practice"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     instrument_id: Mapped[int] = mapped_column(Integer, ForeignKey("instrument.id"), nullable=False)
@@ -39,13 +39,13 @@ class Session(Base):
     total_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
 
     # Relationships
-    instrument: Mapped["Instrument"] = relationship("Instrument", back_populates="sessions")
+    instrument: Mapped["Instrument"] = relationship("Instrument", back_populates="practices")
     exercise_instances: Mapped[list["ExerciseInstance"]] = relationship(
-        "ExerciseInstance", back_populates="session", cascade="all, delete-orphan", order_by="ExerciseInstance.sequence_order"
+        "ExerciseInstance", back_populates="practice", cascade="all, delete-orphan", order_by="ExerciseInstance.sequence_order"
     )
-    blocks: Mapped[list["SessionBlock"]] = relationship(
-        "SessionBlock", back_populates="session", cascade="all, delete-orphan"
+    blocks: Mapped[list["PracticeBlock"]] = relationship(
+        "PracticeBlock", back_populates="practice", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
-        return f"<Session(id={self.id}, date={self.session_date}, " f"type={self.session_type.value})>"
+        return f"<Practice(id={self.id}, date={self.session_date}, " f"type={self.session_type.value})>"
