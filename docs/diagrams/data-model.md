@@ -45,33 +45,33 @@ classDiagram
     Tuning <|-- WindInstrumentTuning
 
     %% Composition relationships
-    Exercise ||--o{ ExerciseInstance
-    Exercise ||--o{ PracticeBlock
-    ExerciseInstance ||--|| Exercise
-    ExerciseInstance ||--|| Practice
-    ExerciseLog ||--|| ExerciseInstance
-    ExerciseState ||--|| Exercise
-    Instrument ||--o{ Practice
-    KeyboardInstrument ||--o{ Practice
-    PercussionInstrument ||--o{ Practice
-    Practice ||--o{ ExerciseInstance
-    Practice ||--|| Instrument
-    Practice ||--o{ PracticeBlock
-    PracticeBlock ||--|| Exercise
-    PracticeBlock ||--|| Practice
-    PracticeBlock ||--o{ PracticeBlockLog
-    PracticeBlockLog ||--|| PracticeBlock
-    StringedInstrument ||--o{ Practice
-    WindInstrument ||--o{ Practice
+    Exercise "1" --> "*" ExerciseInstance
+    Exercise "1" --> "*" PracticeBlock
+    ExerciseInstance "1" --> "1" Exercise
+    ExerciseInstance "1" --> "1" Practice
+    ExerciseLog "1" --> "1" ExerciseInstance
+    ExerciseState "1" --> "1" Exercise
+    Instrument "1" --> "*" Practice
+    KeyboardInstrument "1" --> "*" Practice
+    PercussionInstrument "1" --> "*" Practice
+    Practice "1" --> "*" ExerciseInstance
+    Practice "1" --> "1" Instrument
+    Practice "1" --> "*" PracticeBlock
+    PracticeBlock "1" --> "1" Exercise
+    PracticeBlock "1" --> "1" Practice
+    PracticeBlock "1" --> "*" PracticeBlockLog
+    PracticeBlockLog "1" --> "1" PracticeBlock
+    StringedInstrument "1" --> "*" Practice
+    WindInstrument "1" --> "*" Practice
 
     %% Association relationships (many-to-many)
-    Exercise }o--o{ OverloadDimension
-    Exercise }o--o{ Technique
-    Instrument }o--o{ Technique
-    KeyboardInstrument }o--o{ Technique
-    PercussionInstrument }o--o{ Technique
-    StringedInstrument }o--o{ StringedInstrumentTuning
-    StringedInstrument }o--o{ Technique
-    WindInstrument }o--o{ Technique
+    Exercise "*" --> "*" OverloadDimension
+    Exercise "*" --> "*" Technique
+    Instrument "*" --> "*" Technique
+    KeyboardInstrument "*" --> "*" Technique
+    PercussionInstrument "*" --> "*" Technique
+    StringedInstrument "*" --> "*" StringedInstrumentTuning
+    StringedInstrument "*" --> "*" Technique
+    WindInstrument "*" --> "*" Technique
 
 ```

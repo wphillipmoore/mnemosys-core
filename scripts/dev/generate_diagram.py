@@ -191,11 +191,11 @@ def generate_mermaid(model_info):
     if composition:
         lines.append('    %% Composition relationships')
         for rel in sorted(composition, key=lambda x: (x['from'], x['to'])):
+            # Use class diagram syntax with cardinality labels
             if rel['cardinality'] == '1:1':
-                arrow = '||--||'
+                lines.append(f"    {rel['from']} \"1\" --> \"1\" {rel['to']}")
             else:  # 1:many
-                arrow = '||--o{'
-            lines.append(f"    {rel['from']} {arrow} {rel['to']}")
+                lines.append(f"    {rel['from']} \"1\" --> \"*\" {rel['to']}")
         lines.append('')
 
     # Generate association relationships (many:many)
@@ -207,7 +207,7 @@ def generate_mermaid(model_info):
             pair = tuple(sorted([rel['from'], rel['to']]))
             if pair not in seen:
                 seen.add(pair)
-                lines.append(f"    {rel['from']} }}o--o{{ {rel['to']}")
+                lines.append(f"    {rel['from']} \"*\" --> \"*\" {rel['to']}")
         lines.append('')
 
     lines.append('```')
