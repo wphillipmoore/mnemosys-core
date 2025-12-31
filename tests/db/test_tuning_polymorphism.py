@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from mnemosys_core.db.base import Base
-from mnemosys_core.db.models.tunings import (
+from mnemosys_core.db.models.tuning import (
     KeyboardInstrumentTuning,
     PercussionInstrumentTuning,
     StringedInstrumentTuning,

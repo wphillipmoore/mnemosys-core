@@ -4,8 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from mnemosys_core.db.base import Base
-from mnemosys_core.db.models.exercises import Exercise
-from mnemosys_core.db.models.overload_dimensions import OverloadDimension
+from mnemosys_core.db.models.exercise import Exercise
+from mnemosys_core.db.models.overload_dimension import OverloadDimension
 
 
 def test_exercise_can_support_multiple_overload_dimensions() -> None:

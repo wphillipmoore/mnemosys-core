@@ -7,9 +7,10 @@ from sqlalchemy.orm import sessionmaker
 
 from mnemosys_core.db.base import Base
 from mnemosys_core.db.models import SessionType
-from mnemosys_core.db.models.exercises import Exercise
-from mnemosys_core.db.models.instruments import StringedInstrument
-from mnemosys_core.db.models.sessions import ExerciseInstance, Session
+from mnemosys_core.db.models.exercise import Exercise
+from mnemosys_core.db.models.exercise_instance import ExerciseInstance
+from mnemosys_core.db.models.instrument import StringedInstrument
+from mnemosys_core.db.models.session import Session
 
 
 def test_exercise_instance_creation() -> None:
