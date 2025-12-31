@@ -60,6 +60,15 @@ The following branches always exist and are protected:
 | release | Qualification and validation   | test              |
 | main    | Production truth               | production        |
 
+### Pull Request Requirement
+
+**ALL eternal branches require pull requests for changes.** Direct pushes to `develop`, `release`, or `main` are forbidden.
+
+- Changes to `develop`: Create a `feature/*` or `bugfix/*` branch, then open a PR to `develop`
+- Changes to `release`: Create a PR from `develop` to `release`
+- Changes to `main`: Create a PR from `release` to `main`
+- Exception: `hotfix/*` branches follow special forward-merge rules (see Section 5)
+
 Each merge into these branches triggers **automatic deployment** to the corresponding environment.
 
 ---
@@ -68,28 +77,57 @@ Each merge into these branches triggers **automatic deployment** to the correspo
 
 All work occurs in short-lived branches.
 
+### Branch Naming Conventions
+
+Only the following branch prefixes are allowed:
+- `feature/*`
+- `bugfix/*`
+- `hotfix/*`
+
+**No other prefixes** (e.g., `fix/*`, `chore/*`, `refactor/*`) are permitted. When in doubt, use `feature/*`.
+
 ### feature/*
 
-- New functionality or structural changes
+**Use for:**
+- New functionality or features
+- Structural changes or refactoring
+- Documentation updates
+- Dependency updates
+- Build system changes
+- Any work that is NOT a bug fix
+
+**Rules:**
 - Branched from `develop`
-- Merged into `develop`
+- Merged into `develop` via pull request
 - Deleted immediately after merge
 
 ### bugfix/*
 
-- Non-urgent defect fixes
+**Use for:**
+- Non-urgent defect fixes discovered in development or test environments
+- Fixes for issues that do NOT block production
+
+**Rules:**
 - Same rules as `feature/*`
 - Distinction exists for semantic clarity only
+- Branched from `develop`
+- Merged into `develop` via pull request
+- Deleted immediately after merge
 
 ### hotfix/*
 
-- Used only for production-blocking issues
+**Use for:**
+- Production-blocking issues ONLY
+- Critical defects affecting live users
+- Security vulnerabilities in production
+
+**Rules:**
 - Branched from `main`
-- Merged into `main`
+- Merged into `main` via pull request
 - Immediately forward-merged into `release` and `develop`
 - Deleted immediately after resolution
 
-Creation of a `hotfix/*` branch is treated as an explicit admission of upstream process failure.
+**Important:** Creation of a `hotfix/*` branch is treated as an explicit admission of upstream process failure.
 
 ---
 
@@ -113,10 +151,12 @@ Promotion semantics:
 The following are explicitly disallowed:
 
 - Merging feature/* or bugfix/* directly into release or main
-- Direct commits to eternal branches
+- Direct commits to eternal branches (all changes require pull requests)
+- Direct pushes to develop, release, or main (all changes require pull requests)
 - Cherry-picking between eternal branches
 - Deploying to production without passing through release
 - Long-lived non-eternal branches
+- Using branch prefixes other than feature/*, bugfix/*, or hotfix/*
 
 ---
 
