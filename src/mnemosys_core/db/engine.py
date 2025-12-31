@@ -12,6 +12,7 @@ def create_db_engine(
     database_url: str,
     echo: bool = False,
     pool_pre_ping: bool = True,
+    poolclass: type | None = None,
 ) -> Engine:
     """
     Create a SQLAlchemy engine.
@@ -20,6 +21,7 @@ def create_db_engine(
         database_url: Database connection string
         echo: Whether to log SQL statements
         pool_pre_ping: Check connection health before use
+        poolclass: Optional pool class override (e.g., NullPool for tests)
 
     Returns:
         Configured SQLAlchemy engine
@@ -28,13 +30,15 @@ def create_db_engine(
         >>> engine = create_db_engine("postgresql://user:pass@localhost/db")
         >>> engine = create_db_engine("sqlite:///:memory:")
     """
-    # SQLite-specific configuration for testing
+    # SQLite-specific configuration
     if database_url.startswith("sqlite"):
+        # Use provided poolclass or default to StaticPool for in-memory databases
+        pool = poolclass if poolclass is not None else StaticPool
         return create_engine(
             database_url,
             echo=echo,
             connect_args={"check_same_thread": False},
-            poolclass=StaticPool,  # Required for in-memory SQLite
+            poolclass=pool,
         )
 
     # PostgreSQL production configuration

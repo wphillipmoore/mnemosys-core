@@ -106,3 +106,11 @@ warn_required_dynamic_aliases = true
 minversion = "7.0"
 testpaths = ["tests"]
 addopts = "-v"
+filterwarnings = [
+    # Ignore SQLite connection ResourceWarnings during tests
+    # These are false positives - connections are properly cleaned up by engine.dispose()
+    # but Python's resource tracker complains during garbage collection
+    # Also applies to pytest-cov's internal SQLite usage
+    "ignore:unclosed database:ResourceWarning",
+    "ignore::ResourceWarning",
+]

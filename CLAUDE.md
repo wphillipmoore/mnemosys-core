@@ -10,6 +10,42 @@ This project follows a **database-first architecture** with explicit structural 
 
 **No implicit state or side effects at import time.** The database engine, models, and configuration are isolated and must be explicitly instantiated.
 
+## Start Every Work Session: Create a Feature Branch
+
+**CRITICAL FIRST STEP**: Before making ANY changes in a new session, you MUST:
+
+1. **Check current branch**: `git branch --show-current`
+2. **If on `develop`**: Create a feature branch immediately:
+   ```bash
+   git checkout -b feature/<descriptive-name>
+   ```
+3. **If already on a feature branch**: Continue working on that branch
+
+**Why this matters**: Direct commits to `develop` violate the project's branching model. ALL changes to eternal branches (develop/main/release) must go through pull requests.
+
+**Branch naming**:
+- `feature/*` - New functionality, refactoring, documentation, dependencies (MOST COMMON)
+- `bugfix/*` - Non-urgent defect fixes
+- `hotfix/*` - Production-blocking issues ONLY
+
+**Example workflow**:
+```bash
+# At start of session
+git status
+# If on develop:
+git checkout -b feature/add-caching-layer
+
+# Do your work...
+git add .
+git commit -m "..."
+
+# Push and create PR
+git push -u origin feature/add-caching-layer
+gh pr create --base develop --title "..." --body "..."
+```
+
+**If you forget**: You'll need to move commits from develop to a feature branch before pushing. Don't let this happen.
+
 ## Before You Act: Consult Documentation First
 
 **CRITICAL**: This project follows a documentation-first methodology. All knowledge required for any AI agent to work effectively is present in the repository. **Always read the relevant documentation BEFORE taking action** - never rely on trial-and-error.
