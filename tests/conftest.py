@@ -8,14 +8,14 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session as DBSession
-from sqlalchemy.orm import sessionmaker, Session as DBSession
+from sqlalchemy.orm import sessionmaker
 
 from mnemosys_core.api.app import create_app
-from mnemosys_core.db.base import Base
-from mnemosys_core.db.engine import create_db_engine
 
 # Import all models to register them with Base.metadata before create_all()
 from mnemosys_core.db import models  # noqa: F401
+from mnemosys_core.db.base import Base
+from mnemosys_core.db.engine import create_db_engine
 
 
 @pytest.fixture(scope="function")
