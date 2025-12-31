@@ -61,18 +61,20 @@ class QualityRating(enum.Enum):
 
 
 # Import models for convenience
-from .exercises import Exercise, ExerciseState
-from .instruments import (
+from .exercise import Exercise, ExerciseState
+from .exercise_instance import ExerciseInstance, ExerciseLog
+from .instrument import (
     Instrument,
     KeyboardInstrument,
     PercussionInstrument,
     StringedInstrument,
     WindInstrument,
 )
-from .overload_dimensions import OverloadDimension
-from .sessions import BlockLog, ExerciseInstance, ExerciseLog, Session, SessionBlock
-from .techniques import Technique
-from .tunings import (
+from .overload_dimension import OverloadDimension
+from .session import Session
+from .session_block import BlockLog, SessionBlock
+from .technique import Technique
+from .tuning import (
     KeyboardInstrumentTuning,
     PercussionInstrumentTuning,
     StringedInstrumentTuning,

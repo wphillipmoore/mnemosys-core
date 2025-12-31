@@ -42,7 +42,7 @@ def test_can_import_all_enums() -> None:
 
 def test_instrument_instantiation(db_session: Session) -> None:
     """Test that StringedInstrument can be instantiated and saved."""
-    from mnemosys_core.db.models.instruments import StringedInstrument
+    from mnemosys_core.db.models.instrument import StringedInstrument
 
     instrument = StringedInstrument(
         name="Test Guitar",
@@ -73,7 +73,7 @@ def test_session_instantiation(db_session: Session) -> None:
     """Test that Session can be instantiated and saved."""
     from datetime import date
 
-    from mnemosys_core.db.models.instruments import StringedInstrument
+    from mnemosys_core.db.models.instrument import StringedInstrument
 
     # Create instrument first
     instrument = StringedInstrument(name="Test Bass", string_count=4, scale_length=34.0)
@@ -93,7 +93,7 @@ def test_session_instantiation(db_session: Session) -> None:
 
 def test_instrument_repr(db_session: Session) -> None:
     """Test StringedInstrument __repr__ method."""
-    from mnemosys_core.db.models.instruments import StringedInstrument
+    from mnemosys_core.db.models.instrument import StringedInstrument
 
     instrument = StringedInstrument(
         name="Test Guitar",
@@ -152,7 +152,7 @@ def test_session_repr(db_session: Session) -> None:
     """Test Session __repr__ method."""
     from datetime import date
 
-    from mnemosys_core.db.models.instruments import StringedInstrument
+    from mnemosys_core.db.models.instrument import StringedInstrument
 
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     db_session.add(instrument)
@@ -177,7 +177,7 @@ def test_session_block_repr(db_session: Session) -> None:
     """Test SessionBlock __repr__ method."""
     from datetime import date
 
-    from mnemosys_core.db.models.instruments import StringedInstrument
+    from mnemosys_core.db.models.instrument import StringedInstrument
 
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     db_session.add(instrument)
@@ -219,7 +219,7 @@ def test_block_log_repr(db_session: Session) -> None:
     """Test BlockLog __repr__ method."""
     from datetime import date
 
-    from mnemosys_core.db.models.instruments import StringedInstrument
+    from mnemosys_core.db.models.instrument import StringedInstrument
 
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
     db_session.add(instrument)

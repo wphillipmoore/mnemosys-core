@@ -4,8 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from mnemosys_core.db.base import Base
-from mnemosys_core.db.models.exercises import Exercise
-from mnemosys_core.db.models.techniques import Technique
+from mnemosys_core.db.models.exercise import Exercise
+from mnemosys_core.db.models.technique import Technique
 
 
 def test_exercise_can_use_multiple_techniques() -> None:

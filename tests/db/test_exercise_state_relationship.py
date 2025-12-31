@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from mnemosys_core.db.base import Base
-from mnemosys_core.db.models.exercises import Exercise, ExerciseState
+from mnemosys_core.db.models.exercise import Exercise, ExerciseState
 
 
 def test_exercise_has_one_exercise_state() -> None:
