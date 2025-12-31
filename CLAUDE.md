@@ -10,6 +10,55 @@ This project follows a **database-first architecture** with explicit structural 
 
 **No implicit state or side effects at import time.** The database engine, models, and configuration are isolated and must be explicitly instantiated.
 
+## Before You Act: Consult Documentation First
+
+**CRITICAL**: This project follows a documentation-first methodology. All knowledge required for any AI agent to work effectively is present in the repository. **Always read the relevant documentation BEFORE taking action** - never rely on trial-and-error.
+
+### Required Reading Before Common Operations
+
+**Git Operations (commit, push, branch, merge)**
+- **MUST READ**: `docs/project/final/Development_Branching_Deployment_Model.md`
+- **Key Rules**:
+  - NEVER push directly to develop/main/release (eternal branches)
+  - ALL changes to eternal branches MUST go through pull requests
+  - ALWAYS create a fresh feature branch from clean develop
+  - NEVER reuse old branch names
+
+**Pull Request Operations (creating, submitting, merging)**
+- **MUST READ**: `docs/standards-and-conventions.md` → "Pull Request Submission Process"
+- **MUST READ**: `docs/standards-and-conventions.md` → "Pull Request Finalization Process"
+- **Key Rules**:
+  - 100% test success required before PR creation
+  - 100% line AND branch coverage required
+  - All code quality checks (ruff, mypy) must pass
+  - Follow three-step finalization process after merge
+
+**Code Quality and Standards**
+- **MUST READ**: `docs/standards-and-conventions.md` → "Python Coding Standards"
+- **Key Rules**:
+  - PEP-compliant code only
+  - Complete type hints for all public functions
+  - 100% code coverage (lines and branches)
+  - No abbreviations in variable names (minimum 3 characters)
+
+**Database Changes (models, migrations, schema)**
+- **MUST READ**: `docs/standards-and-conventions.md` → "Database Conventions"
+- **Key Rules**:
+  - Table names are singular, not plural
+  - Follow model file organization rules
+  - One file per database table (with documented exceptions)
+
+### The RTFM Principle
+
+**You should NOT need to be told to read the documentation.** If you find yourself:
+- Using trial-and-error to discover workflow rules
+- Getting error messages that correct your approach
+- Guessing at conventions or standards
+
+**STOP.** You missed reading the relevant documentation. Go back and read it before proceeding.
+
+The 30 seconds spent reading documentation prevents hours of cleanup work.
+
 ## Project Structure
 
 ```
