@@ -253,10 +253,11 @@ def create_instrument(name, string_count):
 
 #### Coverage Target
 
-- **Goal**: 100% code coverage across all production code
+- **Goal**: 100% code coverage (lines AND branches) across all production code
 - **Tool**: pytest with pytest-cov plugin
-- **Measurement**: Run `pytest --cov=src --cov-report=html --cov-report=term`
+- **Measurement**: Run `pytest --cov=src --cov-report=html --cov-report=term --cov-branch`
 - **CI/CD**: Coverage checks run automatically in test suite
+- **Branch Coverage**: Tests all code paths (if/else, try/except, boolean operators, loops, etc.), not just that lines were executed
 
 #### Untestable Code Documentation
 
@@ -307,18 +308,19 @@ def handle_database_connection(config: dict) -> Connection:
 
 **Check coverage:**
 ```bash
-# Terminal report with missing lines
-pytest --cov=src --cov-report=term-missing
+# Terminal report with missing lines and branch coverage
+pytest --cov=src --cov-report=term-missing --cov-branch
 
-# HTML report (opens in browser)
-pytest --cov=src --cov-report=html
+# HTML report (opens in browser) with branch coverage
+pytest --cov=src --cov-report=html --cov-branch
 open htmlcov/index.html
 ```
 
 **Coverage expectations:**
-- **New code**: Must maintain or improve overall coverage percentage
+- **New code**: Must maintain or improve overall coverage percentage for BOTH lines and branches
 - **Pull requests**: Coverage report must be reviewed
 - **Declining coverage**: Requires explicit justification and documentation
+- **Branch coverage**: Pay special attention to missing branch coverage - it indicates untested code paths
 
 #### Rationale
 
@@ -346,7 +348,7 @@ open htmlcov/index.html
 Before creating a pull request, **ALL** of the following requirements must be met:
 
 1. **100% unit test success** - ALL tests must pass
-2. **100% code coverage** - Coverage must not decrease, aspire to 100%
+2. **100% code coverage** - Coverage of both lines AND branches must not decrease, aspire to 100%
 3. **All code quality checks must pass** - ruff and mypy must report no errors
 
 #### Pre-Submission Checklist
@@ -378,20 +380,21 @@ poetry run mypy
 # REQUIRED: Both must report "No errors" or "Success: no issues found"
 ```
 
-**3. Code Coverage (REQUIRED: 100% Coverage Goal)**
+**3. Code Coverage (REQUIRED: 100% Line AND Branch Coverage Goal)**
 ```bash
-# Verify coverage is at 100% or document exceptions
-poetry run pytest --cov=src --cov-report=term-missing
+# Verify line AND branch coverage is at 100% or document exceptions
+poetry run pytest --cov=src --cov-report=term-missing --cov-branch
 
-# REQUIRED: Coverage must not decrease from current levels
-# GOAL: Maintain or improve toward 100% coverage
+# REQUIRED: Both line AND branch coverage must not decrease from current levels
+# GOAL: Maintain or improve toward 100% coverage of lines AND branches
 # Any untestable code must be documented with `# pragma: no cover` and explanation
 ```
 
 **Coverage Requirements:**
-- New code must maintain or improve overall coverage percentage
-- Any decrease in coverage requires explicit justification in the PR description
+- New code must maintain or improve overall coverage percentage for BOTH lines and branches
+- Any decrease in line or branch coverage requires explicit justification in the PR description
 - Untestable code must be marked with `# pragma: no cover` and documented (see Unit Testing Policy above)
+- **Critical**: Branch coverage tests all code paths (if/else, try/except, loops, etc.), not just that lines were executed
 
 #### What to Do When Checks Fail
 

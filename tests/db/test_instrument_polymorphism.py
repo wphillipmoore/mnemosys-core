@@ -95,3 +95,79 @@ def test_polymorphic_query_returns_correct_types() -> None:
     assert isinstance(instruments[0], StringedInstrument)
     assert isinstance(instruments[1], KeyboardInstrument)
     session.close()
+
+
+def test_base_instrument_repr() -> None:
+    """Base Instrument __repr__ should include id, name, and type."""
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    instrument = StringedInstrument(
+        name="Test Guitar", string_count=6, scale_length=25.5
+    )
+    session.add(instrument)
+    session.commit()
+
+    # Explicitly call base class __repr__ to test it
+    repr_str = Instrument.__repr__(instrument)
+    assert "Instrument" in repr_str
+    assert "Test Guitar" in repr_str
+    assert str(instrument.id) in repr_str
+    assert "stringed" in repr_str
+    session.close()
+
+
+def test_keyboard_instrument_repr() -> None:
+    """KeyboardInstrument __repr__ should include id and name."""
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    keyboard = KeyboardInstrument(name="Yamaha P-125")
+    session.add(keyboard)
+    session.commit()
+
+    repr_str = repr(keyboard)
+    assert "KeyboardInstrument" in repr_str
+    assert "Yamaha P-125" in repr_str
+    assert str(keyboard.id) in repr_str
+    session.close()
+
+
+def test_wind_instrument_repr() -> None:
+    """WindInstrument __repr__ should include id and name."""
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    wind = WindInstrument(name="Yamaha YAS-280")
+    session.add(wind)
+    session.commit()
+
+    repr_str = repr(wind)
+    assert "WindInstrument" in repr_str
+    assert "Yamaha YAS-280" in repr_str
+    assert str(wind.id) in repr_str
+    session.close()
+
+
+def test_percussion_instrument_repr() -> None:
+    """PercussionInstrument __repr__ should include id and name."""
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    percussion = PercussionInstrument(name="Pearl Export")
+    session.add(percussion)
+    session.commit()
+
+    repr_str = repr(percussion)
+    assert "PercussionInstrument" in repr_str
+    assert "Pearl Export" in repr_str
+    assert str(percussion.id) in repr_str
+    session.close()
