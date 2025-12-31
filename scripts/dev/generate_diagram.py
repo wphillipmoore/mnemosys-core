@@ -161,21 +161,21 @@ def generate_mermaid(model_info):
     lines.append('classDiagram')
     lines.append('')
 
-    # Generate entity declarations grouped by namespace
+    # Generate entity declarations grouped by conceptual area
+    # Note: Mermaid doesn't support visual grouping, so we use comments
+    # and spatial organization (entities declared together may render near each other)
     for group_name in sorted(groups.keys()):
         if group_name == 'Other':
             continue  # Handle ungrouped entities separately
 
-        lines.append(f'    %% Group: {group_name}')
-        lines.append(f'    namespace {group_name} {{')
+        lines.append(f'    %% === {group_name} Group ===')
         for entity_name in sorted(groups[group_name]):
-            lines.append(f'        class {entity_name}')
-        lines.append('    }')
+            lines.append(f'    class {entity_name}')
         lines.append('')
 
     # Handle ungrouped entities
     if 'Other' in groups:
-        lines.append('    %% Ungrouped entities')
+        lines.append('    %% === Connector Entities ===')
         for entity_name in sorted(groups['Other']):
             lines.append(f'    class {entity_name}')
         lines.append('')

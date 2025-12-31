@@ -5,40 +5,32 @@ Auto-generated diagram showing entity relationships.
 ```mermaid
 classDiagram
 
-    %% Group: Exercise
-    namespace Exercise {
-        class Exercise
-        class ExerciseInstance
-        class ExerciseLog
-        class ExerciseState
-    }
+    %% === Exercise Group ===
+    class Exercise
+    class ExerciseInstance
+    class ExerciseLog
+    class ExerciseState
 
-    %% Group: Instrument
-    namespace Instrument {
-        class Instrument
-        class KeyboardInstrument
-        class PercussionInstrument
-        class StringedInstrument
-        class WindInstrument
-    }
+    %% === Instrument Group ===
+    class Instrument
+    class KeyboardInstrument
+    class PercussionInstrument
+    class StringedInstrument
+    class WindInstrument
 
-    %% Group: Practice
-    namespace Practice {
-        class Practice
-        class PracticeBlock
-        class PracticeBlockLog
-    }
+    %% === Practice Group ===
+    class Practice
+    class PracticeBlock
+    class PracticeBlockLog
 
-    %% Group: Tuning
-    namespace Tuning {
-        class KeyboardInstrumentTuning
-        class PercussionInstrumentTuning
-        class StringedInstrumentTuning
-        class Tuning
-        class WindInstrumentTuning
-    }
+    %% === Tuning Group ===
+    class KeyboardInstrumentTuning
+    class PercussionInstrumentTuning
+    class StringedInstrumentTuning
+    class Tuning
+    class WindInstrumentTuning
 
-    %% Ungrouped entities
+    %% === Connector Entities ===
     class OverloadDimension
     class Technique
 
