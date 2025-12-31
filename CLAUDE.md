@@ -87,29 +87,35 @@ Create PR?
 5. If approved: Push branch and create PR
 6. If not approved: Make requested changes, go back to step 2
 
-**Checkpoint: Before Merging Pull Request**
+**Checkpoint: Before Finalizing Pull Request**
 
 After creating the PR, **STOP** and ask:
 
 ```
-Merge PR?
+Finalize PR?
 ```
 
-**What this gives the user:**
+**What "Finalize" means** (unless user specifies otherwise):
+1. Merge PR with squash merge and delete remote branch
+2. Update local develop branch (checkout and pull)
+3. Run final validation (tests, coverage, quality checks)
+4. Ready for next iteration of changes
+
+**What this checkpoint gives the user:**
 - Time to review the PR on GitHub
 - Opportunity to check CI/CD results (when implemented)
 - Ability to add reviewers or request changes
 - Control over when changes land in develop
 
-**Only proceed with PR merge after explicit user approval.**
+**Only proceed with PR finalization after explicit user approval.**
 
 **Complete workflow with both checkpoints:**
 1. Complete work on feature branch
 2. Commit changes locally
 3. ⏸️ **PAUSE #1** - Ask: "Create PR?"
 4. If approved: Push branch and create PR
-5. ⏸️ **PAUSE #2** - Ask: "Merge PR?"
-6. If approved: Merge PR and run final validation
+5. ⏸️ **PAUSE #2** - Ask: "Finalize PR?"
+6. If approved: Execute three-step finalization (merge, update develop, validate)
 7. If not approved: Wait for user to review/request changes
 
 ## Project Structure
