@@ -9,8 +9,8 @@ from pydantic import BaseModel, Field
 from ...db.models import BlockType, CompletionStatus, QualityRating, SessionType
 
 
-class SessionBase(BaseModel):
-    """Base session fields."""
+class PracticeBase(BaseModel):
+    """Base practice fields."""
 
     instrument_id: int
     session_date: date
@@ -18,14 +18,14 @@ class SessionBase(BaseModel):
     total_minutes: int = Field(..., ge=1)
 
 
-class SessionCreate(SessionBase):
-    """Schema for creating sessions."""
+class PracticeCreate(PracticeBase):
+    """Schema for creating practices."""
 
     pass
 
 
-class SessionUpdate(BaseModel):
-    """Schema for updating sessions."""
+class PracticeUpdate(BaseModel):
+    """Schema for updating practices."""
 
     instrument_id: int | None = None
     session_date: date | None = None
@@ -33,32 +33,32 @@ class SessionUpdate(BaseModel):
     total_minutes: int | None = Field(None, ge=1)
 
 
-class SessionResponse(SessionBase):
-    """Schema for session responses."""
+class PracticeResponse(PracticeBase):
+    """Schema for practice responses."""
 
     id: int
 
     model_config = {"from_attributes": True}
 
 
-class SessionBlockBase(BaseModel):
-    """Base session block fields."""
+class PracticeBlockBase(BaseModel):
+    """Base practice block fields."""
 
-    session_id: int
+    practice_id: int
     exercise_id: int
     block_order: int = Field(..., ge=0)
     block_type: BlockType
     duration_minutes: int = Field(..., ge=1)
 
 
-class SessionBlockCreate(SessionBlockBase):
-    """Schema for creating session blocks."""
+class PracticeBlockCreate(PracticeBlockBase):
+    """Schema for creating practice blocks."""
 
     pass
 
 
-class SessionBlockUpdate(BaseModel):
-    """Schema for updating session blocks."""
+class PracticeBlockUpdate(BaseModel):
+    """Schema for updating practice blocks."""
 
     exercise_id: int | None = None
     block_order: int | None = Field(None, ge=0)
@@ -66,39 +66,39 @@ class SessionBlockUpdate(BaseModel):
     duration_minutes: int | None = Field(None, ge=1)
 
 
-class SessionBlockResponse(SessionBlockBase):
-    """Schema for session block responses."""
+class PracticeBlockResponse(PracticeBlockBase):
+    """Schema for practice block responses."""
 
     id: int
 
     model_config = {"from_attributes": True}
 
 
-class BlockLogBase(BaseModel):
-    """Base block log fields."""
+class PracticeBlockLogBase(BaseModel):
+    """Base practice block log fields."""
 
-    session_block_id: int
+    practice_block_id: int
     completed: CompletionStatus
     quality: QualityRating
     notes: str | None = None
 
 
-class BlockLogCreate(BlockLogBase):
-    """Schema for creating block logs."""
+class PracticeBlockLogCreate(PracticeBlockLogBase):
+    """Schema for creating practice block logs."""
 
     pass
 
 
-class BlockLogUpdate(BaseModel):
-    """Schema for updating block logs."""
+class PracticeBlockLogUpdate(BaseModel):
+    """Schema for updating practice block logs."""
 
     completed: CompletionStatus | None = None
     quality: QualityRating | None = None
     notes: str | None = None
 
 
-class BlockLogResponse(BlockLogBase):
-    """Schema for block log responses."""
+class PracticeBlockLogResponse(PracticeBlockLogBase):
+    """Schema for practice block log responses."""
 
     id: int
 
