@@ -333,6 +333,111 @@ open htmlcov/index.html
 
 ---
 
+## Development Workflow
+
+### Pull Request Submission Process
+
+**Core Principle**: Pull requests must pass **all** automated checks before submission. No exceptions.
+
+**Rationale**: The CI/CD pipeline is a backstop, not a substitute for developer diligence. Submitting failing PRs wastes reviewer time, pollutes the PR history, and undermines confidence in the codebase.
+
+#### Pre-Submission Checklist
+
+Before creating a pull request, **ALL** of the following must pass:
+
+**1. Full Test Suite**
+```bash
+# Run complete test suite (not just a subset)
+poetry run pytest
+
+# Expected output: "=== X passed in Y.YYs ==="
+# NOT: "=== X passed, Y failed in Z.ZZs ==="
+```
+
+**Critical**: Running only a subset (e.g., `pytest tests/db/`) is **not sufficient**. Changes to one area often break tests in another area (as demonstrated by the Session → Practice rename breaking API tests).
+
+**2. Code Quality Checks**
+```bash
+# Linting
+poetry run ruff check
+
+# Type checking
+poetry run mypy
+
+# Both must report: No errors
+```
+
+**3. Code Coverage** (if applicable)
+```bash
+# Verify coverage hasn't decreased
+poetry run pytest --cov=src --cov-report=term-missing
+
+# Check that changed files maintain coverage
+```
+
+#### What to Do When Checks Fail
+
+**If ANY check fails:**
+
+1. ❌ **DO NOT create the PR**
+2. ✅ Fix the failing tests/checks
+3. ✅ Re-run the full checklist
+4. ✅ Only proceed when everything passes
+
+**Common mistakes to avoid:**
+
+- ❌ "I only changed DB code, so I only ran DB tests"
+  - **Reality**: Your changes may break API tests, integration tests, etc.
+
+- ❌ "The test failures are pre-existing, not from my changes"
+  - **Reality**: Fix them anyway, or create a separate issue to track them
+
+- ❌ "I'll fix it in a follow-up PR"
+  - **Reality**: Fix it now, before creating the PR
+
+#### Commit Message Format
+
+Follow conventional commits format:
+
+```
+<type>: <short description>
+
+<optional detailed description>
+
+<footer with co-authorship and generation info>
+```
+
+**Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+
+**Example**:
+```
+fix: update API routers for Practice terminology
+
+Updated all API routers and schemas to use Practice, PracticeBlock,
+and PracticeBlockLog instead of Session, SessionBlock, BlockLog.
+
+Fixed import order bug in test fixtures where models weren't imported
+before Base.metadata.create_all(), causing "no such table" errors.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
+
+#### CI/CD Integration (Future)
+
+**Status**: Not yet implemented
+
+**Planned enforcement**:
+- GitHub Actions will run full test suite on every PR
+- PRs cannot merge unless all checks pass
+- Coverage reports will be posted to PR comments
+- Ruff and mypy errors will block merge
+
+**Until CI/CD is implemented**: Developer discipline is the **only** enforcement mechanism.
+
+---
+
 ## Database Conventions
 
 ### Table Naming Convention
