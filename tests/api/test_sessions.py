@@ -15,8 +15,7 @@ def create_test_instrument(client: TestClient) -> int:
         json={
             "name": "Test Guitar",
             "string_count": 6,
-            "tuning": ["E2", "A2", "D3", "G3", "B3", "E4"],
-            "technique_capabilities": [],
+            "scale_length": 25.5,
         },
     )
     data: dict[str, Any] = response.json()
@@ -30,8 +29,6 @@ def create_test_exercise(client: TestClient) -> int:
         json={
             "name": "Test Exercise",
             "domains": ["Technique"],
-            "technique_tags": [],
-            "supported_overload_dimensions": [],
             "instrument_compatibility": None,
         },
     )
@@ -232,7 +229,7 @@ def test_create_session_block(client: TestClient) -> None:
     response = client.post(
         "/api/v1/sessions/blocks/",
         json={
-            "session_id": session_id,
+            "practice_id": session_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -242,7 +239,7 @@ def test_create_session_block(client: TestClient) -> None:
 
     assert response.status_code == 201
     data = response.json()
-    assert data["session_id"] == session_id
+    assert data["practice_id"] == session_id
     assert data["exercise_id"] == exercise_id
     assert data["block_order"] == 1
     assert data["block_type"] == "Warmup"
@@ -269,7 +266,7 @@ def test_list_session_blocks(client: TestClient) -> None:
         client.post(
             "/api/v1/sessions/blocks/",
             json={
-                "session_id": session_id,
+                "practice_id": session_id,
                 "exercise_id": exercise_id,
                 "block_order": i + 1,
                 "block_type": "Technique",
@@ -304,7 +301,7 @@ def test_list_session_blocks_with_pagination(client: TestClient) -> None:
         client.post(
             "/api/v1/sessions/blocks/",
             json={
-                "session_id": session_id,
+                "practice_id": session_id,
                 "exercise_id": exercise_id,
                 "block_order": i + 1,
                 "block_type": "Technique",
@@ -337,7 +334,7 @@ def test_get_session_block(client: TestClient) -> None:
     block_response = client.post(
         "/api/v1/sessions/blocks/",
         json={
-            "session_id": session_id,
+            "practice_id": session_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Harmony",
@@ -379,7 +376,7 @@ def test_update_session_block(client: TestClient) -> None:
     block_response = client.post(
         "/api/v1/sessions/blocks/",
         json={
-            "session_id": session_id,
+            "practice_id": session_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -430,7 +427,7 @@ def test_delete_session_block(client: TestClient) -> None:
     block_response = client.post(
         "/api/v1/sessions/blocks/",
         json={
-            "session_id": session_id,
+            "practice_id": session_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -474,7 +471,7 @@ def test_create_block_log(client: TestClient) -> None:
     block_response = client.post(
         "/api/v1/sessions/blocks/",
         json={
-            "session_id": session_id,
+            "practice_id": session_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -486,7 +483,7 @@ def test_create_block_log(client: TestClient) -> None:
     response = client.post(
         "/api/v1/sessions/logs/",
         json={
-            "session_block_id": block_id,
+            "practice_block_id": block_id,
             "completed": "yes",
             "quality": "clean",
             "notes": "Felt great today",
@@ -495,7 +492,7 @@ def test_create_block_log(client: TestClient) -> None:
 
     assert response.status_code == 201
     data = response.json()
-    assert data["session_block_id"] == block_id
+    assert data["practice_block_id"] == block_id
     assert data["completed"] == "yes"
     assert data["quality"] == "clean"
     assert data["notes"] == "Felt great today"
@@ -520,7 +517,7 @@ def test_list_block_logs(client: TestClient) -> None:
     block_response = client.post(
         "/api/v1/sessions/blocks/",
         json={
-            "session_id": session_id,
+            "practice_id": session_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -534,7 +531,7 @@ def test_list_block_logs(client: TestClient) -> None:
         client.post(
             "/api/v1/sessions/logs/",
             json={
-                "session_block_id": block_id,
+                "practice_block_id": block_id,
                 "completed": "yes",
                 "quality": "clean",
                 "notes": None,
@@ -566,7 +563,7 @@ def test_list_block_logs_with_pagination(client: TestClient) -> None:
     block_response = client.post(
         "/api/v1/sessions/blocks/",
         json={
-            "session_id": session_id,
+            "practice_id": session_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -580,7 +577,7 @@ def test_list_block_logs_with_pagination(client: TestClient) -> None:
         client.post(
             "/api/v1/sessions/logs/",
             json={
-                "session_block_id": block_id,
+                "practice_block_id": block_id,
                 "completed": "yes",
                 "quality": "clean",
                 "notes": None,
@@ -612,7 +609,7 @@ def test_get_block_log(client: TestClient) -> None:
     block_response = client.post(
         "/api/v1/sessions/blocks/",
         json={
-            "session_id": session_id,
+            "practice_id": session_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -624,7 +621,7 @@ def test_get_block_log(client: TestClient) -> None:
     log_response = client.post(
         "/api/v1/sessions/logs/",
         json={
-            "session_block_id": block_id,
+            "practice_block_id": block_id,
             "completed": "partial",
             "quality": "acceptable",
             "notes": "Had some difficulties",
@@ -666,7 +663,7 @@ def test_update_block_log(client: TestClient) -> None:
     block_response = client.post(
         "/api/v1/sessions/blocks/",
         json={
-            "session_id": session_id,
+            "practice_id": session_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -678,7 +675,7 @@ def test_update_block_log(client: TestClient) -> None:
     log_response = client.post(
         "/api/v1/sessions/logs/",
         json={
-            "session_block_id": block_id,
+            "practice_block_id": block_id,
             "completed": "no",
             "quality": "sloppy",
             "notes": "Tired",
@@ -730,7 +727,7 @@ def test_delete_block_log(client: TestClient) -> None:
     block_response = client.post(
         "/api/v1/sessions/blocks/",
         json={
-            "session_id": session_id,
+            "practice_id": session_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -742,7 +739,7 @@ def test_delete_block_log(client: TestClient) -> None:
     log_response = client.post(
         "/api/v1/sessions/logs/",
         json={
-            "session_block_id": block_id,
+            "practice_block_id": block_id,
             "completed": "yes",
             "quality": "clean",
             "notes": None,
