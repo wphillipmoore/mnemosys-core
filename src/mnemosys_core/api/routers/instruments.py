@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session as DBSession
 
 from ...db.models import Instrument
+from ...db.models.instrument import StringedInstrument
 from ..dependencies import get_db
 from ..schemas.instruments import InstrumentCreate, InstrumentResponse, InstrumentUpdate
 
@@ -14,9 +15,9 @@ router = APIRouter()
 
 
 @router.post("/", response_model=InstrumentResponse, status_code=status.HTTP_201_CREATED)
-def create_instrument(instrument: InstrumentCreate, db_session: DBSession = Depends(get_db)) -> Instrument:
+def create_instrument(instrument: InstrumentCreate, db_session: DBSession = Depends(get_db)) -> StringedInstrument:
     """Create a new instrument profile."""
-    db_instrument = Instrument(**instrument.model_dump())
+    db_instrument = StringedInstrument(**instrument.model_dump())
     db_session.add(db_instrument)
     db_session.flush()
     return db_instrument

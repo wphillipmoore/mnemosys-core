@@ -14,9 +14,8 @@ class ExerciseBase(BaseModel):
 
     name: str = Field(..., min_length=1, max_length=200)
     domains: list[str] = Field(..., min_length=1)
-    technique_tags: list[str] = Field(default_factory=list)
-    supported_overload_dimensions: list[str] = Field(default_factory=list)
     instrument_compatibility: list[str] | None = None
+    # Note: technique_tags and supported_overload_dimensions are relationships, not direct fields
 
 
 class ExerciseCreate(ExerciseBase):
@@ -30,8 +29,6 @@ class ExerciseUpdate(BaseModel):
 
     name: str | None = Field(None, min_length=1, max_length=200)
     domains: list[str] | None = Field(None, min_length=1)
-    technique_tags: list[str] | None = None
-    supported_overload_dimensions: list[str] | None = None
     instrument_compatibility: list[str] | None = None
 
 
