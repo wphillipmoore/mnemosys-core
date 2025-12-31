@@ -515,6 +515,9 @@ poetry sync
 # Delete local feature branch (if not already deleted)
 git branch -d <branch-name>
 
+# Clean up stale remote branch references
+git remote prune origin
+
 # Run FINAL validation on target branch
 poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
 poetry run ruff check
@@ -526,6 +529,11 @@ poetry run mypy src/
 # ✅ Ruff: All checks passed
 # ✅ Mypy: Success, no issues found
 ```
+
+**Why prune remote references?**
+- Removes stale tracking references to deleted remote branches
+- Prevents confusion when listing branches (e.g., `git branch -a`)
+- Keeps local repository metadata clean and accurate
 
 **Why final validation?**
 - Confirms merge was successful
@@ -561,6 +569,8 @@ gh pr merge <PR#> --squash --delete-branch
 git checkout develop
 # Verify .venv is clean
 poetry sync
+# Clean up stale remote references
+git remote prune origin
 # Run final validation
 poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
 poetry run ruff check && poetry run mypy src/
