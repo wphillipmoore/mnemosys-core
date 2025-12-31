@@ -496,7 +496,7 @@ git status
 ```bash
 # CRITICAL: Sync .venv with dependency specification
 # This prevents test failures from stale or conflicting dependencies
-poetry install --sync
+poetry sync
 
 # Expected output: "Installing dependencies from lock file"
 # If dependencies are already synced: "No dependencies to install or update"
@@ -558,7 +558,7 @@ gh pr create --title "Add user authentication" --body "..." --base develop
 gh pr merge <PR#> --squash --delete-branch
 git checkout develop
 # Verify .venv is clean
-poetry install --sync
+poetry sync
 # Run final validation
 poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
 poetry run ruff check && poetry run mypy src/
@@ -604,7 +604,7 @@ git checkout develop
 gh pr merge 14 --squash --delete-branch
 git checkout develop
 # Verify .venv is clean first!
-poetry install --sync
+poetry sync
 # Then run full validation!
 poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
 poetry run ruff check && poetry run mypy src/
