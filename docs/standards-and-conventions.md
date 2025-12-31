@@ -271,9 +271,9 @@ def handle_database_connection(config: dict) -> Connection:
     """
     Establish database connection with retry logic.
 
-    Note: The connection timeout branch (lines 45-48) cannot be reliably
-    tested in unit tests due to non-deterministic timing behavior.
-    Integration tests cover this scenario.
+    Note: The connection timeout branch cannot be reliably tested in unit
+    tests due to non-deterministic timing behavior. Integration tests
+    cover this scenario.
     """
     try:
         return connect(config)
@@ -303,6 +303,8 @@ def handle_database_connection(config: dict) -> Connection:
 ```python
 # pragma: no cover - <brief reason>, <where it IS tested if applicable>
 ```
+
+**IMPORTANT**: Do not include specific line numbers in docstrings or comments explaining coverage exceptions. Line numbers become stale as code evolves, and developers rarely remember to update them. Instead, describe the code path or branch conceptually (e.g., "the connection timeout branch" rather than "lines 45-48").
 
 #### Coverage Reporting
 
