@@ -46,6 +46,48 @@ gh pr create --base develop --title "..." --body "..."
 
 **If you forget**: You'll need to move commits from develop to a feature branch before pushing. Don't let this happen.
 
+## CRITICAL: Heredoc Commands ALWAYS FAIL - Use Temp Files Instead
+
+**⚠️ ATTENTION CLAUDE: This is a recurring failure pattern that happens EVERY session.**
+
+When creating git commits or GitHub PRs with multi-line messages, **HEREDOC syntax ALWAYS FAILS** in this environment. You repeatedly try commands like:
+
+```bash
+# ❌ THIS ALWAYS FAILS - DO NOT USE
+git commit -m "$(cat <<'EOF'
+Multi-line commit message
+EOF
+)"
+
+gh pr create --body "$(cat <<'EOF'
+Multi-line PR body
+EOF
+)"
+```
+
+**✅ CORRECT APPROACH: Use a temporary file**
+
+```bash
+# Create temp file with content
+cat > /tmp/commit-msg.txt << 'EOF'
+Multi-line commit message
+EOF
+
+# Use the temp file
+git commit -F /tmp/commit-msg.txt
+rm /tmp/commit-msg.txt
+
+# For PR creation
+cat > /tmp/pr-body.txt << 'EOF'
+Multi-line PR body
+EOF
+
+gh pr create --base develop --title "..." --body-file /tmp/pr-body.txt
+rm /tmp/pr-body.txt
+```
+
+**Why this matters**: Every session you attempt heredocs, they fail, and you have to debug and retry. This wastes time. **USE TEMP FILES FROM THE START.**
+
 ## Before You Act: Consult Documentation First
 
 **CRITICAL**: This project follows a documentation-first methodology. All knowledge required for any AI agent to work effectively is present in the repository. **Always read the relevant documentation BEFORE taking action** - never rely on trial-and-error.
@@ -134,7 +176,7 @@ Finalize PR?
 **What "Finalize" means** (unless user specifies otherwise):
 1. Merge PR with squash merge and delete remote branch
 2. Update local develop branch (checkout and pull)
-3. Verify .venv is in sync with dependency specification (poetry install --sync)
+3. Verify .venv is in sync with dependency specification (poetry sync)
 4. Run final validation (tests, coverage, quality checks)
 5. Ready for next iteration of changes
 
