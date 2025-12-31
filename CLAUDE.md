@@ -143,7 +143,33 @@ The 30 seconds spent reading documentation prevents hours of cleanup work.
 
 **Checkpoint: Before Creating Pull Request**
 
-After completing work and committing to your feature branch, **STOP** and ask:
+After completing work and committing to your feature branch, you MUST validate the code before pushing. **STOP** and follow this sequence:
+
+**REQUIRED PRE-PUSH VALIDATION:**
+
+Before pushing the branch or creating a PR, you MUST run and pass the full test suite:
+
+```bash
+# Run full test suite with coverage (includes code quality checks)
+poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
+```
+
+**All checks must pass with:**
+- ✅ 100% test success (no failures, no errors)
+- ✅ 100% line and branch coverage (includes all source files)
+
+**Note:** The test suite includes `test_code_compliance.py` which validates:
+- ruff check (zero violations)
+- mypy src/ (zero errors)
+- poetry sync verification
+
+**If any test fails:**
+1. Fix the issue
+2. Commit the fix
+3. Re-run the test suite
+4. Only proceed when everything passes
+
+**After validation passes, STOP and ask:**
 
 ```
 Create PR?
@@ -160,10 +186,11 @@ Create PR?
 **Workflow sequence:**
 1. Complete work on feature branch
 2. Commit changes locally
-3. ⏸️ **PAUSE** - Ask: "Create PR?"
-4. Wait for user response
-5. If approved: Push branch and create PR
-6. If not approved: Make requested changes, go back to step 2
+3. 🔍 **VALIDATE** - Run all tests and quality checks (MUST PASS)
+4. ⏸️ **PAUSE** - Ask: "Create PR?"
+5. Wait for user response
+6. If approved: Push branch and create PR
+7. If not approved: Make requested changes, go back to step 2
 
 **Checkpoint: Before Finalizing Pull Request**
 
@@ -191,11 +218,12 @@ Finalize PR?
 **Complete workflow with both checkpoints:**
 1. Complete work on feature branch
 2. Commit changes locally
-3. ⏸️ **PAUSE #1** - Ask: "Create PR?"
-4. If approved: Push branch and create PR
-5. ⏸️ **PAUSE #2** - Ask: "Finalize PR?"
-6. If approved: Execute four-step finalization (merge, update develop, verify .venv, validate)
-7. If not approved: Wait for user to review/request changes
+3. 🔍 **VALIDATE** - Run all tests and quality checks (MUST PASS before proceeding)
+4. ⏸️ **PAUSE #1** - Ask: "Create PR?"
+5. If approved: Push branch and create PR
+6. ⏸️ **PAUSE #2** - Ask: "Finalize PR?"
+7. If approved: Execute finalization (merge, update develop, verify .venv, validate)
+8. If not approved: Wait for user to review/request changes
 
 ## Project Structure
 
