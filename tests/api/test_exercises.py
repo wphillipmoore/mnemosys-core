@@ -13,8 +13,6 @@ def test_create_exercise(client: TestClient) -> None:
         json={
             "name": "Chromatic Scale",
             "domains": ["Technique"],
-            "technique_tags": ["scales", "finger-independence"],
-            "supported_overload_dimensions": ["tempo", "duration"],
             "instrument_compatibility": ["guitar", "bass"],
         },
     )
@@ -24,7 +22,6 @@ def test_create_exercise(client: TestClient) -> None:
     assert data["name"] == "Chromatic Scale"
     assert data["id"] is not None
     assert data["domains"] == ["Technique"]
-    assert data["technique_tags"] == ["scales", "finger-independence"]
 
 
 def test_list_exercises(client: TestClient) -> None:
@@ -35,8 +32,6 @@ def test_list_exercises(client: TestClient) -> None:
         json={
             "name": "Exercise 1",
             "domains": ["Technique"],
-            "technique_tags": ["picking"],
-            "supported_overload_dimensions": ["tempo"],
             "instrument_compatibility": None,
         },
     )
@@ -45,8 +40,6 @@ def test_list_exercises(client: TestClient) -> None:
         json={
             "name": "Exercise 2",
             "domains": ["Harmony"],
-            "technique_tags": ["chords"],
-            "supported_overload_dimensions": ["complexity"],
             "instrument_compatibility": None,
         },
     )
@@ -68,8 +61,6 @@ def test_list_exercises_with_pagination(client: TestClient) -> None:
             json={
                 "name": f"Exercise {i}",
                 "domains": ["Technique"],
-                "technique_tags": [],
-                "supported_overload_dimensions": [],
                 "instrument_compatibility": None,
             },
         )
@@ -91,8 +82,6 @@ def test_get_exercise(client: TestClient) -> None:
         json={
             "name": "Test Exercise",
             "domains": ["Rhythm"],
-            "technique_tags": ["timing"],
-            "supported_overload_dimensions": ["tempo"],
             "instrument_compatibility": ["drums"],
         },
     )
@@ -122,8 +111,6 @@ def test_update_exercise(client: TestClient) -> None:
         json={
             "name": "Original Name",
             "domains": ["Technique"],
-            "technique_tags": ["original"],
-            "supported_overload_dimensions": ["tempo"],
             "instrument_compatibility": None,
         },
     )
@@ -134,13 +121,11 @@ def test_update_exercise(client: TestClient) -> None:
         f"/api/v1/exercises/{exercise_id}",
         json={
             "name": "Updated Name",
-            "technique_tags": ["updated", "new"],
         },
     )
     assert response.status_code == 200
     data = response.json()
     assert data["name"] == "Updated Name"
-    assert data["technique_tags"] == ["updated", "new"]
     assert data["domains"] == ["Technique"]  # Unchanged
 
 
@@ -162,8 +147,6 @@ def test_delete_exercise(client: TestClient) -> None:
         json={
             "name": "To Delete",
             "domains": ["Technique"],
-            "technique_tags": [],
-            "supported_overload_dimensions": [],
             "instrument_compatibility": None,
         },
     )
@@ -194,8 +177,6 @@ def test_create_exercise_state(client: TestClient) -> None:
         json={
             "name": "State Test Exercise",
             "domains": ["Technique"],
-            "technique_tags": [],
-            "supported_overload_dimensions": [],
             "instrument_compatibility": None,
         },
     )
@@ -230,8 +211,6 @@ def test_list_exercise_states(client: TestClient) -> None:
             json={
                 "name": f"Exercise {i}",
                 "domains": ["Technique"],
-                "technique_tags": [],
-                "supported_overload_dimensions": [],
                 "instrument_compatibility": None,
             },
         )
@@ -263,8 +242,6 @@ def test_list_exercise_states_with_pagination(client: TestClient) -> None:
             json={
                 "name": f"Pagination Exercise {i}",
                 "domains": ["Technique"],
-                "technique_tags": [],
-                "supported_overload_dimensions": [],
                 "instrument_compatibility": None,
             },
         )
@@ -296,8 +273,6 @@ def test_get_exercise_state(client: TestClient) -> None:
         json={
             "name": "Get State Exercise",
             "domains": ["Technique"],
-            "technique_tags": [],
-            "supported_overload_dimensions": [],
             "instrument_compatibility": None,
         },
     )
@@ -339,8 +314,6 @@ def test_update_exercise_state(client: TestClient) -> None:
         json={
             "name": "Update State Exercise",
             "domains": ["Technique"],
-            "technique_tags": [],
-            "supported_overload_dimensions": [],
             "instrument_compatibility": None,
         },
     )
@@ -391,8 +364,6 @@ def test_delete_exercise_state(client: TestClient) -> None:
         json={
             "name": "Delete State Exercise",
             "domains": ["Technique"],
-            "technique_tags": [],
-            "supported_overload_dimensions": [],
             "instrument_compatibility": None,
         },
     )
