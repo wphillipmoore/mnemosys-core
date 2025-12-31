@@ -53,7 +53,7 @@ class Exercise(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
-    domains: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
+    domains: Mapped[list[str]] = mapped_column(EncodedList, nullable=False)
     # Note: technique_tags removed - replaced with relationship below
     # Note: supported_overload_dimensions removed - replaced with relationship below
     instrument_compatibility: Mapped[list[str] | None] = mapped_column(JSONEncodedList, nullable=True)
