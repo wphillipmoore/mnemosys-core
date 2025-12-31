@@ -134,8 +134,9 @@ Finalize PR?
 **What "Finalize" means** (unless user specifies otherwise):
 1. Merge PR with squash merge and delete remote branch
 2. Update local develop branch (checkout and pull)
-3. Run final validation (tests, coverage, quality checks)
-4. Ready for next iteration of changes
+3. Verify .venv is in sync with dependency specification (poetry install --sync)
+4. Run final validation (tests, coverage, quality checks)
+5. Ready for next iteration of changes
 
 **What this checkpoint gives the user:**
 - Time to review the PR on GitHub
@@ -151,7 +152,7 @@ Finalize PR?
 3. ⏸️ **PAUSE #1** - Ask: "Create PR?"
 4. If approved: Push branch and create PR
 5. ⏸️ **PAUSE #2** - Ask: "Finalize PR?"
-6. If approved: Execute three-step finalization (merge, update develop, validate)
+6. If approved: Execute four-step finalization (merge, update develop, verify .venv, validate)
 7. If not approved: Wait for user to review/request changes
 
 ## Project Structure
