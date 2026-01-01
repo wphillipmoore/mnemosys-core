@@ -8,8 +8,7 @@ for testing.
 import enum
 from typing import Any, cast
 
-from sqlalchemy import JSON, Enum as SQLEnum
-from sqlalchemy import String, TypeDecorator
+from sqlalchemy import JSON, Enum as SQLEnum, String, TypeDecorator
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.engine import Dialect
 
@@ -34,7 +33,7 @@ class JSONEncodedList(TypeDecorator[list[str]]):
     def process_result_value(self, value: Any, dialect: Dialect) -> list[str] | None:
         if value is None:
             return None
-        return cast(list[str], value)
+        return cast("list[str]", value)
 
 
 class JSONEncodedDict(TypeDecorator[dict[str, Any]]):
@@ -57,7 +56,7 @@ class JSONEncodedDict(TypeDecorator[dict[str, Any]]):
     def process_result_value(self, value: Any, dialect: Dialect) -> dict[str, Any] | None:
         if value is None:
             return None
-        return cast(dict[str, Any], value)
+        return cast("dict[str, Any]", value)
 
 
 class DatabaseEnum(TypeDecorator[enum.Enum]):
