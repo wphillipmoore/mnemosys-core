@@ -145,10 +145,7 @@ class DatabaseEnumList(TypeDecorator[list[enum.Enum]]):
     def process_result_value(self, value: Any, dialect: Dialect) -> list[enum.Enum] | None:
         if value is None:
             return None
-        if dialect.name == "postgresql":
-            raw_values = value
-        else:
-            raw_values = json.loads(value)
+        raw_values = value if dialect.name == "postgresql" else json.loads(value)
         return [self._coerce_enum(item) for item in raw_values]
 
     def _coerce_enum(self, value: enum.Enum | str) -> enum.Enum:
