@@ -33,11 +33,11 @@ def create_app(engine: Engine) -> FastAPI:
     configure_dependencies(app, engine)
 
     # Register routers
-    from .routers import exercises, health, instruments, sessions
+    from .routers import exercises, health, instruments, practices
 
     app.include_router(health.router, prefix="/health", tags=["health"])
     app.include_router(instruments.router, prefix="/api/v1/instruments", tags=["instruments"])
     app.include_router(exercises.router, prefix="/api/v1/exercises", tags=["exercises"])
-    app.include_router(sessions.router, prefix="/api/v1/sessions", tags=["sessions"])
+    app.include_router(practices.router, prefix="/api/v1/practices", tags=["practices"])
 
     return app
