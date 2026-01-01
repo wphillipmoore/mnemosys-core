@@ -31,6 +31,7 @@ def test_exercise_can_use_multiple_techniques() -> None:
     assert len(retrieved.techniques) == 3
     assert any(t.name == "alternate picking" for t in retrieved.techniques)
     session.close()
+    engine.dispose()
 
 
 def test_technique_can_be_used_by_multiple_exercises() -> None:
@@ -57,3 +58,4 @@ def test_technique_can_be_used_by_multiple_exercises() -> None:
     assert retrieved_technique is not None
     assert len(retrieved_technique.exercises) == 2
     session.close()
+    engine.dispose()

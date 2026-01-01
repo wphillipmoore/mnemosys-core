@@ -27,6 +27,7 @@ def test_overload_dimension_creation() -> None:
     assert retrieved.description is not None
     assert "beats per minute" in retrieved.description
     session.close()
+    engine.dispose()
 
 
 def test_overload_dimension_unique_name() -> None:
@@ -52,6 +53,7 @@ def test_overload_dimension_unique_name() -> None:
         session.rollback()
     finally:
         session.close()
+        engine.dispose()
 
 
 def test_overload_dimension_repr() -> None:
