@@ -1,5 +1,5 @@
 """
-Session API tests.
+Practice API tests.
 """
 
 from typing import Any
@@ -36,13 +36,13 @@ def create_test_exercise(client: TestClient) -> int:
     return int(data["id"])
 
 
-# Session endpoint tests
-def test_create_session(client: TestClient) -> None:
-    """Test POST /api/v1/sessions/."""
+# Practice endpoint tests
+def test_create_practice(client: TestClient) -> None:
+    """Test POST /api/v1/practices/."""
     instrument_id = create_test_instrument(client)
 
     response = client.post(
-        "/api/v1/sessions/",
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -59,13 +59,13 @@ def test_create_session(client: TestClient) -> None:
     assert data["total_minutes"] == 60
 
 
-def test_list_sessions(client: TestClient) -> None:
-    """Test GET /api/v1/sessions/."""
+def test_list_practices(client: TestClient) -> None:
+    """Test GET /api/v1/practices/."""
     instrument_id = create_test_instrument(client)
 
-    # Create test sessions
+    # Create test practices
     client.post(
-        "/api/v1/sessions/",
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -74,7 +74,7 @@ def test_list_sessions(client: TestClient) -> None:
         },
     )
     client.post(
-        "/api/v1/sessions/",
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-16",
@@ -83,20 +83,20 @@ def test_list_sessions(client: TestClient) -> None:
         },
     )
 
-    response = client.get("/api/v1/sessions/")
+    response = client.get("/api/v1/practices/")
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 2
 
 
-def test_list_sessions_with_pagination(client: TestClient) -> None:
-    """Test GET /api/v1/sessions/ with skip and limit."""
+def test_list_practices_with_pagination(client: TestClient) -> None:
+    """Test GET /api/v1/practices/ with skip and limit."""
     instrument_id = create_test_instrument(client)
 
-    # Create multiple sessions
+    # Create multiple practices
     for i in range(5):
         client.post(
-            "/api/v1/sessions/",
+            "/api/v1/practices/",
             json={
                 "instrument_id": instrument_id,
                 "session_date": f"2025-01-{15+i:02d}",
@@ -106,18 +106,18 @@ def test_list_sessions_with_pagination(client: TestClient) -> None:
         )
 
     # Test skip and limit
-    response = client.get("/api/v1/sessions/?skip=1&limit=2")
+    response = client.get("/api/v1/practices/?skip=1&limit=2")
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 2
 
 
-def test_get_session(client: TestClient) -> None:
-    """Test GET /api/v1/sessions/{id}."""
+def test_get_practice(client: TestClient) -> None:
+    """Test GET /api/v1/practices/{id}."""
     instrument_id = create_test_instrument(client)
 
     create_response = client.post(
-        "/api/v1/sessions/",
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -125,28 +125,28 @@ def test_get_session(client: TestClient) -> None:
             "total_minutes": 90,
         },
     )
-    session_id = create_response.json()["id"]
+    practice_id = create_response.json()["id"]
 
-    response = client.get(f"/api/v1/sessions/{session_id}")
+    response = client.get(f"/api/v1/practices/{practice_id}")
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == session_id
+    assert data["id"] == practice_id
     assert data["session_type"] == "heavy"
 
 
-def test_get_session_not_found(client: TestClient) -> None:
-    """Test GET /api/v1/sessions/{id} with invalid ID."""
-    response = client.get("/api/v1/sessions/999")
+def test_get_practice_not_found(client: TestClient) -> None:
+    """Test GET /api/v1/practices/{id} with invalid ID."""
+    response = client.get("/api/v1/practices/999")
     assert response.status_code == 404
-    assert response.json()["detail"] == "Session not found"
+    assert response.json()["detail"] == "Practice not found"
 
 
-def test_update_session(client: TestClient) -> None:
-    """Test PUT /api/v1/sessions/{id}."""
+def test_update_practice(client: TestClient) -> None:
+    """Test PUT /api/v1/practices/{id}."""
     instrument_id = create_test_instrument(client)
 
     create_response = client.post(
-        "/api/v1/sessions/",
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -154,10 +154,10 @@ def test_update_session(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = create_response.json()["id"]
+    practice_id = create_response.json()["id"]
 
     response = client.put(
-        f"/api/v1/sessions/{session_id}",
+        f"/api/v1/practices/{practice_id}",
         json={
             "total_minutes": 75,
             "session_type": "heavy",
@@ -169,22 +169,22 @@ def test_update_session(client: TestClient) -> None:
     assert data["session_type"] == "heavy"
 
 
-def test_update_session_not_found(client: TestClient) -> None:
-    """Test PUT /api/v1/sessions/{id} with invalid ID."""
+def test_update_practice_not_found(client: TestClient) -> None:
+    """Test PUT /api/v1/practices/{id} with invalid ID."""
     response = client.put(
-        "/api/v1/sessions/999",
+        "/api/v1/practices/999",
         json={"total_minutes": 75},
     )
     assert response.status_code == 404
-    assert response.json()["detail"] == "Session not found"
+    assert response.json()["detail"] == "Practice not found"
 
 
-def test_delete_session(client: TestClient) -> None:
-    """Test DELETE /api/v1/sessions/{id}."""
+def test_delete_practice(client: TestClient) -> None:
+    """Test DELETE /api/v1/practices/{id}."""
     instrument_id = create_test_instrument(client)
 
     create_response = client.post(
-        "/api/v1/sessions/",
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -192,31 +192,31 @@ def test_delete_session(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = create_response.json()["id"]
+    practice_id = create_response.json()["id"]
 
-    response = client.delete(f"/api/v1/sessions/{session_id}")
+    response = client.delete(f"/api/v1/practices/{practice_id}")
     assert response.status_code == 204
 
     # Verify deleted
-    get_response = client.get(f"/api/v1/sessions/{session_id}")
+    get_response = client.get(f"/api/v1/practices/{practice_id}")
     assert get_response.status_code == 404
 
 
-def test_delete_session_not_found(client: TestClient) -> None:
-    """Test DELETE /api/v1/sessions/{id} with invalid ID."""
-    response = client.delete("/api/v1/sessions/999")
+def test_delete_practice_not_found(client: TestClient) -> None:
+    """Test DELETE /api/v1/practices/{id} with invalid ID."""
+    response = client.delete("/api/v1/practices/999")
     assert response.status_code == 404
-    assert response.json()["detail"] == "Session not found"
+    assert response.json()["detail"] == "Practice not found"
 
 
-# Session block endpoint tests
-def test_create_session_block(client: TestClient) -> None:
-    """Test POST /api/v1/sessions/blocks/."""
+# Practice block endpoint tests
+def test_create_practice_block(client: TestClient) -> None:
+    """Test POST /api/v1/practices/blocks/."""
     instrument_id = create_test_instrument(client)
     exercise_id = create_test_exercise(client)
 
-    session_response = client.post(
-        "/api/v1/sessions/",
+    practice_response = client.post(
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -224,12 +224,12 @@ def test_create_session_block(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = session_response.json()["id"]
+    practice_id = practice_response.json()["id"]
 
     response = client.post(
-        "/api/v1/sessions/blocks/",
+        "/api/v1/practices/blocks/",
         json={
-            "practice_id": session_id,
+            "practice_id": practice_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -239,19 +239,19 @@ def test_create_session_block(client: TestClient) -> None:
 
     assert response.status_code == 201
     data = response.json()
-    assert data["practice_id"] == session_id
+    assert data["practice_id"] == practice_id
     assert data["exercise_id"] == exercise_id
     assert data["block_order"] == 1
     assert data["block_type"] == "Warmup"
 
 
-def test_list_session_blocks(client: TestClient) -> None:
-    """Test GET /api/v1/sessions/blocks/."""
+def test_list_practice_blocks(client: TestClient) -> None:
+    """Test GET /api/v1/practices/blocks/."""
     instrument_id = create_test_instrument(client)
     exercise_id = create_test_exercise(client)
 
-    session_response = client.post(
-        "/api/v1/sessions/",
+    practice_response = client.post(
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -259,14 +259,14 @@ def test_list_session_blocks(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = session_response.json()["id"]
+    practice_id = practice_response.json()["id"]
 
     # Create blocks
     for i in range(2):
         client.post(
-            "/api/v1/sessions/blocks/",
+            "/api/v1/practices/blocks/",
             json={
-                "practice_id": session_id,
+                "practice_id": practice_id,
                 "exercise_id": exercise_id,
                 "block_order": i + 1,
                 "block_type": "Technique",
@@ -274,19 +274,19 @@ def test_list_session_blocks(client: TestClient) -> None:
             },
         )
 
-    response = client.get("/api/v1/sessions/blocks/")
+    response = client.get("/api/v1/practices/blocks/")
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 2
 
 
-def test_list_session_blocks_with_pagination(client: TestClient) -> None:
-    """Test GET /api/v1/sessions/blocks/ with skip and limit."""
+def test_list_practice_blocks_with_pagination(client: TestClient) -> None:
+    """Test GET /api/v1/practices/blocks/ with skip and limit."""
     instrument_id = create_test_instrument(client)
     exercise_id = create_test_exercise(client)
 
-    session_response = client.post(
-        "/api/v1/sessions/",
+    practice_response = client.post(
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -294,14 +294,14 @@ def test_list_session_blocks_with_pagination(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = session_response.json()["id"]
+    practice_id = practice_response.json()["id"]
 
     # Create multiple blocks
     for i in range(5):
         client.post(
-            "/api/v1/sessions/blocks/",
+            "/api/v1/practices/blocks/",
             json={
-                "practice_id": session_id,
+                "practice_id": practice_id,
                 "exercise_id": exercise_id,
                 "block_order": i + 1,
                 "block_type": "Technique",
@@ -309,19 +309,19 @@ def test_list_session_blocks_with_pagination(client: TestClient) -> None:
             },
         )
 
-    response = client.get("/api/v1/sessions/blocks/?skip=2&limit=2")
+    response = client.get("/api/v1/practices/blocks/?skip=2&limit=2")
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 2
 
 
-def test_get_session_block(client: TestClient) -> None:
-    """Test GET /api/v1/sessions/blocks/{id}."""
+def test_get_practice_block(client: TestClient) -> None:
+    """Test GET /api/v1/practices/blocks/{id}."""
     instrument_id = create_test_instrument(client)
     exercise_id = create_test_exercise(client)
 
-    session_response = client.post(
-        "/api/v1/sessions/",
+    practice_response = client.post(
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -329,12 +329,12 @@ def test_get_session_block(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = session_response.json()["id"]
+    practice_id = practice_response.json()["id"]
 
     block_response = client.post(
-        "/api/v1/sessions/blocks/",
+        "/api/v1/practices/blocks/",
         json={
-            "practice_id": session_id,
+            "practice_id": practice_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Harmony",
@@ -343,27 +343,27 @@ def test_get_session_block(client: TestClient) -> None:
     )
     block_id = block_response.json()["id"]
 
-    response = client.get(f"/api/v1/sessions/blocks/{block_id}")
+    response = client.get(f"/api/v1/practices/blocks/{block_id}")
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == block_id
     assert data["block_type"] == "Harmony"
 
 
-def test_get_session_block_not_found(client: TestClient) -> None:
-    """Test GET /api/v1/sessions/blocks/{id} with invalid ID."""
-    response = client.get("/api/v1/sessions/blocks/999")
+def test_get_practice_block_not_found(client: TestClient) -> None:
+    """Test GET /api/v1/practices/blocks/{id} with invalid ID."""
+    response = client.get("/api/v1/practices/blocks/999")
     assert response.status_code == 404
-    assert response.json()["detail"] == "Session block not found"
+    assert response.json()["detail"] == "Practice block not found"
 
 
-def test_update_session_block(client: TestClient) -> None:
-    """Test PUT /api/v1/sessions/blocks/{id}."""
+def test_update_practice_block(client: TestClient) -> None:
+    """Test PUT /api/v1/practices/blocks/{id}."""
     instrument_id = create_test_instrument(client)
     exercise_id = create_test_exercise(client)
 
-    session_response = client.post(
-        "/api/v1/sessions/",
+    practice_response = client.post(
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -371,12 +371,12 @@ def test_update_session_block(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = session_response.json()["id"]
+    practice_id = practice_response.json()["id"]
 
     block_response = client.post(
-        "/api/v1/sessions/blocks/",
+        "/api/v1/practices/blocks/",
         json={
-            "practice_id": session_id,
+            "practice_id": practice_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -386,7 +386,7 @@ def test_update_session_block(client: TestClient) -> None:
     block_id = block_response.json()["id"]
 
     response = client.put(
-        f"/api/v1/sessions/blocks/{block_id}",
+        f"/api/v1/practices/blocks/{block_id}",
         json={
             "duration_minutes": 20,
             "block_type": "Technique",
@@ -398,23 +398,23 @@ def test_update_session_block(client: TestClient) -> None:
     assert data["block_type"] == "Technique"
 
 
-def test_update_session_block_not_found(client: TestClient) -> None:
-    """Test PUT /api/v1/sessions/blocks/{id} with invalid ID."""
+def test_update_practice_block_not_found(client: TestClient) -> None:
+    """Test PUT /api/v1/practices/blocks/{id} with invalid ID."""
     response = client.put(
-        "/api/v1/sessions/blocks/999",
+        "/api/v1/practices/blocks/999",
         json={"duration_minutes": 20},
     )
     assert response.status_code == 404
-    assert response.json()["detail"] == "Session block not found"
+    assert response.json()["detail"] == "Practice block not found"
 
 
-def test_delete_session_block(client: TestClient) -> None:
-    """Test DELETE /api/v1/sessions/blocks/{id}."""
+def test_delete_practice_block(client: TestClient) -> None:
+    """Test DELETE /api/v1/practices/blocks/{id}."""
     instrument_id = create_test_instrument(client)
     exercise_id = create_test_exercise(client)
 
-    session_response = client.post(
-        "/api/v1/sessions/",
+    practice_response = client.post(
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -422,12 +422,12 @@ def test_delete_session_block(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = session_response.json()["id"]
+    practice_id = practice_response.json()["id"]
 
     block_response = client.post(
-        "/api/v1/sessions/blocks/",
+        "/api/v1/practices/blocks/",
         json={
-            "practice_id": session_id,
+            "practice_id": practice_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -436,29 +436,29 @@ def test_delete_session_block(client: TestClient) -> None:
     )
     block_id = block_response.json()["id"]
 
-    response = client.delete(f"/api/v1/sessions/blocks/{block_id}")
+    response = client.delete(f"/api/v1/practices/blocks/{block_id}")
     assert response.status_code == 204
 
     # Verify deleted
-    get_response = client.get(f"/api/v1/sessions/blocks/{block_id}")
+    get_response = client.get(f"/api/v1/practices/blocks/{block_id}")
     assert get_response.status_code == 404
 
 
-def test_delete_session_block_not_found(client: TestClient) -> None:
-    """Test DELETE /api/v1/sessions/blocks/{id} with invalid ID."""
-    response = client.delete("/api/v1/sessions/blocks/999")
+def test_delete_practice_block_not_found(client: TestClient) -> None:
+    """Test DELETE /api/v1/practices/blocks/{id} with invalid ID."""
+    response = client.delete("/api/v1/practices/blocks/999")
     assert response.status_code == 404
-    assert response.json()["detail"] == "Session block not found"
+    assert response.json()["detail"] == "Practice block not found"
 
 
-# Block log endpoint tests
-def test_create_block_log(client: TestClient) -> None:
-    """Test POST /api/v1/sessions/logs/."""
+# Practice block log endpoint tests
+def test_create_practice_block_log(client: TestClient) -> None:
+    """Test POST /api/v1/practices/logs/."""
     instrument_id = create_test_instrument(client)
     exercise_id = create_test_exercise(client)
 
-    session_response = client.post(
-        "/api/v1/sessions/",
+    practice_response = client.post(
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -466,12 +466,12 @@ def test_create_block_log(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = session_response.json()["id"]
+    practice_id = practice_response.json()["id"]
 
     block_response = client.post(
-        "/api/v1/sessions/blocks/",
+        "/api/v1/practices/blocks/",
         json={
-            "practice_id": session_id,
+            "practice_id": practice_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -481,7 +481,7 @@ def test_create_block_log(client: TestClient) -> None:
     block_id = block_response.json()["id"]
 
     response = client.post(
-        "/api/v1/sessions/logs/",
+        "/api/v1/practices/logs/",
         json={
             "practice_block_id": block_id,
             "completed": "yes",
@@ -498,13 +498,13 @@ def test_create_block_log(client: TestClient) -> None:
     assert data["notes"] == "Felt great today"
 
 
-def test_list_block_logs(client: TestClient) -> None:
-    """Test GET /api/v1/sessions/logs/."""
+def test_list_practice_block_logs(client: TestClient) -> None:
+    """Test GET /api/v1/practices/logs/."""
     instrument_id = create_test_instrument(client)
     exercise_id = create_test_exercise(client)
 
-    session_response = client.post(
-        "/api/v1/sessions/",
+    practice_response = client.post(
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -512,12 +512,12 @@ def test_list_block_logs(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = session_response.json()["id"]
+    practice_id = practice_response.json()["id"]
 
     block_response = client.post(
-        "/api/v1/sessions/blocks/",
+        "/api/v1/practices/blocks/",
         json={
-            "practice_id": session_id,
+            "practice_id": practice_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -529,7 +529,7 @@ def test_list_block_logs(client: TestClient) -> None:
     # Create logs
     for _ in range(2):
         client.post(
-            "/api/v1/sessions/logs/",
+            "/api/v1/practices/logs/",
             json={
                 "practice_block_id": block_id,
                 "completed": "yes",
@@ -538,19 +538,19 @@ def test_list_block_logs(client: TestClient) -> None:
             },
         )
 
-    response = client.get("/api/v1/sessions/logs/")
+    response = client.get("/api/v1/practices/logs/")
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 2
 
 
-def test_list_block_logs_with_pagination(client: TestClient) -> None:
-    """Test GET /api/v1/sessions/logs/ with skip and limit."""
+def test_list_practice_block_logs_with_pagination(client: TestClient) -> None:
+    """Test GET /api/v1/practices/logs/ with skip and limit."""
     instrument_id = create_test_instrument(client)
     exercise_id = create_test_exercise(client)
 
-    session_response = client.post(
-        "/api/v1/sessions/",
+    practice_response = client.post(
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -558,12 +558,12 @@ def test_list_block_logs_with_pagination(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = session_response.json()["id"]
+    practice_id = practice_response.json()["id"]
 
     block_response = client.post(
-        "/api/v1/sessions/blocks/",
+        "/api/v1/practices/blocks/",
         json={
-            "practice_id": session_id,
+            "practice_id": practice_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -575,7 +575,7 @@ def test_list_block_logs_with_pagination(client: TestClient) -> None:
     # Create multiple logs
     for _ in range(5):
         client.post(
-            "/api/v1/sessions/logs/",
+            "/api/v1/practices/logs/",
             json={
                 "practice_block_id": block_id,
                 "completed": "yes",
@@ -584,19 +584,19 @@ def test_list_block_logs_with_pagination(client: TestClient) -> None:
             },
         )
 
-    response = client.get("/api/v1/sessions/logs/?skip=1&limit=2")
+    response = client.get("/api/v1/practices/logs/?skip=1&limit=2")
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 2
 
 
-def test_get_block_log(client: TestClient) -> None:
-    """Test GET /api/v1/sessions/logs/{id}."""
+def test_get_practice_block_log(client: TestClient) -> None:
+    """Test GET /api/v1/practices/logs/{id}."""
     instrument_id = create_test_instrument(client)
     exercise_id = create_test_exercise(client)
 
-    session_response = client.post(
-        "/api/v1/sessions/",
+    practice_response = client.post(
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -604,12 +604,12 @@ def test_get_block_log(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = session_response.json()["id"]
+    practice_id = practice_response.json()["id"]
 
     block_response = client.post(
-        "/api/v1/sessions/blocks/",
+        "/api/v1/practices/blocks/",
         json={
-            "practice_id": session_id,
+            "practice_id": practice_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -619,7 +619,7 @@ def test_get_block_log(client: TestClient) -> None:
     block_id = block_response.json()["id"]
 
     log_response = client.post(
-        "/api/v1/sessions/logs/",
+        "/api/v1/practices/logs/",
         json={
             "practice_block_id": block_id,
             "completed": "partial",
@@ -629,7 +629,7 @@ def test_get_block_log(client: TestClient) -> None:
     )
     log_id = log_response.json()["id"]
 
-    response = client.get(f"/api/v1/sessions/logs/{log_id}")
+    response = client.get(f"/api/v1/practices/logs/{log_id}")
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == log_id
@@ -637,20 +637,20 @@ def test_get_block_log(client: TestClient) -> None:
     assert data["quality"] == "acceptable"
 
 
-def test_get_block_log_not_found(client: TestClient) -> None:
-    """Test GET /api/v1/sessions/logs/{id} with invalid ID."""
-    response = client.get("/api/v1/sessions/logs/999")
+def test_get_practice_block_log_not_found(client: TestClient) -> None:
+    """Test GET /api/v1/practices/logs/{id} with invalid ID."""
+    response = client.get("/api/v1/practices/logs/999")
     assert response.status_code == 404
-    assert response.json()["detail"] == "Block log not found"
+    assert response.json()["detail"] == "Practice block log not found"
 
 
-def test_update_block_log(client: TestClient) -> None:
-    """Test PUT /api/v1/sessions/logs/{id}."""
+def test_update_practice_block_log(client: TestClient) -> None:
+    """Test PUT /api/v1/practices/logs/{id}."""
     instrument_id = create_test_instrument(client)
     exercise_id = create_test_exercise(client)
 
-    session_response = client.post(
-        "/api/v1/sessions/",
+    practice_response = client.post(
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -658,12 +658,12 @@ def test_update_block_log(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = session_response.json()["id"]
+    practice_id = practice_response.json()["id"]
 
     block_response = client.post(
-        "/api/v1/sessions/blocks/",
+        "/api/v1/practices/blocks/",
         json={
-            "practice_id": session_id,
+            "practice_id": practice_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -673,7 +673,7 @@ def test_update_block_log(client: TestClient) -> None:
     block_id = block_response.json()["id"]
 
     log_response = client.post(
-        "/api/v1/sessions/logs/",
+        "/api/v1/practices/logs/",
         json={
             "practice_block_id": block_id,
             "completed": "no",
@@ -684,7 +684,7 @@ def test_update_block_log(client: TestClient) -> None:
     log_id = log_response.json()["id"]
 
     response = client.put(
-        f"/api/v1/sessions/logs/{log_id}",
+        f"/api/v1/practices/logs/{log_id}",
         json={
             "completed": "yes",
             "quality": "clean",
@@ -698,23 +698,23 @@ def test_update_block_log(client: TestClient) -> None:
     assert data["notes"] == "Actually did well"
 
 
-def test_update_block_log_not_found(client: TestClient) -> None:
-    """Test PUT /api/v1/sessions/logs/{id} with invalid ID."""
+def test_update_practice_block_log_not_found(client: TestClient) -> None:
+    """Test PUT /api/v1/practices/logs/{id} with invalid ID."""
     response = client.put(
-        "/api/v1/sessions/logs/999",
+        "/api/v1/practices/logs/999",
         json={"completed": "yes"},
     )
     assert response.status_code == 404
-    assert response.json()["detail"] == "Block log not found"
+    assert response.json()["detail"] == "Practice block log not found"
 
 
-def test_delete_block_log(client: TestClient) -> None:
-    """Test DELETE /api/v1/sessions/logs/{id}."""
+def test_delete_practice_block_log(client: TestClient) -> None:
+    """Test DELETE /api/v1/practices/logs/{id}."""
     instrument_id = create_test_instrument(client)
     exercise_id = create_test_exercise(client)
 
-    session_response = client.post(
-        "/api/v1/sessions/",
+    practice_response = client.post(
+        "/api/v1/practices/",
         json={
             "instrument_id": instrument_id,
             "session_date": "2025-01-15",
@@ -722,12 +722,12 @@ def test_delete_block_log(client: TestClient) -> None:
             "total_minutes": 60,
         },
     )
-    session_id = session_response.json()["id"]
+    practice_id = practice_response.json()["id"]
 
     block_response = client.post(
-        "/api/v1/sessions/blocks/",
+        "/api/v1/practices/blocks/",
         json={
-            "practice_id": session_id,
+            "practice_id": practice_id,
             "exercise_id": exercise_id,
             "block_order": 1,
             "block_type": "Warmup",
@@ -737,7 +737,7 @@ def test_delete_block_log(client: TestClient) -> None:
     block_id = block_response.json()["id"]
 
     log_response = client.post(
-        "/api/v1/sessions/logs/",
+        "/api/v1/practices/logs/",
         json={
             "practice_block_id": block_id,
             "completed": "yes",
@@ -747,16 +747,16 @@ def test_delete_block_log(client: TestClient) -> None:
     )
     log_id = log_response.json()["id"]
 
-    response = client.delete(f"/api/v1/sessions/logs/{log_id}")
+    response = client.delete(f"/api/v1/practices/logs/{log_id}")
     assert response.status_code == 204
 
     # Verify deleted
-    get_response = client.get(f"/api/v1/sessions/logs/{log_id}")
+    get_response = client.get(f"/api/v1/practices/logs/{log_id}")
     assert get_response.status_code == 404
 
 
-def test_delete_block_log_not_found(client: TestClient) -> None:
-    """Test DELETE /api/v1/sessions/logs/{id} with invalid ID."""
-    response = client.delete("/api/v1/sessions/logs/999")
+def test_delete_practice_block_log_not_found(client: TestClient) -> None:
+    """Test DELETE /api/v1/practices/logs/{id} with invalid ID."""
+    response = client.delete("/api/v1/practices/logs/999")
     assert response.status_code == 404
-    assert response.json()["detail"] == "Block log not found"
+    assert response.json()["detail"] == "Practice block log not found"
