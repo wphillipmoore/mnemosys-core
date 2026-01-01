@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from mnemosys_core.db.base import Base
-from mnemosys_core.db.models import SessionType
+from mnemosys_core.db.models import DomainType, SessionType
 from mnemosys_core.db.models.exercise import Exercise
 from mnemosys_core.db.models.exercise_instance import ExerciseInstance
 from mnemosys_core.db.models.instrument import StringedInstrument
@@ -24,7 +24,7 @@ def test_exercise_instance_creation() -> None:
     instrument = StringedInstrument(
         name="Test Guitar", string_count=6, scale_length=25.5
     )
-    exercise = Exercise(name="Chromatic Scale", domains=["technique"])
+    exercise = Exercise(name="Chromatic Scale", domains=[DomainType.TECHNIQUE])
     practice_session = Practice(
         instrument=instrument,
         session_date=date(2025, 12, 30),
@@ -64,7 +64,7 @@ def test_exercise_instance_parameters_optional() -> None:
     instrument = StringedInstrument(
         name="Test Guitar", string_count=6, scale_length=25.5
     )
-    exercise = Exercise(name="Warmup", domains=["warmup"])
+    exercise = Exercise(name="Warmup", domains=[DomainType.TECHNIQUE])
     practice_session = Practice(
         instrument=instrument,
         session_date=date(2025, 12, 30),
@@ -95,9 +95,9 @@ def test_session_has_multiple_exercise_instances() -> None:
     instrument = StringedInstrument(
         name="Test Guitar", string_count=6, scale_length=25.5
     )
-    exercise1 = Exercise(name="Warmup", domains=["warmup"])
-    exercise2 = Exercise(name="Scales", domains=["technique"])
-    exercise3 = Exercise(name="Arpeggios", domains=["technique"])
+    exercise1 = Exercise(name="Warmup", domains=[DomainType.TECHNIQUE])
+    exercise2 = Exercise(name="Scales", domains=[DomainType.TECHNIQUE])
+    exercise3 = Exercise(name="Arpeggios", domains=[DomainType.TECHNIQUE])
 
     practice_session = Practice(
         instrument=instrument,
@@ -145,7 +145,7 @@ def test_exercise_instance_repr() -> None:
     instrument = StringedInstrument(
         name="Test Guitar", string_count=6, scale_length=25.5
     )
-    exercise = Exercise(name="Test Exercise", domains=["test"])
+    exercise = Exercise(name="Test Exercise", domains=[DomainType.TECHNIQUE])
     practice_session = Practice(
         instrument=instrument,
         session_date=date(2025, 12, 30),

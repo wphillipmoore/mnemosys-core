@@ -6,14 +6,14 @@ from datetime import date
 
 from pydantic import BaseModel, Field
 
-from ...db.models import FatigueProfile
+from ...db.models import DomainType, FatigueProfile
 
 
 class ExerciseBase(BaseModel):
     """Base exercise fields."""
 
     name: str = Field(..., min_length=1, max_length=200)
-    domains: list[str] = Field(..., min_length=1)
+    domains: list[DomainType] = Field(..., min_length=1)
     instrument_compatibility: list[str] | None = None
     # Note: technique_tags and supported_overload_dimensions are relationships, not direct fields
 
@@ -28,7 +28,7 @@ class ExerciseUpdate(BaseModel):
     """Schema for updating exercises."""
 
     name: str | None = Field(None, min_length=1, max_length=200)
-    domains: list[str] | None = Field(None, min_length=1)
+    domains: list[DomainType] | None = Field(None, min_length=1)
     instrument_compatibility: list[str] | None = None
 
 

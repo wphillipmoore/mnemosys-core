@@ -109,3 +109,49 @@ class DatabaseEnum(TypeDecorator[enum.Enum]):
         if value is None:
             return None
         return self.enum_class(value)
+
+
+class DatabaseEnumList(TypeDecorator[list[enum.Enum]]):
+    """
+    Enum list type that uses native PostgreSQL ENUM arrays in production
+    and JSON strings in SQLite for testing.
+    """
+
+    impl = String
+    cache_ok = True
+
+    def __init__(self, enum_class: type[enum.Enum], **kwargs: Any) -> None:
+        self.enum_class = enum_class
+        super().__init__(**kwargs)
+
+    def load_dialect_impl(self, dialect: Dialect) -> Any:
+        if dialect.name == "postgresql":
+            return dialect.type_descriptor(
+                postgresql.ARRAY(SQLEnum(self.enum_class, name=self.enum_class.__name__))
+            )
+        else:
+            return dialect.type_descriptor(String())
+
+    def process_bind_param(
+        self, value: list[enum.Enum] | list[str] | None, dialect: Dialect
+    ) -> list[str] | str | None:
+        if value is None:
+            return None
+        enum_values = [self._coerce_enum(item).value for item in value]
+        if dialect.name == "postgresql":
+            return enum_values
+        return json.dumps(enum_values)
+
+    def process_result_value(self, value: Any, dialect: Dialect) -> list[enum.Enum] | None:
+        if value is None:
+            return None
+        if dialect.name == "postgresql":
+            raw_values = value
+        else:
+            raw_values = json.loads(value)
+        return [self._coerce_enum(item) for item in raw_values]
+
+    def _coerce_enum(self, value: enum.Enum | str) -> enum.Enum:
+        if isinstance(value, self.enum_class):
+            return value
+        return self.enum_class(value)

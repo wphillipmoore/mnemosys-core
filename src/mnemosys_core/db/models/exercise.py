@@ -9,8 +9,8 @@ from sqlalchemy import Column, Date, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
-from ..types import DatabaseEnum, JSONEncodedList
-from . import FatigueProfile
+from ..types import DatabaseEnum, DatabaseEnumList, JSONEncodedList
+from . import DomainType, FatigueProfile
 
 if TYPE_CHECKING:
     from .exercise_instance import ExerciseInstance
@@ -53,7 +53,7 @@ class Exercise(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
-    domains: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
+    domains: Mapped[list[DomainType]] = mapped_column(DatabaseEnumList(DomainType), nullable=False)
     # Note: technique_tags removed - replaced with relationship below
     # Note: supported_overload_dimensions removed - replaced with relationship below
     instrument_compatibility: Mapped[list[str] | None] = mapped_column(JSONEncodedList, nullable=True)
