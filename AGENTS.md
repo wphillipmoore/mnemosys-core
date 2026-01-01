@@ -153,21 +153,19 @@ After completing work and committing to your feature branch, you MUST validate t
 
 **REQUIRED PRE-PUSH VALIDATION:**
 
-Before pushing the branch or creating a PR, you MUST run and pass the full test suite:
+Before pushing the branch or creating a PR, you MUST run and pass the full local validation:
 
 ```bash
-# Run full test suite with coverage (includes code quality checks)
-poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
+# Run local validation (mirrors CI hard gates)
+python scripts/dev/validate_local.py
 ```
 
 **All checks must pass with:**
 - ✅ 100% test success (no failures, no errors)
 - ✅ 100% line and branch coverage (includes all source files)
-
-**Note:** The test suite includes `test_code_compliance.py` which validates:
-- ruff check (zero violations)
-- mypy src/ (zero errors)
-- poetry sync verification
+- ✅ ruff check (zero violations)
+- ✅ mypy src/ (zero errors)
+- ✅ poetry sync --dry-run has zero changes
 
 **If any test fails:**
 1. Fix the issue
