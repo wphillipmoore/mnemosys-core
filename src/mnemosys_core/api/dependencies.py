@@ -4,15 +4,11 @@ Dependency injection configuration for FastAPI.
 
 from collections.abc import Generator
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session as DBSession
-from sqlalchemy.orm import sessionmaker
 
 from ..db.session import create_session_factory, get_session_dependency
-
-# Global storage for session factory (set by create_app)
-_session_factory: sessionmaker[DBSession] | None = None
 
 
 def configure_dependencies(app: FastAPI, engine: Engine) -> None:
@@ -23,11 +19,10 @@ def configure_dependencies(app: FastAPI, engine: Engine) -> None:
         app: FastAPI application
         engine: SQLAlchemy engine
     """
-    global _session_factory
-    _session_factory = create_session_factory(engine)
+    app.state.session_factory = create_session_factory(engine)
 
 
-def get_db() -> Generator[DBSession]:
+def get_db(request: Request) -> Generator[DBSession]:
     """
     FastAPI dependency for database sessions.
 
@@ -39,8 +34,9 @@ def get_db() -> Generator[DBSession]:
         def list_instruments(db_session: DBSession = Depends(get_db)):
             return db_session.query(Instrument).all()
     """
-    if _session_factory is None:
+    session_factory = getattr(request.app.state, "session_factory", None)
+    if session_factory is None:
         raise RuntimeError("Dependencies not configured. Call configure_dependencies first.")
 
-    get_session = get_session_dependency(_session_factory)
+    get_session = get_session_dependency(session_factory)
     yield from get_session()
