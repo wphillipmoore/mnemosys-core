@@ -52,6 +52,7 @@ def test_exercise_instance_creation() -> None:
     assert retrieved.exercise.name == "Chromatic Scale"
     assert retrieved.practice.total_minutes == 60
     session_db.close()
+    engine.dispose()
 
 
 def test_exercise_instance_parameters_optional() -> None:
@@ -83,6 +84,7 @@ def test_exercise_instance_parameters_optional() -> None:
     assert retrieved is not None
     assert retrieved.parameters == {}
     session_db.close()
+    engine.dispose()
 
 
 def test_session_has_multiple_exercise_instances() -> None:
@@ -133,6 +135,7 @@ def test_session_has_multiple_exercise_instances() -> None:
     assert retrieved_session.exercise_instances[1].sequence_order == 2
     assert retrieved_session.exercise_instances[2].sequence_order == 3
     session_db.close()
+    engine.dispose()
 
 
 def test_exercise_instance_repr() -> None:
@@ -162,3 +165,4 @@ def test_exercise_instance_repr() -> None:
     assert "ExerciseInstance" in repr(instance)
     assert "5" in repr(instance)
     session_db.close()
+    engine.dispose()
