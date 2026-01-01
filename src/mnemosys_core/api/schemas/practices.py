@@ -1,5 +1,5 @@
 """
-Pydantic schemas for session API.
+Pydantic schemas for practice API.
 """
 
 from datetime import date
