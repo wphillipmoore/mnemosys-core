@@ -6,11 +6,10 @@ for testing.
 """
 
 import enum
-import json
-from typing import Any
+from typing import Any, cast
 
+from sqlalchemy import JSON, String, TypeDecorator
 from sqlalchemy import Enum as SQLEnum
-from sqlalchemy import String, TypeDecorator
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.engine import Dialect
 
@@ -18,65 +17,47 @@ from sqlalchemy.engine import Dialect
 class JSONEncodedList(TypeDecorator[list[str]]):
     """
     Array type that stores as PostgreSQL ARRAY in production
-    and JSON string in SQLite for testing.
+    and JSON in SQLite for testing.
     """
 
-    impl = String
+    impl = JSON
     cache_ok = True
 
     def load_dialect_impl(self, dialect: Dialect) -> Any:
         if dialect.name == "postgresql":
             return dialect.type_descriptor(postgresql.ARRAY(String))
-        else:
-            return dialect.type_descriptor(String())
+        return dialect.type_descriptor(JSON())
 
-    def process_bind_param(self, value: list[str] | None, dialect: Dialect) -> list[str] | str | None:
-        if value is None:
-            return None
-        if dialect.name == "postgresql":
-            return value
-        else:
-            return json.dumps(value)
+    def process_bind_param(self, value: list[str] | None, dialect: Dialect) -> list[str] | None:
+        return value
 
     def process_result_value(self, value: Any, dialect: Dialect) -> list[str] | None:
         if value is None:
             return None
-        if dialect.name == "postgresql":
-            return value  # type: ignore[no-any-return]
-        else:
-            return json.loads(value)  # type: ignore[no-any-return]
+        return cast("list[str]", value)
 
 
 class JSONEncodedDict(TypeDecorator[dict[str, Any]]):
     """
     Dictionary type that stores as PostgreSQL JSONB in production
-    and JSON string in SQLite for testing.
+    and JSON in SQLite for testing.
     """
 
-    impl = String
+    impl = JSON
     cache_ok = True
 
     def load_dialect_impl(self, dialect: Dialect) -> Any:
         if dialect.name == "postgresql":
             return dialect.type_descriptor(postgresql.JSONB())
-        else:
-            return dialect.type_descriptor(String())
+        return dialect.type_descriptor(JSON())
 
-    def process_bind_param(self, value: dict[str, Any] | None, dialect: Dialect) -> dict[str, Any] | str | None:
-        if value is None:
-            return None
-        if dialect.name == "postgresql":
-            return value
-        else:
-            return json.dumps(value)
+    def process_bind_param(self, value: dict[str, Any] | None, dialect: Dialect) -> dict[str, Any] | None:
+        return value
 
     def process_result_value(self, value: Any, dialect: Dialect) -> dict[str, Any] | None:
         if value is None:
             return None
-        if dialect.name == "postgresql":
-            return value  # type: ignore[no-any-return]
-        else:
-            return json.loads(value)  # type: ignore[no-any-return]
+        return cast("dict[str, Any]", value)
 
 
 class DatabaseEnum(TypeDecorator[enum.Enum]):
@@ -114,10 +95,10 @@ class DatabaseEnum(TypeDecorator[enum.Enum]):
 class DatabaseEnumList(TypeDecorator[list[enum.Enum]]):
     """
     Enum list type that uses native PostgreSQL ENUM arrays in production
-    and JSON strings in SQLite for testing.
+    and JSON in SQLite for testing.
     """
 
-    impl = String
+    impl = JSON
     cache_ok = True
 
     def __init__(self, enum_class: type[enum.Enum], **kwargs: Any) -> None:
@@ -129,24 +110,20 @@ class DatabaseEnumList(TypeDecorator[list[enum.Enum]]):
             return dialect.type_descriptor(
                 postgresql.ARRAY(SQLEnum(self.enum_class, name=self.enum_class.__name__))
             )
-        else:
-            return dialect.type_descriptor(String())
+        return dialect.type_descriptor(JSON())
 
     def process_bind_param(
         self, value: list[enum.Enum] | list[str] | None, dialect: Dialect
-    ) -> list[str] | str | None:
+    ) -> list[str] | None:
         if value is None:
             return None
         enum_values = [self._coerce_enum(item).value for item in value]
-        if dialect.name == "postgresql":
-            return enum_values
-        return json.dumps(enum_values)
+        return enum_values
 
     def process_result_value(self, value: Any, dialect: Dialect) -> list[enum.Enum] | None:
         if value is None:
             return None
-        raw_values = value if dialect.name == "postgresql" else json.loads(value)
-        return [self._coerce_enum(item) for item in raw_values]
+        return [self._coerce_enum(item) for item in value]
 
     def _coerce_enum(self, value: enum.Enum | str) -> enum.Enum:
         if isinstance(value, self.enum_class):
