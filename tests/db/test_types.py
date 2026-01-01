@@ -4,8 +4,8 @@ Custom database type tests.
 
 from unittest.mock import MagicMock
 
-from mnemosys_core.db.models import FatigueProfile
-from mnemosys_core.db.types import DatabaseEnum, JSONEncodedDict, JSONEncodedList
+from mnemosys_core.db.models import DomainType, FatigueProfile
+from mnemosys_core.db.types import DatabaseEnum, DatabaseEnumList, JSONEncodedDict, JSONEncodedList
 
 
 class TestJSONEncodedList:
@@ -173,6 +173,98 @@ class TestDatabaseEnum:
         """Test that enum class is stored correctly."""
         converter = DatabaseEnum(FatigueProfile)
         assert converter.enum_class == FatigueProfile
+
+
+class TestDatabaseEnumList:
+    """Test DatabaseEnumList type converter."""
+
+    def test_load_dialect_impl_postgresql(self) -> None:
+        """Test that PostgreSQL uses native ENUM array type."""
+        converter = DatabaseEnumList(DomainType)
+        mock_dialect = MagicMock()
+        mock_dialect.name = "postgresql"
+
+        converter.load_dialect_impl(mock_dialect)
+        mock_dialect.type_descriptor.assert_called_once()
+
+    def test_load_dialect_impl_sqlite(self) -> None:
+        """Test that SQLite uses String type."""
+        converter = DatabaseEnumList(DomainType)
+        mock_dialect = MagicMock()
+        mock_dialect.name = "sqlite"
+
+        converter.load_dialect_impl(mock_dialect)
+        mock_dialect.type_descriptor.assert_called_once()
+
+    def test_process_bind_param_with_enums(self) -> None:
+        """Test binding enum values for PostgreSQL."""
+        converter = DatabaseEnumList(DomainType)
+        mock_dialect = MagicMock()
+        mock_dialect.name = "postgresql"
+
+        result = converter.process_bind_param(
+            [DomainType.TECHNIQUE, DomainType.HARMONY], mock_dialect
+        )
+        assert result == ["Technique", "Harmony"]
+
+    def test_process_bind_param_with_strings(self) -> None:
+        """Test binding string values for PostgreSQL."""
+        converter = DatabaseEnumList(DomainType)
+        mock_dialect = MagicMock()
+        mock_dialect.name = "postgresql"
+
+        result = converter.process_bind_param(["Technique", "Harmony"], mock_dialect)
+        assert result == ["Technique", "Harmony"]
+
+    def test_process_bind_param_none(self) -> None:
+        """Test binding None value."""
+        converter = DatabaseEnumList(DomainType)
+        mock_dialect = MagicMock()
+        mock_dialect.name = "postgresql"
+
+        result = converter.process_bind_param(None, mock_dialect)
+        assert result is None
+
+    def test_process_result_value_postgresql(self) -> None:
+        """Test reading enum list values from PostgreSQL."""
+        converter = DatabaseEnumList(DomainType)
+        mock_dialect = MagicMock()
+        mock_dialect.name = "postgresql"
+
+        result = converter.process_result_value(["Technique", "Harmony"], mock_dialect)
+        assert result == [DomainType.TECHNIQUE, DomainType.HARMONY]
+
+    def test_process_result_value_postgresql_with_enums(self) -> None:
+        """Test reading enum list values when enums are returned."""
+        converter = DatabaseEnumList(DomainType)
+        mock_dialect = MagicMock()
+        mock_dialect.name = "postgresql"
+
+        result = converter.process_result_value([DomainType.TECHNIQUE], mock_dialect)
+        assert result == [DomainType.TECHNIQUE]
+
+    def test_process_result_value_sqlite(self) -> None:
+        """Test reading enum list values from SQLite."""
+        converter = DatabaseEnumList(DomainType)
+        mock_dialect = MagicMock()
+        mock_dialect.name = "sqlite"
+
+        result = converter.process_result_value('["Technique", "Harmony"]', mock_dialect)
+        assert result == [DomainType.TECHNIQUE, DomainType.HARMONY]
+
+    def test_process_result_value_none(self) -> None:
+        """Test reading None value."""
+        converter = DatabaseEnumList(DomainType)
+        mock_dialect = MagicMock()
+        mock_dialect.name = "postgresql"
+
+        result = converter.process_result_value(None, mock_dialect)
+        assert result is None
+
+    def test_enum_class_stored(self) -> None:
+        """Test that enum class is stored correctly."""
+        converter = DatabaseEnumList(DomainType)
+        assert converter.enum_class == DomainType
 
 
 class TestJSONEncodedDict:

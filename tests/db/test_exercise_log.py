@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from mnemosys_core.db.base import Base
-from mnemosys_core.db.models import CompletionStatus, QualityRating, SessionType
+from mnemosys_core.db.models import CompletionStatus, DomainType, QualityRating, SessionType
 from mnemosys_core.db.models.exercise import Exercise
 from mnemosys_core.db.models.exercise_instance import ExerciseInstance, ExerciseLog
 from mnemosys_core.db.models.instrument import StringedInstrument
@@ -22,7 +22,7 @@ def test_exercise_log_creation() -> None:
 
     # Create dependencies
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
-    exercise = Exercise(name="Chromatic Scale", domains=["technique"])
+    exercise = Exercise(name="Chromatic Scale", domains=[DomainType.TECHNIQUE])
     practice_session = Practice(
         instrument=instrument,
         session_date=date(2025, 12, 30),
@@ -65,7 +65,7 @@ def test_exercise_log_notes_optional() -> None:
     session_db = Session_maker()
 
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
-    exercise = Exercise(name="Warmup", domains=["warmup"])
+    exercise = Exercise(name="Warmup", domains=[DomainType.TECHNIQUE])
     practice_session = Practice(
         instrument=instrument,
         session_date=date(2025, 12, 30),
@@ -102,7 +102,7 @@ def test_exercise_instance_has_log() -> None:
     session_db = Session_maker()
 
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
-    exercise = Exercise(name="Test Exercise", domains=["test"])
+    exercise = Exercise(name="Test Exercise", domains=[DomainType.TECHNIQUE])
     practice_session = Practice(
         instrument=instrument,
         session_date=date(2025, 12, 30),
@@ -141,7 +141,7 @@ def test_exercise_log_repr() -> None:
     session_db = Session_maker()
 
     instrument = StringedInstrument(name="Test Guitar", string_count=6, scale_length=25.5)
-    exercise = Exercise(name="Test", domains=["test"])
+    exercise = Exercise(name="Test", domains=[DomainType.TECHNIQUE])
     practice_session = Practice(
         instrument=instrument,
         session_date=date(2025, 12, 30),
