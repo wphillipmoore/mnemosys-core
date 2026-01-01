@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from mnemosys_core.db.models import (
     BlockType,
     CompletionStatus,
+    DomainType,
     Exercise,
     ExerciseState,
     FatigueProfile,
@@ -58,7 +59,7 @@ def test_exercise_instantiation(db_session: Session) -> None:
     """Test that Exercise can be instantiated and saved."""
     exercise = Exercise(
         name="Chromatic Scale",
-        domains=["Technique"],
+        domains=[DomainType.TECHNIQUE],
     )
     db_session.add(exercise)
     db_session.flush()
@@ -111,7 +112,7 @@ def test_exercise_repr(db_session: Session) -> None:
     """Test Exercise __repr__ method."""
     exercise = Exercise(
         name="Chromatic Scale",
-        domains=["Technique"],
+        domains=[DomainType.TECHNIQUE],
     )
     db_session.add(exercise)
     db_session.flush()
@@ -126,7 +127,7 @@ def test_exercise_state_repr(db_session: Session) -> None:
     """Test ExerciseState __repr__ method."""
     exercise = Exercise(
         name="Test Exercise",
-        domains=["Technique"],
+        domains=[DomainType.TECHNIQUE],
     )
     db_session.add(exercise)
     db_session.flush()
@@ -183,7 +184,7 @@ def test_session_block_repr(db_session: Session) -> None:
 
     exercise = Exercise(
         name="Test Exercise",
-        domains=["Technique"],
+        domains=[DomainType.TECHNIQUE],
     )
     db_session.add(exercise)
     db_session.flush()
@@ -225,7 +226,7 @@ def test_block_log_repr(db_session: Session) -> None:
 
     exercise = Exercise(
         name="Test Exercise",
-        domains=["Technique"],
+        domains=[DomainType.TECHNIQUE],
     )
     db_session.add(exercise)
     db_session.flush()
