@@ -8,7 +8,7 @@ for testing.
 import enum
 from typing import Any, cast
 
-from sqlalchemy import JSON, Enum as SQLEnum, String, TypeDecorator
+from sqlalchemy import Enum as SQLEnum, JSON, String, TypeDecorator
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.engine import Dialect
 
