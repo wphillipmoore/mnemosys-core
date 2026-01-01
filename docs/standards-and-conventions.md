@@ -357,6 +357,12 @@ Before creating a pull request, **ALL** of the following requirements must be me
 
 Before creating a pull request, **ALL** of the following must pass:
 
+**Shortcut (recommended):**
+```bash
+# Run all CI hard gates locally
+python scripts/dev/validate_local.py
+```
+
 **1. Full Test Suite (REQUIRED: 100% Success)**
 ```bash
 # Run complete test suite (not just a subset)
