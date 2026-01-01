@@ -14,12 +14,9 @@ packages = [{ include = "mnemosys_core", from = "src" }]
 [tool.poetry.dependencies]
 python = "^3.13"
 sqlalchemy = "*"
-alembic = "*"
-requests = "^2.32.5"
 fastapi = "^0.115.0"
 uvicorn = {extras = ["standard"], version = "^0.34.0"}
 pydantic = "^2.10.0"
-psycopg2-binary = "^2.9.10"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "*"
