@@ -23,12 +23,12 @@ class TestJSONEncodedList:
         mock_dialect.type_descriptor.assert_called_once()
 
     def test_load_dialect_impl_sqlite(self) -> None:
-        """Test that SQLite uses String type."""
+        """Test that SQLite uses JSON type."""
         converter = JSONEncodedList()
         mock_dialect = MagicMock()
         mock_dialect.name = "sqlite"
 
-        # Should return String
+        # Should return JSON
         converter.load_dialect_impl(mock_dialect)
         mock_dialect.type_descriptor.assert_called_once()
 
@@ -53,9 +53,8 @@ class TestJSONEncodedList:
         value = ["item1", "item2", "item3"]
         result = converter.process_bind_param(value, mock_dialect)
 
-        # SQLite gets JSON string
-        assert result == '["item1", "item2", "item3"]'
-        assert isinstance(result, str)
+        # SQLite gets the raw list
+        assert result == ["item1", "item2", "item3"]
 
     def test_process_bind_param_none(self) -> None:
         """Test binding None value."""
@@ -84,10 +83,10 @@ class TestJSONEncodedList:
         mock_dialect = MagicMock()
         mock_dialect.name = "sqlite"
 
-        value = '["item1", "item2"]'
+        value = ["item1", "item2"]
         result = converter.process_result_value(value, mock_dialect)
 
-        # SQLite parses JSON string
+        # SQLite returns raw list
         assert result == ["item1", "item2"]
 
     def test_process_result_value_none(self) -> None:
@@ -188,7 +187,7 @@ class TestDatabaseEnumList:
         mock_dialect.type_descriptor.assert_called_once()
 
     def test_load_dialect_impl_sqlite(self) -> None:
-        """Test that SQLite uses String type."""
+        """Test that SQLite uses JSON type."""
         converter = DatabaseEnumList(DomainType)
         mock_dialect = MagicMock()
         mock_dialect.name = "sqlite"
@@ -249,7 +248,7 @@ class TestDatabaseEnumList:
         mock_dialect = MagicMock()
         mock_dialect.name = "sqlite"
 
-        result = converter.process_result_value('["Technique", "Harmony"]', mock_dialect)
+        result = converter.process_result_value(["Technique", "Harmony"], mock_dialect)
         assert result == [DomainType.TECHNIQUE, DomainType.HARMONY]
 
     def test_process_result_value_none(self) -> None:
@@ -281,12 +280,12 @@ class TestJSONEncodedDict:
         mock_dialect.type_descriptor.assert_called_once()
 
     def test_load_dialect_impl_sqlite(self) -> None:
-        """Test that SQLite uses String type."""
+        """Test that SQLite uses JSON type."""
         converter = JSONEncodedDict()
         mock_dialect = MagicMock()
         mock_dialect.name = "sqlite"
 
-        # Should return String
+        # Should return JSON
         converter.load_dialect_impl(mock_dialect)
         mock_dialect.type_descriptor.assert_called_once()
 
@@ -311,9 +310,8 @@ class TestJSONEncodedDict:
         value = {"key1": "value1", "key2": 42}
         result = converter.process_bind_param(value, mock_dialect)
 
-        # SQLite gets JSON string
-        assert result == '{"key1": "value1", "key2": 42}'
-        assert isinstance(result, str)
+        # SQLite gets the raw dict
+        assert result == {"key1": "value1", "key2": 42}
 
     def test_process_bind_param_none(self) -> None:
         """Test binding None value."""
@@ -342,10 +340,10 @@ class TestJSONEncodedDict:
         mock_dialect = MagicMock()
         mock_dialect.name = "sqlite"
 
-        value = '{"key1": "value1", "key2": 42}'
+        value = {"key1": "value1", "key2": 42}
         result = converter.process_result_value(value, mock_dialect)
 
-        # SQLite parses JSON string
+        # SQLite returns raw dict
         assert result == {"key1": "value1", "key2": 42}
 
     def test_process_result_value_none(self) -> None:
