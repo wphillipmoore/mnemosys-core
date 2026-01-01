@@ -28,6 +28,7 @@ def test_base_tuning_has_discriminator() -> None:
 
     assert tuning.tuning_type == "stringed"
     session.close()
+    engine.dispose()
 
 
 def test_stringed_instrument_tuning_creation() -> None:
@@ -52,6 +53,7 @@ def test_stringed_instrument_tuning_creation() -> None:
     assert retrieved.pitch_sequence == ["E2", "A2", "D3", "G3", "B3", "E4"]
     assert retrieved.tuning_type == "stringed"
     session.close()
+    engine.dispose()
 
 
 def test_placeholder_tunings_exist() -> None:
@@ -72,6 +74,7 @@ def test_placeholder_tunings_exist() -> None:
     assert session.query(WindInstrumentTuning).count() == 1
     assert session.query(PercussionInstrumentTuning).count() == 1
     session.close()
+    engine.dispose()
 
 
 def test_polymorphic_tuning_query() -> None:
@@ -94,6 +97,7 @@ def test_polymorphic_tuning_query() -> None:
     assert isinstance(tunings[0], StringedInstrumentTuning)
     assert isinstance(tunings[1], KeyboardInstrumentTuning)
     session.close()
+    engine.dispose()
 
 
 def test_base_tuning_repr() -> None:
@@ -116,6 +120,7 @@ def test_base_tuning_repr() -> None:
     assert str(tuning.id) in repr_str
     assert "stringed" in repr_str
     session.close()
+    engine.dispose()
 
 
 def test_stringed_instrument_tuning_repr() -> None:
@@ -136,6 +141,7 @@ def test_stringed_instrument_tuning_repr() -> None:
     assert "Drop D" in repr_str
     assert str(tuning.id) in repr_str
     session.close()
+    engine.dispose()
 
 
 def test_keyboard_instrument_tuning_repr() -> None:
@@ -154,6 +160,7 @@ def test_keyboard_instrument_tuning_repr() -> None:
     assert "A440" in repr_str
     assert str(tuning.id) in repr_str
     session.close()
+    engine.dispose()
 
 
 def test_wind_instrument_tuning_repr() -> None:
@@ -172,6 +179,7 @@ def test_wind_instrument_tuning_repr() -> None:
     assert "A442" in repr_str
     assert str(tuning.id) in repr_str
     session.close()
+    engine.dispose()
 
 
 def test_percussion_instrument_tuning_repr() -> None:
@@ -190,3 +198,4 @@ def test_percussion_instrument_tuning_repr() -> None:
     assert "Standard" in repr_str
     assert str(tuning.id) in repr_str
     session.close()
+    engine.dispose()

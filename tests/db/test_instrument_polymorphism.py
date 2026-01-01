@@ -30,6 +30,7 @@ def test_base_instrument_has_discriminator() -> None:
     # Verify discriminator is set
     assert instrument.instrument_type == "stringed"
     session.close()
+    engine.dispose()
 
 
 def test_stringed_instrument_creation() -> None:
@@ -52,6 +53,7 @@ def test_stringed_instrument_creation() -> None:
     assert retrieved.scale_length == 34.0
     assert retrieved.instrument_type == "stringed"
     session.close()
+    engine.dispose()
 
 
 def test_placeholder_instruments_exist() -> None:
@@ -72,6 +74,7 @@ def test_placeholder_instruments_exist() -> None:
     assert session.query(WindInstrument).count() == 1
     assert session.query(PercussionInstrument).count() == 1
     session.close()
+    engine.dispose()
 
 
 def test_polymorphic_query_returns_correct_types() -> None:
@@ -95,6 +98,7 @@ def test_polymorphic_query_returns_correct_types() -> None:
     assert isinstance(instruments[0], StringedInstrument)
     assert isinstance(instruments[1], KeyboardInstrument)
     session.close()
+    engine.dispose()
 
 
 def test_base_instrument_repr() -> None:
@@ -117,6 +121,7 @@ def test_base_instrument_repr() -> None:
     assert str(instrument.id) in repr_str
     assert "stringed" in repr_str
     session.close()
+    engine.dispose()
 
 
 def test_keyboard_instrument_repr() -> None:
@@ -135,6 +140,7 @@ def test_keyboard_instrument_repr() -> None:
     assert "Yamaha P-125" in repr_str
     assert str(keyboard.id) in repr_str
     session.close()
+    engine.dispose()
 
 
 def test_wind_instrument_repr() -> None:
@@ -153,6 +159,7 @@ def test_wind_instrument_repr() -> None:
     assert "Yamaha YAS-280" in repr_str
     assert str(wind.id) in repr_str
     session.close()
+    engine.dispose()
 
 
 def test_percussion_instrument_repr() -> None:
@@ -171,3 +178,4 @@ def test_percussion_instrument_repr() -> None:
     assert "Pearl Export" in repr_str
     assert str(percussion.id) in repr_str
     session.close()
+    engine.dispose()

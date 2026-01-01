@@ -55,6 +55,7 @@ def test_exercise_log_creation() -> None:
     assert retrieved.notes == "Great session!"
     assert retrieved.exercise_instance.sequence_order == 1
     session_db.close()
+    engine.dispose()
 
 
 def test_exercise_log_notes_optional() -> None:
@@ -92,6 +93,7 @@ def test_exercise_log_notes_optional() -> None:
     assert retrieved is not None
     assert retrieved.notes is None
     session_db.close()
+    engine.dispose()
 
 
 def test_exercise_instance_has_log() -> None:
@@ -131,6 +133,7 @@ def test_exercise_instance_has_log() -> None:
     assert retrieved_instance.log is not None
     assert retrieved_instance.log.completion_status == CompletionStatus.YES
     session_db.close()
+    engine.dispose()
 
 
 def test_exercise_log_repr() -> None:
@@ -167,3 +170,4 @@ def test_exercise_log_repr() -> None:
     assert "yes" in repr(log)
     assert "clean" in repr(log)
     session_db.close()
+    engine.dispose()

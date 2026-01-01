@@ -31,6 +31,7 @@ def test_exercise_can_support_multiple_overload_dimensions() -> None:
     assert len(retrieved.overload_dimensions) == 3
     assert any(od.name == "tempo" for od in retrieved.overload_dimensions)
     session.close()
+    engine.dispose()
 
 
 def test_overload_dimension_can_be_used_by_multiple_exercises() -> None:
@@ -57,3 +58,4 @@ def test_overload_dimension_can_be_used_by_multiple_exercises() -> None:
     assert retrieved_dimension is not None
     assert len(retrieved_dimension.exercises) == 2
     session.close()
+    engine.dispose()
