@@ -26,6 +26,7 @@ def test_exercise_has_one_exercise_state() -> None:
     assert retrieved_exercise.exercise_state is not None  # Should be singular, not plural
     assert retrieved_exercise.exercise_state.exercise_id == exercise.id
     session.close()
+    engine.dispose()
 
 
 def test_exercise_state_unique_per_exercise() -> None:
@@ -56,6 +57,7 @@ def test_exercise_state_unique_per_exercise() -> None:
         session.rollback()
     finally:
         session.close()
+        engine.dispose()
 
 
 def test_exercise_without_state() -> None:
@@ -73,3 +75,4 @@ def test_exercise_without_state() -> None:
     assert retrieved is not None
     assert retrieved.exercise_state is None  # No state yet
     session.close()
+    engine.dispose()

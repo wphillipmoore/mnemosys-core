@@ -41,6 +41,7 @@ def test_stringed_instrument_can_have_multiple_tunings() -> None:
     assert retrieved.tunings[0].name == "Standard"
     assert retrieved.tunings[1].name == "Drop D"
     session.close()
+    engine.dispose()
 
 
 def test_tuning_can_be_used_by_multiple_instruments() -> None:
@@ -77,3 +78,4 @@ def test_tuning_can_be_used_by_multiple_instruments() -> None:
     assert retrieved_tuning is not None
     assert len(retrieved_tuning.instruments) == 2
     session.close()
+    engine.dispose()

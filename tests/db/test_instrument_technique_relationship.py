@@ -33,6 +33,7 @@ def test_instrument_can_support_multiple_techniques() -> None:
     assert len(retrieved.techniques) == 3
     assert any(t.name == "string bending" for t in retrieved.techniques)
     session.close()
+    engine.dispose()
 
 
 def test_technique_can_be_supported_by_multiple_instruments() -> None:
@@ -59,3 +60,4 @@ def test_technique_can_be_supported_by_multiple_instruments() -> None:
     assert retrieved_technique is not None
     assert len(retrieved_technique.instruments) == 2
     session.close()
+    engine.dispose()
