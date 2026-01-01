@@ -83,6 +83,12 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-interaction
 
+      - name: Run ruff check
+        run: poetry run ruff check
+
+      - name: Run mypy
+        run: poetry run mypy src/
+
       - name: Run tests with coverage
         run: |
           poetry run pytest \
@@ -114,7 +120,7 @@ feat: implement automated CI/CD pipeline with GitHub Actions
 Replace placeholder CI workflow with full implementation that enforces:
 - 100% test coverage (line and branch)
 - All tests passing
-- Code quality checks (ruff, mypy via test_code_compliance.py)
+- Code quality checks (ruff, mypy as explicit CI steps)
 - Python 3.13 (required), 3.14, 3.15 (informational)
 
 Workflow features:
@@ -181,16 +187,19 @@ Find the section starting with "**REQUIRED PRE-PUSH VALIDATION:**" (around line 
 ```markdown
 **REQUIRED PRE-PUSH VALIDATION:**
 
-Before pushing the branch or creating a PR, you MUST run and pass the full test suite locally:
+Before pushing the branch or creating a PR, you MUST run and pass the full local validation:
 
 ```bash
-# Run full test suite with coverage (includes code quality checks)
-poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
+# Run local validation (mirrors CI hard gates)
+python scripts/dev/validate_local.py
 ```
 
 **All checks must pass with:**
 - ✅ 100% test success (no failures, no errors)
 - ✅ 100% line and branch coverage (includes all source files)
+- ✅ ruff check (zero violations)
+- ✅ mypy src/ (zero errors)
+- ✅ poetry sync --dry-run has zero changes
 
 **Automated CI Enforcement:**
 
@@ -199,11 +208,6 @@ GitHub Actions automatically runs these same checks when you push your branch an
 - Tests on Python 3.13 (required to pass), 3.14, 3.15 (informational)
 - Enforces 100% coverage - PRs cannot merge if checks fail
 - Branch protection requires the `test-and-validate (3.13)` status check
-
-**Note:** The test suite includes `test_code_compliance.py` which validates:
-- ruff check (zero violations)
-- mypy src/ (zero errors)
-- poetry sync verification
 
 **If any test fails:**
 1. Fix the issue

@@ -11,7 +11,7 @@ Automate enforcement of code quality standards (tests, coverage, linting, type c
 
 - **100% code coverage** (line and branch) - strict enforcement
 - **All tests passing** - zero tolerance for failures
-- **Code quality checks** (ruff, mypy) - enforced via test suite
+- **Code quality checks** (ruff, mypy) - enforced via explicit CI steps
 - **Forward-looking Python support** - test on 3.13 (required), 3.14, 3.15 (informational)
 - **Eternal branch protection** - run on PRs and pushes to develop/main/release/*
 
@@ -60,7 +60,15 @@ on:
    - Restores virtualenv on cache hit
    - Falls back to fresh install on miss
 6. **Install dependencies** (`poetry install --no-interaction`)
-7. **Run full validation**:
+7. **Run ruff**:
+   ```bash
+   poetry run ruff check
+   ```
+8. **Run mypy**:
+   ```bash
+   poetry run mypy src/
+   ```
+9. **Run tests with coverage**:
    ```bash
    poetry run pytest \
      --cov=mnemosys_core \
@@ -69,7 +77,7 @@ on:
      --cov-report=xml \
      --cov-fail-under=100
    ```
-   - Validates: tests pass, 100% coverage, ruff passes, mypy passes (via `test_code_compliance.py`)
+   - Validates: tests pass, 100% coverage
    - Fails if coverage < 100% (lines OR branches)
    - Generates XML report for future integration
 
@@ -120,7 +128,7 @@ permissions:
 - ✅ Python 3.13 job passes (blocks merge if fails)
 - ✅ 100% line and branch coverage achieved
 - ✅ All tests pass
-- ✅ Ruff and mypy checks pass (via test suite)
+- ✅ Ruff and mypy checks pass (explicit CI steps)
 - ℹ️ Python 3.14/3.15 results visible but don't block
 
 ## Future Enhancements (Not Implemented)
