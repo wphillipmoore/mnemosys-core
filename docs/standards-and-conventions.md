@@ -367,7 +367,7 @@ Documentation-only changes may skip the unit test suite and coverage checks when
 - Any file under `docs/`
 - Top-level `README.md` and `CHANGELOG.md` (if present)
 
-If any non-documentation file changes, the full checklist is required. When using this exception, explicitly state `Docs-only: tests skipped` in the PR description and list the files changed. Ruff and mypy checks still apply. Running `python scripts/dev/validate_local.py` is optional for docs-only changes.
+If any non-documentation file changes, the full checklist is required. When using this exception, explicitly state `Docs-only: tests skipped` in the PR description and list the files changed. For docs-only changes, unit tests, coverage, ruff, and mypy are all optional (no required local validation).
 
 #### Pre-Submission Requirements
 
@@ -375,24 +375,20 @@ Before creating a pull request, **ALL** of the following requirements must be me
 
 1. **100% unit test success** - ALL tests must pass
 2. **100% code coverage** - Coverage of both lines AND branches must not decrease, aspire to 100%
-3. **All code quality checks must pass** - ruff and mypy must report no errors
+3. **All code quality checks must pass** - ruff and mypy must report no errors (docs-only exception may skip)
 
 #### Pre-Submission Checklist
 
 Before creating a pull request, **ALL** of the following must pass:
 
-**Shortcut (recommended for non-docs-only changes; optional for docs-only):**
+**Shortcut (recommended for non-docs-only changes):**
 ```bash
 # Run all CI hard gates locally (includes unit tests and coverage)
 python scripts/dev/validate_local.py
 ```
 
-**Docs-only exception (required checks; validate_local optional):**
-```bash
-# Skip unit tests and coverage; still run code quality checks
-poetry run ruff check
-poetry run mypy src/
-```
+**Docs-only exception:**
+No local checks are required.
 
 **1. Full Test Suite (REQUIRED: 100% Success; docs-only exception may skip)**
 ```bash
@@ -408,7 +404,7 @@ poetry run pytest
 - Running only a subset (e.g., `pytest tests/db/`) is **not sufficient**. Changes to one area often break tests in another area (as demonstrated by the Session → Practice rename breaking API tests).
 - **ALL tests must pass**. Zero failures, zero skips (unless explicitly documented).
 
-**2. Code Quality Checks (REQUIRED: Zero Errors)**
+**2. Code Quality Checks (REQUIRED: Zero Errors; docs-only exception may skip)**
 ```bash
 # Linting
 poetry run ruff check
@@ -590,7 +586,7 @@ git branch -d <branch-name>
 # Clean up stale remote branch references
 git remote prune origin
 
-# Run FINAL validation on target branch
+# Run FINAL validation on target branch (skip for docs-only PRs)
 poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
 poetry run ruff check
 poetry run mypy src/
@@ -602,12 +598,14 @@ poetry run mypy src/
 # ✅ Mypy: Success, no issues found
 ```
 
+Docs-only PRs: run the cleanup steps, skip the validation commands.
+
 **Why prune remote references?**
 - Removes stale tracking references to deleted remote branches
 - Prevents confusion when listing branches (e.g., `git branch -a`)
 - Keeps local repository metadata clean and accurate
 
-**Why final validation?**
+**Why final validation?** (non-docs-only changes)
 - Confirms merge was successful
 - Verifies no integration issues
 - Ensures develop branch is in perfect state
@@ -643,7 +641,7 @@ git checkout develop
 poetry sync
 # Clean up stale remote references
 git remote prune origin
-# Run final validation
+# Run final validation (docs-only: skip)
 poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
 poetry run ruff check && poetry run mypy src/
 
@@ -677,7 +675,7 @@ git checkout -b fix/api-error-handling     # ✅ GOOD! Describes the work
 
 #### Common Mistakes
 
-**Mistake 1: Skipping .venv verification and final validation**
+**Mistake 1: Skipping .venv verification and final validation (non-docs-only changes)**
 ```bash
 # ❌ WRONG
 gh pr merge 14 --squash --delete-branch
@@ -689,7 +687,7 @@ gh pr merge 14 --squash --delete-branch
 git checkout develop
 # Verify .venv is clean first!
 poetry sync
-# Then run full validation!
+# Then run full validation (docs-only: skip)
 poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch
 poetry run ruff check && poetry run mypy src/
 # NOW start new work
