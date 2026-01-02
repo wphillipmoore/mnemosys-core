@@ -94,12 +94,12 @@ def test_list_practices_with_pagination(client: TestClient) -> None:
     instrument_id = create_test_instrument(client)
 
     # Create multiple practices
-    for i in range(5):
+    for index in range(5):
         client.post(
             "/api/v1/practices/",
             json={
                 "instrument_id": instrument_id,
-                "session_date": f"2025-01-{15+i:02d}",
+                "session_date": f"2025-01-{15 + index:02d}",
                 "session_type": "normal",
                 "total_minutes": 30,
             },
@@ -262,13 +262,13 @@ def test_list_practice_blocks(client: TestClient) -> None:
     practice_id = practice_response.json()["id"]
 
     # Create blocks
-    for i in range(2):
+    for index in range(2):
         client.post(
             "/api/v1/practices/blocks/",
             json={
                 "practice_id": practice_id,
                 "exercise_id": exercise_id,
-                "block_order": i + 1,
+                "block_order": index + 1,
                 "block_type": "Technique",
                 "duration_minutes": 20,
             },
@@ -297,13 +297,13 @@ def test_list_practice_blocks_with_pagination(client: TestClient) -> None:
     practice_id = practice_response.json()["id"]
 
     # Create multiple blocks
-    for i in range(5):
+    for index in range(5):
         client.post(
             "/api/v1/practices/blocks/",
             json={
                 "practice_id": practice_id,
                 "exercise_id": exercise_id,
-                "block_order": i + 1,
+                "block_order": index + 1,
                 "block_type": "Technique",
                 "duration_minutes": 10,
             },
@@ -527,7 +527,7 @@ def test_list_practice_block_logs(client: TestClient) -> None:
     block_id = block_response.json()["id"]
 
     # Create logs
-    for _ in range(2):
+    for log_index in range(2):
         client.post(
             "/api/v1/practices/logs/",
             json={
@@ -573,7 +573,7 @@ def test_list_practice_block_logs_with_pagination(client: TestClient) -> None:
     block_id = block_response.json()["id"]
 
     # Create multiple logs
-    for _ in range(5):
+    for log_index in range(5):
         client.post(
             "/api/v1/practices/logs/",
             json={

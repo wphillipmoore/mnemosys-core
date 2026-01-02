@@ -29,7 +29,7 @@ def test_exercise_can_support_multiple_overload_dimensions() -> None:
     retrieved = session.query(Exercise).filter_by(name="Chromatic Scale").first()
     assert retrieved is not None
     assert len(retrieved.overload_dimensions) == 3
-    assert any(od.name == "tempo" for od in retrieved.overload_dimensions)
+    assert any(overload_dimension.name == "tempo" for overload_dimension in retrieved.overload_dimensions)
     session.close()
     engine.dispose()
 
