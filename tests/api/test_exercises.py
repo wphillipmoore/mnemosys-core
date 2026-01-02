@@ -55,11 +55,11 @@ def test_list_exercises(client: TestClient) -> None:
 def test_list_exercises_with_pagination(client: TestClient) -> None:
     """Test GET /api/v1/exercises/ with skip and limit."""
     # Create multiple exercises
-    for i in range(5):
+    for index in range(5):
         client.post(
             "/api/v1/exercises/",
             json={
-                "name": f"Exercise {i}",
+                "name": f"Exercise {index}",
                 "domains": ["Technique"],
                 "instrument_compatibility": None,
             },
@@ -205,11 +205,11 @@ def test_create_exercise_state(client: TestClient) -> None:
 def test_list_exercise_states(client: TestClient) -> None:
     """Test GET /api/v1/exercises/states/."""
     # Create exercises and states
-    for i in range(2):
+    for index in range(2):
         exercise_response = client.post(
             "/api/v1/exercises/",
             json={
-                "name": f"Exercise {i}",
+                "name": f"Exercise {index}",
                 "domains": ["Technique"],
                 "instrument_compatibility": None,
             },
@@ -236,11 +236,11 @@ def test_list_exercise_states(client: TestClient) -> None:
 def test_list_exercise_states_with_pagination(client: TestClient) -> None:
     """Test GET /api/v1/exercises/states/ with skip and limit."""
     # Create multiple states
-    for i in range(5):
+    for index in range(5):
         exercise_response = client.post(
             "/api/v1/exercises/",
             json={
-                "name": f"Pagination Exercise {i}",
+                "name": f"Pagination Exercise {index}",
                 "domains": ["Technique"],
                 "instrument_compatibility": None,
             },

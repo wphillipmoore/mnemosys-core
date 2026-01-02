@@ -25,17 +25,17 @@ def today_utc() -> date:
     return utc_now().date()
 
 
-def to_utc(dt: datetime) -> datetime:
+def to_utc(datetime_value: datetime) -> datetime:
     """
     Convert datetime to UTC.
 
     Args:
-        dt: Datetime (naive or aware)
+        datetime_value: Datetime (naive or aware)
 
     Returns:
         Timezone-aware datetime in UTC
     """
-    if dt.tzinfo is None:
+    if datetime_value.tzinfo is None:
         # Assume naive datetime is UTC
-        return dt.replace(tzinfo=UTC)
-    return dt.astimezone(UTC)
+        return datetime_value.replace(tzinfo=UTC)
+    return datetime_value.astimezone(UTC)

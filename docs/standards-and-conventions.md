@@ -54,6 +54,16 @@ Early design documents (v0.1 snapshots) may reference deprecated names in their 
 - Mypy: Strict mode with any relaxations documented in `[tool.mypy]` section
 - All exceptions to default rules must include an inline comment explaining why
 
+### Import-Time Side Effects
+
+**Core Rule**: No implicit state or side effects at import time.
+
+**Explicit Exceptions (Framework-Standard Mechanisms Only):**
+- **SQLAlchemy ORM model declarations** (including `Table` definitions and declarative class registration in `Base.metadata`)
+- **FastAPI router definitions** (`APIRouter()` creation and decorator-based route registration)
+
+These are allowed **only** because the frameworks require import-time registration. Everything else remains forbidden at import time (engine/session creation, settings loading, network calls, file system writes, or global mutable state).
+
 ### Naming Conventions
 
 MNEMOSYS follows **PEP 8 naming conventions** as a foundation:
@@ -104,7 +114,10 @@ for i, x in enumerate(xs):
     process(x)
 ```
 
-**Exception**: Well-established mathematical variables in limited scope (`x`, `y` for coordinates in a 5-line algorithm).
+**Exceptions**:
+- Well-established mathematical variables in limited scope (`x`, `y` for coordinates in a 5-line algorithm).
+- Common domain abbreviations and acronyms **already used in this codebase** are permitted: `id`, `db`, `api`, `env`, `app`. Use these only as clear, explicit tokens (e.g., `instrument_id`, `db_session`, `api_router`, `env_name`, `app_state`), not as single-character loop variables.
+- Enum member names may use short domain codes (e.g., `F0`) when those codes are established labels; prefer full words otherwise.
 
 **3. Complete English Words (Verbosity Over Brevity)**
 
@@ -123,6 +136,8 @@ config = load_config()  # Use configuration
 db = get_session()      # Use db_session (see collision handling)
 idx = 0                 # Use index or instrument_index
 ```
+
+**Exception**: The allowed domain abbreviations and acronyms above (`id`, `db`, `api`) may appear as tokens in identifiers. Other acronyms are acceptable only when they are the official name of a domain concept (e.g., `UTC`), and should not be shortened further.
 
 **4. Namespace Collision Handling**
 

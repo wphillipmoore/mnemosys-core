@@ -29,7 +29,7 @@ def test_exercise_can_use_multiple_techniques() -> None:
     retrieved = session.query(Exercise).filter_by(name="Chromatic Scale").first()
     assert retrieved is not None
     assert len(retrieved.techniques) == 3
-    assert any(t.name == "alternate picking" for t in retrieved.techniques)
+    assert any(technique.name == "alternate picking" for technique in retrieved.techniques)
     session.close()
     engine.dispose()
 

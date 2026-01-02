@@ -31,7 +31,7 @@ def test_instrument_can_support_multiple_techniques() -> None:
     retrieved = session.query(StringedInstrument).filter_by(name="Strat").first()
     assert retrieved is not None
     assert len(retrieved.techniques) == 3
-    assert any(t.name == "string bending" for t in retrieved.techniques)
+    assert any(technique.name == "string bending" for technique in retrieved.techniques)
     session.close()
     engine.dispose()
 
