@@ -356,13 +356,22 @@ open htmlcov/index.html
 
 ### Pull Request Submission Process
 
-**Core Principle**: Pull requests must pass **all** automated checks before submission. No exceptions.
+**Core Principle**: Pull requests must pass **all** automated checks before submission. **Docs-only** changes may skip the unit test suite and coverage checks as defined below.
 
 **Rationale**: The CI/CD pipeline is a backstop, not a substitute for developer diligence. Submitting failing PRs wastes reviewer time, pollutes the PR history, and undermines confidence in the codebase.
 
+#### Docs-Only Exception
+
+Documentation-only changes may skip the unit test suite and coverage checks when the diff includes **only** documentation files. For this repository, "docs-only" means:
+
+- Any file under `docs/`
+- Top-level `README.md` and `CHANGELOG.md` (if present)
+
+If any non-documentation file changes, the full checklist is required. When using this exception, explicitly state `Docs-only: tests skipped` in the PR description and list the files changed. Ruff and mypy checks still apply.
+
 #### Pre-Submission Requirements
 
-Before creating a pull request, **ALL** of the following requirements must be met:
+Before creating a pull request, **ALL** of the following requirements must be met (unless the docs-only exception applies):
 
 1. **100% unit test success** - ALL tests must pass
 2. **100% code coverage** - Coverage of both lines AND branches must not decrease, aspire to 100%
@@ -378,7 +387,14 @@ Before creating a pull request, **ALL** of the following must pass:
 python scripts/dev/validate_local.py
 ```
 
-**1. Full Test Suite (REQUIRED: 100% Success)**
+**Docs-only exception (required checks):**
+```bash
+# Skip unit tests and coverage; still run code quality checks
+poetry run ruff check
+poetry run mypy src/
+```
+
+**1. Full Test Suite (REQUIRED: 100% Success; docs-only exception may skip)**
 ```bash
 # Run complete test suite (not just a subset)
 poetry run pytest
@@ -403,7 +419,7 @@ poetry run mypy
 # REQUIRED: Both must report "No errors" or "Success: no issues found"
 ```
 
-**3. Code Coverage (REQUIRED: 100% Line AND Branch Coverage Goal)**
+**3. Code Coverage (REQUIRED: 100% Line AND Branch Coverage Goal; docs-only exception may skip)**
 ```bash
 # Verify line AND branch coverage is at 100% or document exceptions
 poetry run pytest --cov=src --cov-report=term-missing --cov-branch
