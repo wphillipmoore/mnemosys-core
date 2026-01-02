@@ -534,7 +534,7 @@ def test_list_practice_block_logs(client: TestClient) -> None:
                 "practice_block_id": block_id,
                 "completed": "yes",
                 "quality": "clean",
-                "notes": None,
+                "notes": f"Log {log_index}",
             },
         )
 
@@ -580,7 +580,7 @@ def test_list_practice_block_logs_with_pagination(client: TestClient) -> None:
                 "practice_block_id": block_id,
                 "completed": "yes",
                 "quality": "clean",
-                "notes": None,
+                "notes": f"Log {log_index}",
             },
         )
 
