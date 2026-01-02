@@ -486,6 +486,23 @@ Co-Authored-By: mnemosys-claude <252602472+mnemosys-claude@users.noreply.github.
 
 **Rationale**: AI is a tool. The human drives decisions, validates outcomes, and remains accountable for the code, while the AI contributors are explicitly visible in GitHub history.
 
+#### Adding a New AI Service Account
+
+When onboarding a new AI tool (e.g., "foo"), create a dedicated GitHub service account to preserve clear attribution.
+
+**Setup Steps**:
+1. Create a GitHub account named `mnemosys-foo`.
+2. Use a Gmail alias for signup (e.g., `w.phillip.moore+mnemosys-foo@gmail.com`) to avoid creating a new inbox.
+3. Enable 2FA and set "Keep my email address private".
+4. Copy the account's GitHub noreply email from Settings → Emails.
+
+**Then update this section** with the new co-author identity:
+```
+Co-Authored-By: mnemosys-foo <ID+mnemosys-foo@users.noreply.github.com>
+```
+
+**Why**: GitHub contributor attribution is email-based. A dedicated service account prevents misattribution to unrelated accounts.
+
 #### CI/CD Integration (Future)
 
 **Status**: Not yet implemented
