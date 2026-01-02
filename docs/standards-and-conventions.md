@@ -381,13 +381,13 @@ Before creating a pull request, **ALL** of the following requirements must be me
 
 Before creating a pull request, **ALL** of the following must pass:
 
-**Shortcut (recommended):**
+**Shortcut (recommended for non-docs-only changes):**
 ```bash
-# Run all CI hard gates locally
+# Run all CI hard gates locally (includes unit tests and coverage)
 python scripts/dev/validate_local.py
 ```
 
-**Docs-only exception (required checks):**
+**Docs-only exception (required checks, replaces validate_local):**
 ```bash
 # Skip unit tests and coverage; still run code quality checks
 poetry run ruff check
