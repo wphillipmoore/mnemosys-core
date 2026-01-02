@@ -13,24 +13,7 @@ It represents a frozen **v0.1 snapshot**, intended to support:
 
 ---
 
-## 1. Development Environment
-
-### Primary Editor
-
-Visual Studio Code is the primary development environment.
-
-This is a pragmatic choice and is **explicitly non-architectural**.  
-Editor-specific configuration **must not** leak into:
-
-- Repository structure
-- Tooling contracts
-- Build or deployment assumptions
-
-The codebase must remain editor-agnostic.
-
-### AI Assistance (Explicitly Bounded)
-
-ChatGPT and GitHub Copilot may be used as **advisory tools only**.
+## 1. AI Assistance (Explicitly Bounded)
 
 Constraints:
 
@@ -162,7 +145,6 @@ Clever automation that cannot be reasonably expressed outside GitHub.
 - Git as the source control system
 - GitHub as the initial hosting provider
 - GitHub Actions for CI/CD
-- Visual Studio Code as primary editor
 - Python-first implementation
 - Parallel testing on current and next Python versions
 
