@@ -367,7 +367,7 @@ Documentation-only changes may skip the unit test suite and coverage checks when
 - Any file under `docs/`
 - Top-level `README.md` and `CHANGELOG.md` (if present)
 
-If any non-documentation file changes, the full checklist is required. When using this exception, explicitly state `Docs-only: tests skipped` in the PR description and list the files changed. Ruff and mypy checks still apply.
+If any non-documentation file changes, the full checklist is required. When using this exception, explicitly state `Docs-only: tests skipped` in the PR description and list the files changed. Ruff and mypy checks still apply. Running `python scripts/dev/validate_local.py` is optional for docs-only changes.
 
 #### Pre-Submission Requirements
 
@@ -381,13 +381,13 @@ Before creating a pull request, **ALL** of the following requirements must be me
 
 Before creating a pull request, **ALL** of the following must pass:
 
-**Shortcut (recommended for non-docs-only changes):**
+**Shortcut (recommended for non-docs-only changes; optional for docs-only):**
 ```bash
 # Run all CI hard gates locally (includes unit tests and coverage)
 python scripts/dev/validate_local.py
 ```
 
-**Docs-only exception (required checks, replaces validate_local):**
+**Docs-only exception (required checks; validate_local optional):**
 ```bash
 # Skip unit tests and coverage; still run code quality checks
 poetry run ruff check
