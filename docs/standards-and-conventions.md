@@ -465,23 +465,26 @@ before Base.metadata.create_all(), causing "no such table" errors.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+Co-Authored-By: mnemosys-claude <252602472+mnemosys-claude@users.noreply.github.com>
 ```
 
 #### Commit Authorship and AI Co-Authorship
 
 **Core Rule**: All commits must be authored by a human. The human owns responsibility and accountability for the change.
 
-**Allowed (Optional) AI Co-Authorship**:
-- AI tooling that materially contributed to the change may be listed as a co-author.
-- This is **optional**, not required. If omitted, only the human appears in GitHub contributors.
+**Required AI Co-Authorship (When AI Contributed)**:
+- If an AI tool materially contributed to the change, include a co-author trailer for that tool.
+- If no AI tool contributed, omit AI co-authors.
 
 **Requirements**:
 - The commit **author** must be the human operator (your account).
 - Do **not** set AI tooling as the author or committer.
-- If co-authoring, use explicit tool identifiers (e.g., Claude, Codex) and their noreply email addresses.
+- Use these exact AI co-author identities (no vendor noreply emails):
+  - `mnemosys-codex <252598091+mnemosys-codex@users.noreply.github.com>`
+  - `mnemosys-claude <252602472+mnemosys-claude@users.noreply.github.com>`
+- If multiple tools contributed, include multiple co-author trailers.
 
-**Rationale**: AI is a tool. The human drives decisions, validates outcomes, and remains accountable for the code.
+**Rationale**: AI is a tool. The human drives decisions, validates outcomes, and remains accountable for the code, while the AI contributors are explicitly visible in GitHub history.
 
 #### CI/CD Integration (Future)
 
