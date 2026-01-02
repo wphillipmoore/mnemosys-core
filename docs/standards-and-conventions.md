@@ -468,6 +468,21 @@ before Base.metadata.create_all(), causing "no such table" errors.
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 
+#### Commit Authorship and AI Co-Authorship
+
+**Core Rule**: All commits must be authored by a human. The human owns responsibility and accountability for the change.
+
+**Allowed (Optional) AI Co-Authorship**:
+- AI tooling that materially contributed to the change may be listed as a co-author.
+- This is **optional**, not required. If omitted, only the human appears in GitHub contributors.
+
+**Requirements**:
+- The commit **author** must be the human operator (your account).
+- Do **not** set AI tooling as the author or committer.
+- If co-authoring, use explicit tool identifiers (e.g., Claude, Codex) and their noreply email addresses.
+
+**Rationale**: AI is a tool. The human drives decisions, validates outcomes, and remains accountable for the code.
+
 #### CI/CD Integration (Future)
 
 **Status**: Not yet implemented
