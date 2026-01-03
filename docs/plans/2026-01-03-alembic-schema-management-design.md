@@ -153,24 +153,39 @@ Default position: use the shared development sandbox database with per-branch sc
 ### Credentials and access model
 
 - Alembic tooling uses **admin credentials** to create schemas and apply migrations in the sandbox database.
-- The REST API should use a **non-admin** database user (to be created) in all environments.
+- The REST API should use a **non-admin** database user in all environments; application testing must never use admin credentials.
 - The development deployment database remains API-only; direct admin access is not assumed.
 - Bootstrap exception: the development RDS instance may be publicly accessible with IP allowlisting, but local environments must store only sandbox credentials and the sandbox role must be denied `CONNECT` on `mnemosys_dev`. Bootstrap ends when end-to-end automation updates `mnemosys_dev` and restarts the REST API service, at which point `mnemosys_dev` must be fully locked down.
 
 ### Sandbox role isolation (SQL)
 
-Create a sandbox-only role and explicitly deny access to the deployment database:
+Create sandbox roles for schema management (admin) and application testing (non-admin), and explicitly deny access to the deployment database. Use underscores in role names to avoid quoted identifiers.
 
 ```sql
 CREATE ROLE mnemosys_sandbox_admin LOGIN PASSWORD 'replace_me';
+CREATE ROLE mnemosys_user LOGIN PASSWORD 'replace_me';
 GRANT ALL PRIVILEGES ON DATABASE mnemosys_dev_sandbox TO mnemosys_sandbox_admin;
+GRANT CONNECT ON DATABASE mnemosys_dev_sandbox TO mnemosys_user;
 REVOKE CONNECT ON DATABASE mnemosys_dev FROM mnemosys_sandbox_admin;
+REVOKE CONNECT ON DATABASE mnemosys_dev FROM mnemosys_user;
 ```
 
 Optional hardening for existing roles:
 
 ```sql
 REVOKE CONNECT ON DATABASE mnemosys_dev FROM PUBLIC;
+```
+
+Grant schema and table access for application testing (run as admin):
+
+```sql
+GRANT USAGE ON SCHEMA mnemosys TO mnemosys_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA mnemosys TO mnemosys_user;
+GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA mnemosys TO mnemosys_user;
+ALTER DEFAULT PRIVILEGES FOR ROLE mnemosys_sandbox_admin IN SCHEMA mnemosys
+    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO mnemosys_user;
+ALTER DEFAULT PRIVILEGES FOR ROLE mnemosys_sandbox_admin IN SCHEMA mnemosys
+    GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO mnemosys_user;
 ```
 
 ### Bootstrap exit checklist (lockdown)
