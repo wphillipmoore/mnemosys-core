@@ -9,7 +9,10 @@ import re
 import shutil
 import subprocess
 import sys
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 MAX_MESSAGE_LENGTH = 60
 MESSAGE_PATTERN = re.compile(r"^[a-z0-9]+(?:_[a-z0-9]+)*$")

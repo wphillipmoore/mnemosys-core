@@ -11,8 +11,11 @@ import shutil
 import subprocess
 import sys
 import time
-from collections.abc import Sequence
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 from sqlalchemy.engine import make_url
 

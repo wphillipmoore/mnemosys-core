@@ -5,8 +5,10 @@ Tests for Alembic migration runner.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
-import pytest
+if TYPE_CHECKING:
+    import pytest
 
 from mnemosys_core.migrations import runner
 

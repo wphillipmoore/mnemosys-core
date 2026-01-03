@@ -11,8 +11,11 @@ import re
 import subprocess
 import sys
 import uuid
-from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator, Sequence
 
 from sqlalchemy import text
 from sqlalchemy.pool import NullPool
