@@ -30,6 +30,18 @@ class Settings:
     log_sql: bool = False
 
 
+@dataclass(frozen=True)
+class DatabaseComponents:
+    """Structured database URL components."""
+
+    drivername: str
+    username: str | None
+    password: str | None
+    host: str | None
+    port: int | None
+    database: str
+
+
 def load_settings_from_env() -> Settings:
     """
     Load settings from environment variables.
@@ -60,31 +72,31 @@ def load_settings_from_env() -> Settings:
     env_name = os.getenv("MNEMOSYS_ENV", "development")
     environment = Environment(env_name)
 
-    default_db_components = {
-        Environment.DEVELOPMENT: {
-            "drivername": "postgresql",
-            "username": None,
-            "password": None,
-            "host": "localhost",
-            "port": None,
-            "database": "mnemosys_dev",
-        },
-        Environment.TEST: {
-            "drivername": "sqlite",
-            "username": None,
-            "password": None,
-            "host": None,
-            "port": None,
-            "database": ":memory:",
-        },
-        Environment.PRODUCTION: {
-            "drivername": "postgresql",
-            "username": None,
-            "password": None,
-            "host": "localhost",
-            "port": None,
-            "database": "mnemosys_prod",
-        },
+    default_db_components: dict[Environment, DatabaseComponents] = {
+        Environment.DEVELOPMENT: DatabaseComponents(
+            drivername="postgresql",
+            username=None,
+            password=None,
+            host="localhost",
+            port=None,
+            database="mnemosys_dev",
+        ),
+        Environment.TEST: DatabaseComponents(
+            drivername="sqlite",
+            username=None,
+            password=None,
+            host=None,
+            port=None,
+            database=":memory:",
+        ),
+        Environment.PRODUCTION: DatabaseComponents(
+            drivername="postgresql",
+            username=None,
+            password=None,
+            host="localhost",
+            port=None,
+            database="mnemosys_prod",
+        ),
     }
 
     default_database_schemas = {
@@ -97,7 +109,7 @@ def load_settings_from_env() -> Settings:
     if database_url is None:
         defaults = default_db_components[environment]
         port_value = os.getenv("MNEMOSYS_DB_PORT")
-        port = defaults["port"]
+        port: int | None = defaults.port
         if port_value is not None:
             try:
                 port = int(port_value)
@@ -106,12 +118,12 @@ def load_settings_from_env() -> Settings:
 
         database_url = str(
             URL.create(
-                drivername=os.getenv("MNEMOSYS_DB_DRIVERNAME", defaults["drivername"]),
-                username=os.getenv("MNEMOSYS_DB_USERNAME", defaults["username"]),
-                password=os.getenv("MNEMOSYS_DB_PASSWORD", defaults["password"]),
-                host=os.getenv("MNEMOSYS_DB_HOST", defaults["host"]),
+                drivername=os.getenv("MNEMOSYS_DB_DRIVERNAME") or defaults.drivername,
+                username=os.getenv("MNEMOSYS_DB_USERNAME") or defaults.username,
+                password=os.getenv("MNEMOSYS_DB_PASSWORD") or defaults.password,
+                host=os.getenv("MNEMOSYS_DB_HOST") or defaults.host,
                 port=port,
-                database=os.getenv("MNEMOSYS_DB_DATABASE", defaults["database"]),
+                database=os.getenv("MNEMOSYS_DB_DATABASE") or defaults.database,
             )
         )
     database_schema = os.getenv("MNEMOSYS_DB_SCHEMA", default_database_schemas[environment])
