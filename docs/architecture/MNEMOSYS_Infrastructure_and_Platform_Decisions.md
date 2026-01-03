@@ -13,7 +13,7 @@
 - Alembic or equivalent migration tooling is **not assumed by default** and will be introduced only if provider tooling proves insufficient.
 - Database access will be mediated through an API layer; direct client access is not a supported model.
 - Temporary public database access is permitted only for controlled bootstrap or diagnostics and must be removed afterward.
-- Bootstrap exception: the development RDS instance may be made public with IP allowlisting to provision and use `mnemosys_dev_sandbox`; local environments must store only sandbox credentials, and sandbox roles must be denied `CONNECT` on `mnemosys_dev`.
+- Bootstrap exception: the development RDS instance may be made public with IP allowlisting to provision and use `mnemosys_dev_sandbox`; local environments must store only sandbox credentials, and sandbox roles must be denied `CONNECT` on `mnemosys_dev`. Bootstrap ends when end-to-end automation updates `mnemosys_dev` and restarts the REST API service, at which point `mnemosys_dev` must be fully locked down.
 
 ---
 
