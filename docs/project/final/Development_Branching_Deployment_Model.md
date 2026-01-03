@@ -43,6 +43,8 @@ Each environment consists of:
 - one API
 - one running application version
 
+Sandbox is a pre-PR environment for feature, bugfix, and hotfix branch work. It is not tied to an eternal branch and is outside the promotion flow; updates are manual or ad hoc.
+
 Parallel stacks, canaries, or shadow environments are explicitly out of scope at v0.1.
 
 ---
