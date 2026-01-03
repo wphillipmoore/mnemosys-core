@@ -151,6 +151,30 @@ Default position: use the shared development sandbox database with per-branch sc
 - The development deployment database remains API-only; direct admin access is not assumed.
 - Bootstrap exception: the development RDS instance may be publicly accessible with IP allowlisting, but local environments must store only sandbox credentials and the sandbox role must be denied `CONNECT` on `mnemosys_dev`. Bootstrap ends when end-to-end automation updates `mnemosys_dev` and restarts the REST API service, at which point `mnemosys_dev` must be fully locked down.
 
+### Sandbox role isolation (SQL)
+
+Create a sandbox-only role and explicitly deny access to the deployment database:
+
+```sql
+CREATE ROLE mnemosys_sandbox_admin LOGIN PASSWORD 'replace_me';
+GRANT ALL PRIVILEGES ON DATABASE mnemosys_dev_sandbox TO mnemosys_sandbox_admin;
+REVOKE CONNECT ON DATABASE mnemosys_dev FROM mnemosys_sandbox_admin;
+```
+
+Optional hardening for existing roles:
+
+```sql
+REVOKE CONNECT ON DATABASE mnemosys_dev FROM PUBLIC;
+```
+
+### Bootstrap exit checklist (lockdown)
+
+- Disable public access on the development RDS instance.
+- Remove any temporary inbound rules (TCP 5432) from security groups.
+- Rotate admin credentials and store them outside local `.env`.
+- Ensure local environments only reference sandbox credentials.
+- Verify `mnemosys_dev` accepts connections only from the REST API runtime role.
+
 ### Standard revision workflow
 
 1. Update SQLAlchemy models.
