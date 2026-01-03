@@ -149,6 +149,7 @@ Default position: use the shared development sandbox database with per-branch sc
 - Alembic tooling uses **admin credentials** to create schemas and apply migrations in the sandbox database.
 - The REST API should use a **non-admin** database user (to be created) in all environments.
 - The development deployment database remains API-only; direct admin access is not assumed.
+- Bootstrap exception: the development RDS instance may be publicly accessible with IP allowlisting, but local environments must store only sandbox credentials and the sandbox role must be denied `CONNECT` on `mnemosys_dev`.
 
 ### Standard revision workflow
 
