@@ -116,7 +116,7 @@ This design requires deployment automation to pass the correct environment varia
 Development environments use two databases with different access models:
 
 - **Development deployment database** (`mnemosys_dev`): API-only access, mirrors test/production access constraints.
-- **Development sandbox database** (`mnemosys_dev_sandbox`): admin access for schema testing with multiple schemas.
+- **Sandbox database** (`mnemosys_sandbox`): admin access for schema testing with multiple schemas.
 
 The sandbox database hosts:
 - **Default schema**: used for interactive development and local API runs.
@@ -128,7 +128,7 @@ development environment aligned with production access constraints.
 Test environment notes:
 
 - **Test database** (`mnemosys_test`): API-only access, updated only by release automation; local environments do not store test credentials.
-- During bootstrap, `mnemosys_test` may share the non-production RDS instance with `mnemosys_dev` and `mnemosys_dev_sandbox`.
+- During bootstrap, `mnemosys_test` may share the non-production RDS instance with `mnemosys_dev` and `mnemosys_sandbox`.
 - Before any external users access test, `mnemosys_test` must move to a dedicated RDS instance with separate network access controls.
 
 ### Recommended database allocation
@@ -164,8 +164,8 @@ Create sandbox roles for schema management (admin) and application testing (non-
 ```sql
 CREATE ROLE mnemosys_sandbox_admin LOGIN PASSWORD 'replace_me';
 CREATE ROLE mnemosys_sandbox_user LOGIN PASSWORD 'replace_me';
-GRANT ALL PRIVILEGES ON DATABASE mnemosys_dev_sandbox TO mnemosys_sandbox_admin;
-GRANT CONNECT ON DATABASE mnemosys_dev_sandbox TO mnemosys_sandbox_user;
+GRANT ALL PRIVILEGES ON DATABASE mnemosys_sandbox TO mnemosys_sandbox_admin;
+GRANT CONNECT ON DATABASE mnemosys_sandbox TO mnemosys_sandbox_user;
 REVOKE CONNECT ON DATABASE mnemosys_dev FROM mnemosys_sandbox_admin;
 REVOKE CONNECT ON DATABASE mnemosys_dev FROM mnemosys_sandbox_user;
 ```
