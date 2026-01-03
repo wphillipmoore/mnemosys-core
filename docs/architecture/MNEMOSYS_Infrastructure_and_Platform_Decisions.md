@@ -14,6 +14,7 @@
 - Database access will be mediated through an API layer; direct client access is not a supported model.
 - Temporary public database access is permitted only for controlled bootstrap or diagnostics and must be removed afterward.
 - Bootstrap exception: the development RDS instance may be made public with IP allowlisting to provision and use `mnemosys_dev_sandbox`; local environments must store only sandbox credentials, and sandbox roles must be denied `CONNECT` on `mnemosys_dev`. Bootstrap ends when end-to-end automation updates `mnemosys_dev` and restarts the REST API service, at which point `mnemosys_dev` must be fully locked down.
+- Bootstrap non-production allocation: the development and test databases may share the existing non-production RDS instance during bootstrap, but test must move to a dedicated RDS instance before any external users are granted access.
 
 ---
 

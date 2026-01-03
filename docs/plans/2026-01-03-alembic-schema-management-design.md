@@ -125,6 +125,12 @@ The sandbox database hosts:
 The goal is to avoid polluting the default schema when validating schema changes while keeping the deployed
 development environment aligned with production access constraints.
 
+Test environment notes:
+
+- **Test database** (`mnemosys_test`): API-only access, updated only by release automation; local environments do not store test credentials.
+- During bootstrap, `mnemosys_test` may share the non-production RDS instance with `mnemosys_dev` and `mnemosys_dev_sandbox`.
+- Before any external users access test, `mnemosys_test` must move to a dedicated RDS instance with separate network access controls.
+
 ### Recommended database allocation
 
 Human developer:
