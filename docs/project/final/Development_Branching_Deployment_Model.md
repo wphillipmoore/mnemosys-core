@@ -31,8 +31,9 @@ This model prioritizes **clarity and durability** over cleverness.
 
 ## 3. Deployment Environments
 
-There are exactly three environments:
+There are exactly four environments:
 
+- **sandbox**
 - **development**
 - **test**
 - **production**
