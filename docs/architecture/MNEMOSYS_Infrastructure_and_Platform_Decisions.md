@@ -15,7 +15,7 @@
 - Temporary public database access is permitted only for controlled bootstrap or diagnostics and must be removed afterward.
 - Bootstrap exception: the development RDS instance may be made public with IP allowlisting to provision and use `mnemosys_dev_sandbox`; local environments must store only sandbox credentials, and sandbox roles must be denied `CONNECT` on `mnemosys_dev`. Bootstrap ends when end-to-end automation updates `mnemosys_dev` and restarts the REST API service, at which point `mnemosys_dev` must be fully locked down.
 - Bootstrap non-production allocation: the development and test databases may share the existing non-production RDS instance during bootstrap, but test must move to a dedicated RDS instance before any external users are granted access.
-- AWS account model: all environments share a single AWS account during bootstrap, with environment-qualified IAM usernames (e.g., `mnemosys-dev-admin`, `mnemosys-test-user`, `mnemosys-prod-admin`) to prevent ambiguity. This can be split into separate non-prod and prod accounts later if scale or risk demands it.
+- AWS account model: all environments share a single AWS account during bootstrap, with a single console-access IAM user (`mnemosys-admin`) and environment-qualified IAM usernames (e.g., `mnemosys-dev-admin`, `mnemosys-test-user`, `mnemosys-prod-admin`) reserved for automation and non-console use. This can be split into separate non-prod and prod accounts later if scale or risk demands it.
 
 ---
 
