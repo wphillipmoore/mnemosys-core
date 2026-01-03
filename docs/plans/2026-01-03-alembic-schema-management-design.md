@@ -113,12 +113,17 @@ This design requires deployment automation to pass the correct environment varia
 
 ### Required databases
 
-Each developer (human or AI) needs a single development database with multiple schemas:
+Development environments use two databases with different access models:
 
-- **Default schema**: used for interactive development and API runs.
+- **Development deployment database** (`mnemosys_dev`): API-only access, mirrors test/production access constraints.
+- **Development sandbox database** (`mnemosys_dev_sandbox`): admin access for schema testing with multiple schemas.
+
+The sandbox database hosts:
+- **Default schema**: used for interactive development and local API runs.
 - **Ephemeral schemas**: created per revision test to validate upgrades and downgrades.
 
-The goal is to avoid polluting the default schema when validating schema changes.
+The goal is to avoid polluting the default schema when validating schema changes while keeping the deployed
+development environment aligned with production access constraints.
 
 ### Recommended database allocation
 
@@ -137,7 +142,13 @@ Use a separate development database only when the change cannot be isolated by s
 - Tests that require database-level configuration (collation, ICU locale, encoding, or default privileges).
 - Scenarios that must validate a truly empty database bootstrap (not just an empty schema).
 
-Default position: use a single shared development database with per-branch schemas.
+Default position: use the shared development sandbox database with per-branch schemas.
+
+### Credentials and access model
+
+- Alembic tooling uses **admin credentials** to create schemas and apply migrations in the sandbox database.
+- The REST API should use a **non-admin** database user (to be created) in all environments.
+- The development deployment database remains API-only; direct admin access is not assumed.
 
 ### Standard revision workflow
 
