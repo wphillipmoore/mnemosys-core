@@ -163,11 +163,11 @@ Create sandbox roles for schema management (admin) and application testing (non-
 
 ```sql
 CREATE ROLE mnemosys_sandbox_admin LOGIN PASSWORD 'replace_me';
-CREATE ROLE mnemosys_user LOGIN PASSWORD 'replace_me';
+CREATE ROLE mnemosys_sandbox_user LOGIN PASSWORD 'replace_me';
 GRANT ALL PRIVILEGES ON DATABASE mnemosys_dev_sandbox TO mnemosys_sandbox_admin;
-GRANT CONNECT ON DATABASE mnemosys_dev_sandbox TO mnemosys_user;
+GRANT CONNECT ON DATABASE mnemosys_dev_sandbox TO mnemosys_sandbox_user;
 REVOKE CONNECT ON DATABASE mnemosys_dev FROM mnemosys_sandbox_admin;
-REVOKE CONNECT ON DATABASE mnemosys_dev FROM mnemosys_user;
+REVOKE CONNECT ON DATABASE mnemosys_dev FROM mnemosys_sandbox_user;
 ```
 
 Optional hardening for existing roles:
@@ -179,13 +179,13 @@ REVOKE CONNECT ON DATABASE mnemosys_dev FROM PUBLIC;
 Grant schema and table access for application testing (run as admin):
 
 ```sql
-GRANT USAGE ON SCHEMA mnemosys TO mnemosys_user;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA mnemosys TO mnemosys_user;
-GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA mnemosys TO mnemosys_user;
+GRANT USAGE ON SCHEMA mnemosys TO mnemosys_sandbox_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA mnemosys TO mnemosys_sandbox_user;
+GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA mnemosys TO mnemosys_sandbox_user;
 ALTER DEFAULT PRIVILEGES FOR ROLE mnemosys_sandbox_admin IN SCHEMA mnemosys
-    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO mnemosys_user;
+    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO mnemosys_sandbox_user;
 ALTER DEFAULT PRIVILEGES FOR ROLE mnemosys_sandbox_admin IN SCHEMA mnemosys
-    GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO mnemosys_user;
+    GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO mnemosys_sandbox_user;
 ```
 
 ### Bootstrap exit checklist (lockdown)
