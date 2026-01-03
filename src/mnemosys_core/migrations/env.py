@@ -5,11 +5,12 @@ Alembic migration environment.
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import pool
 
 # Import metadata and models
 from mnemosys_core.config.settings import load_settings_from_env
 from mnemosys_core.db.base import Base
+from mnemosys_core.db.engine import create_db_engine
 
 # Ensure all models are imported for autogenerate
 from mnemosys_core.db.models import (  # noqa: F401
@@ -51,14 +52,24 @@ def get_url():
     return settings.database_url
 
 
+def get_schema_name():
+    """Get database schema name from settings."""
+    settings = load_settings_from_env()
+    if settings.database_url.startswith("sqlite"):
+        return None
+    return settings.database_schema
+
+
 def run_migrations_offline():
     """Run migrations in 'offline' mode."""
     url = get_url()
+    schema_name = get_schema_name()
     context.configure(
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        version_table_schema=schema_name,
     )
 
     with context.begin_transaction():
@@ -67,17 +78,20 @@ def run_migrations_offline():
 
 def run_migrations_online():
     """Run migrations in 'online' mode."""
-    configuration = config.get_section(config.config_ini_section)
-    configuration["sqlalchemy.url"] = get_url()
-
-    connectable = engine_from_config(
-        configuration,
-        prefix="sqlalchemy.",
+    database_url = get_url()
+    schema_name = get_schema_name()
+    connectable = create_db_engine(
+        database_url,
         poolclass=pool.NullPool,
+        database_schema=schema_name,
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            version_table_schema=schema_name,
+        )
 
         with context.begin_transaction():
             context.run_migrations()

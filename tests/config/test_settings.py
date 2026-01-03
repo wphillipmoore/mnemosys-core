@@ -13,19 +13,25 @@ def test_settings_dataclass_creation() -> None:
     settings = Settings(
         environment=Environment.TEST,
         database_url="sqlite:///:memory:",
+        database_schema="mnemosys_test",
         debug=True,
         log_sql=True,
     )
 
     assert settings.environment == Environment.TEST
     assert settings.database_url == "sqlite:///:memory:"
+    assert settings.database_schema == "mnemosys_test"
     assert settings.debug is True
     assert settings.log_sql is True
 
 
 def test_settings_dataclass_defaults() -> None:
     """Test Settings default values."""
-    settings = Settings(environment=Environment.DEVELOPMENT, database_url="postgresql://localhost/test")
+    settings = Settings(
+        environment=Environment.DEVELOPMENT,
+        database_url="postgresql://localhost/test",
+        database_schema="mnemosys",
+    )
 
     assert settings.debug is False
     assert settings.log_sql is False
@@ -35,6 +41,7 @@ def test_load_settings_from_env_development(monkeypatch: pytest.MonkeyPatch) -> 
     """Test loading development settings from environment."""
     monkeypatch.setenv("MNEMOSYS_ENV", "development")
     monkeypatch.delenv("DATABASE_URL", raising=False)
+    monkeypatch.delenv("MNEMOSYS_DB_SCHEMA", raising=False)
     monkeypatch.delenv("DEBUG", raising=False)
     monkeypatch.delenv("LOG_SQL", raising=False)
 
@@ -42,6 +49,7 @@ def test_load_settings_from_env_development(monkeypatch: pytest.MonkeyPatch) -> 
 
     assert settings.environment == Environment.DEVELOPMENT
     assert settings.database_url == "postgresql://localhost/mnemosys_dev"
+    assert settings.database_schema == "mnemosys"
     assert settings.debug is False
     assert settings.log_sql is False
 
@@ -50,32 +58,38 @@ def test_load_settings_from_env_test(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test loading test settings from environment."""
     monkeypatch.setenv("MNEMOSYS_ENV", "test")
     monkeypatch.delenv("DATABASE_URL", raising=False)
+    monkeypatch.delenv("MNEMOSYS_DB_SCHEMA", raising=False)
 
     settings = load_settings_from_env()
 
     assert settings.environment == Environment.TEST
     assert settings.database_url == "sqlite:///:memory:"
+    assert settings.database_schema == "mnemosys"
 
 
 def test_load_settings_from_env_production(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test loading production settings from environment."""
     monkeypatch.setenv("MNEMOSYS_ENV", "production")
     monkeypatch.delenv("DATABASE_URL", raising=False)
+    monkeypatch.delenv("MNEMOSYS_DB_SCHEMA", raising=False)
 
     settings = load_settings_from_env()
 
     assert settings.environment == Environment.PRODUCTION
     assert settings.database_url == "postgresql://localhost/mnemosys_prod"
+    assert settings.database_schema == "mnemosys"
 
 
 def test_load_settings_from_env_custom_database_url(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test custom DATABASE_URL override."""
     monkeypatch.setenv("MNEMOSYS_ENV", "development")
     monkeypatch.setenv("DATABASE_URL", "postgresql://custom:5432/customdb")
+    monkeypatch.delenv("MNEMOSYS_DB_SCHEMA", raising=False)
 
     settings = load_settings_from_env()
 
     assert settings.database_url == "postgresql://custom:5432/customdb"
+    assert settings.database_schema == "mnemosys"
 
 
 def test_load_settings_from_env_debug_true(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -112,17 +126,20 @@ def test_load_settings_from_env_default_no_env_var(monkeypatch: pytest.MonkeyPat
     """Test default environment when MNEMOSYS_ENV is not set."""
     monkeypatch.delenv("MNEMOSYS_ENV", raising=False)
     monkeypatch.delenv("DATABASE_URL", raising=False)
+    monkeypatch.delenv("MNEMOSYS_DB_SCHEMA", raising=False)
 
     settings = load_settings_from_env()
 
     assert settings.environment == Environment.DEVELOPMENT
     assert settings.database_url == "postgresql://localhost/mnemosys_dev"
+    assert settings.database_schema == "mnemosys"
 
 
 def test_load_settings_from_env_all_custom(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test all settings customized via environment."""
     monkeypatch.setenv("MNEMOSYS_ENV", "test")
     monkeypatch.setenv("DATABASE_URL", "sqlite:///test.db")
+    monkeypatch.setenv("MNEMOSYS_DB_SCHEMA", "mnemosys_custom")
     monkeypatch.setenv("DEBUG", "true")
     monkeypatch.setenv("LOG_SQL", "true")
 
@@ -130,5 +147,16 @@ def test_load_settings_from_env_all_custom(monkeypatch: pytest.MonkeyPatch) -> N
 
     assert settings.environment == Environment.TEST
     assert settings.database_url == "sqlite:///test.db"
+    assert settings.database_schema == "mnemosys_custom"
     assert settings.debug is True
     assert settings.log_sql is True
+
+
+def test_load_settings_from_env_custom_schema(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test custom MNEMOSYS_DB_SCHEMA override."""
+    monkeypatch.setenv("MNEMOSYS_ENV", "development")
+    monkeypatch.setenv("MNEMOSYS_DB_SCHEMA", "mnemosys_dev_feature")
+
+    settings = load_settings_from_env()
+
+    assert settings.database_schema == "mnemosys_dev_feature"

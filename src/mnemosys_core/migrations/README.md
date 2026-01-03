@@ -4,10 +4,10 @@ This directory contains Alembic database migration scripts for the mnemosys-core
 
 ## Generating Migrations
 
-Create a new migration after modifying models:
+Create a new migration after modifying models (message must be short `snake_case`, <= 60 chars):
 
 ```bash
-alembic revision --autogenerate -m "description of changes"
+python scripts/dev/alembic_revision.py add_column_to_practice
 ```
 
 ## Applying Migrations
@@ -32,6 +32,20 @@ Rollback to a specific revision:
 alembic downgrade <revision_id>
 ```
 
+## Migration Validation
+
+Validate upgrade/downgrade in a temporary schema (PostgreSQL only):
+
+```bash
+python scripts/dev/validate_migrations.py
+```
+
+Optional seed script:
+
+```bash
+python scripts/dev/validate_migrations.py --seed-script <path-to-seed-script>
+```
+
 ## Migration History
 
 View migration history:
@@ -51,5 +65,6 @@ alembic current
 Migrations use the database URL from environment variables:
 - Set `MNEMOSYS_ENV` to control environment (development/test/production)
 - Set `DATABASE_URL` to override the default database connection string
+- Set `MNEMOSYS_DB_SCHEMA` to target a specific database schema
 
 See `src/mnemosys_core/config/settings.py` for configuration details.
