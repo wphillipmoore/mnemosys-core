@@ -129,6 +129,16 @@ AI or automated tasks:
 - Prefer ephemeral schemas per run or per branch (suffix with a unique ID).
 - Avoid long-lived shared schemas across automated agents.
 
+### When a separate database is required
+
+Use a separate development database only when the change cannot be isolated by schema:
+
+- Migrations that touch database-level objects (roles, extensions, databases, or ALTER DATABASE).
+- Tests that require database-level configuration (collation, ICU locale, encoding, or default privileges).
+- Scenarios that must validate a truly empty database bootstrap (not just an empty schema).
+
+Default position: use a single shared development database with per-branch schemas.
+
 ### Standard revision workflow
 
 1. Update SQLAlchemy models.
