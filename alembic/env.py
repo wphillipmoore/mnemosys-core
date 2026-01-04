@@ -24,6 +24,11 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 
+def should_include_object(object_, name, type_, reflected, compare_to):
+    """Exclude Alembic's version table from autogenerate comparisons."""
+    return not (type_ == "table" and name == "alembic_version")
+
+
 def get_url():
     """Get database URL from settings."""
     settings = load_admin_settings_from_env()
@@ -48,6 +53,7 @@ def run_migrations_offline():
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         version_table_schema=schema_name,
+        include_object=should_include_object,
     )
 
     with context.begin_transaction():
@@ -69,6 +75,7 @@ def run_migrations_online():
             connection=connection,
             target_metadata=target_metadata,
             version_table_schema=schema_name,
+            include_object=should_include_object,
         )
 
         with context.begin_transaction():
