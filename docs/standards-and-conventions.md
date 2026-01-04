@@ -354,6 +354,14 @@ open htmlcov/index.html
 
 ## Development Workflow
 
+### Virtual Environment Requirement
+
+**Rule**: All development work and CLI commands must be run with the project virtual environment activated.
+
+**Rationale**: Ensures consistent dependency resolution, avoids system Python drift, and prevents subtle CI/local mismatches.
+
+**TODO**: Document all required external tooling dependencies for development (e.g., AWS CLI).
+
 ### Pull Request Submission Process
 
 **Core Principle**: Pull requests must pass **all** automated checks before submission. **Docs-only** changes may skip the unit test suite and coverage checks as defined below.

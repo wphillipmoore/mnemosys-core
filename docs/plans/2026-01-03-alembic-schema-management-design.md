@@ -26,9 +26,10 @@ This is a design and workflow document. It captures current repository setup and
 
 ## Current Repository State
 
-- Alembic is configured under `src/mnemosys_core/migrations` with `alembic.ini`.
+- Alembic is configured under `alembic/` with `alembic.ini` at the repo root.
 - `env.py` loads database settings explicitly from environment variables (including admin credentials).
 - Migration runner and validation tooling exist under `src/mnemosys_core/migrations/` and `scripts/dev/`.
+- Alembic script contents under `alembic/` are generated artifacts and excluded from linting/testing/coverage; validation is handled via migration tooling.
 - Deployment automation is not implemented yet.
 
 ## Local Alembic Setup
