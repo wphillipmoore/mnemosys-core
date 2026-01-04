@@ -5,8 +5,8 @@ Revises: cd75eb275cb7
 Create Date: 2026-01-04 17:06:57.446739
 
 """
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
