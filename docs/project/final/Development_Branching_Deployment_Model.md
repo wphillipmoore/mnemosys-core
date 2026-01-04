@@ -31,8 +31,9 @@ This model prioritizes **clarity and durability** over cleverness.
 
 ## 3. Deployment Environments
 
-There are exactly three environments:
+There are exactly four environments:
 
+- **sandbox**
 - **development**
 - **test**
 - **production**
@@ -41,6 +42,8 @@ Each environment consists of:
 - one database
 - one API
 - one running application version
+
+Sandbox is a pre-PR environment for feature, bugfix, and hotfix branch work. It is not tied to an eternal branch and is outside the promotion flow; updates are manual or ad hoc.
 
 Parallel stacks, canaries, or shadow environments are explicitly out of scope at v0.1.
 

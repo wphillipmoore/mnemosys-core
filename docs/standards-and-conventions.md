@@ -266,6 +266,8 @@ def create_instrument(name, string_count):
 
 **Default Assumption**: All code is tested unless explicitly documented otherwise.
 
+**Exception**: Alembic tooling under `alembic/` is excluded from unit tests, linting, and coverage. Validation occurs via migration tooling (see `scripts/dev/validate_migrations.py`).
+
 #### Coverage Target
 
 - **Goal**: 100% code coverage (lines AND branches) across all production code
@@ -353,6 +355,14 @@ open htmlcov/index.html
 ---
 
 ## Development Workflow
+
+### Virtual Environment Requirement
+
+**Rule**: All development work and CLI commands must be run with the project virtual environment activated.
+
+**Rationale**: Ensures consistent dependency resolution, avoids system Python drift, and prevents subtle CI/local mismatches.
+
+**TODO**: Document all required external tooling dependencies for development (e.g., AWS CLI).
 
 ### Pull Request Submission Process
 

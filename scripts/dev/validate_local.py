@@ -12,6 +12,7 @@ COMMANDS: tuple[tuple[str, ...], ...] = (
     ("poetry", "sync", "--dry-run"),
     ("poetry", "run", "ruff", "check"),
     ("poetry", "run", "mypy", "src/"),
+    ("poetry", "run", "python", "scripts/dev/validate_migrations.py"),
     (
         "poetry",
         "run",

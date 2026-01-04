@@ -13,6 +13,7 @@ def create_db_engine(
     echo: bool = False,
     pool_pre_ping: bool = True,
     poolclass: type | None = None,
+    database_schema: str | None = None,
 ) -> Engine:
     """
     Create a SQLAlchemy engine.
@@ -22,6 +23,7 @@ def create_db_engine(
         echo: Whether to log SQL statements
         pool_pre_ping: Check connection health before use
         poolclass: Optional pool class override (e.g., NullPool for tests)
+        database_schema: Optional database schema name for PostgreSQL
 
     Returns:
         Configured SQLAlchemy engine
@@ -41,11 +43,25 @@ def create_db_engine(
             poolclass=pool,
         )
 
+    connect_args: dict[str, str] = {}
+    if database_schema:
+        connect_args["options"] = f"-c search_path={database_schema}"
+
+    engine_kwargs: dict[str, object] = {
+        "echo": echo,
+        "pool_pre_ping": pool_pre_ping,
+    }
+    if connect_args:
+        engine_kwargs["connect_args"] = connect_args
+
+    if poolclass is not None:
+        engine_kwargs["poolclass"] = poolclass
+        return create_engine(database_url, **engine_kwargs)
+
     # PostgreSQL production configuration
     return create_engine(
         database_url,
-        echo=echo,
-        pool_pre_ping=pool_pre_ping,
+        **engine_kwargs,
         pool_size=5,
         max_overflow=10,
     )
