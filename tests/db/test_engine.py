@@ -86,6 +86,25 @@ def test_create_db_engine_postgresql_settings() -> None:
             )
 
 
+def test_create_db_engine_postgresql_without_schema() -> None:
+    """Test PostgreSQL engine without schema configuration."""
+    if is_psycopg2_available():
+        engine = create_db_engine(
+            "postgresql://localhost/testdb",
+            echo=False,
+        )
+
+        assert engine is not None
+        assert isinstance(engine, Engine)
+        assert str(engine.url).startswith("postgresql")
+    else:
+        with pytest.raises(ModuleNotFoundError, match="psycopg2"):
+            create_db_engine(
+                "postgresql://localhost/testdb",
+                echo=False,
+            )
+
+
 def test_create_db_engine_postgresql_with_poolclass() -> None:
     """Test PostgreSQL engine accepts custom pool class."""
     if is_psycopg2_available():

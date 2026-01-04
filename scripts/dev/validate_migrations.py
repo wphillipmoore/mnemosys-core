@@ -6,12 +6,14 @@ Validate Alembic upgrade/downgrade against a temporary schema.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import os
 import re
 import subprocess
 import sys
 import uuid
 from contextlib import contextmanager
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -22,9 +24,9 @@ from sqlalchemy.pool import NullPool
 
 from mnemosys_core.config.settings import load_admin_settings_from_env
 from mnemosys_core.db.engine import create_db_engine
-from mnemosys_core.migrations import runner
 
 SCHEMA_PATTERN = re.compile(r"^[a-z0-9_]+$")
+RUNNER_PATH = Path(__file__).resolve().parents[2] / "alembic" / "runner.py"
 
 
 @contextmanager
@@ -101,6 +103,24 @@ def run_seed_script(seed_script: str | None) -> int:
     return result.returncode
 
 
+def ensure_alembic_available() -> None:
+    """Ensure Alembic is importable in the current environment."""
+    if importlib.util.find_spec("alembic") is None:
+        raise SystemExit("Alembic module not found in the current environment.")
+
+
+def ensure_runner_available() -> None:
+    """Ensure the migration runner script exists."""
+    if not RUNNER_PATH.is_file():
+        raise SystemExit(f"Migration runner not found at {RUNNER_PATH}.")
+
+
+def run_runner(command_arguments: Sequence[str]) -> int:
+    """Run the Alembic migration runner script."""
+    command = [sys.executable, str(RUNNER_PATH), *command_arguments]
+    return subprocess.run(command, check=False).returncode
+
+
 def run_validation(schema_name: str, environment_name: str, seed_script: str | None) -> int:
     """Run upgrade and downgrade validation against the temporary schema."""
     overrides = {
@@ -109,7 +129,7 @@ def run_validation(schema_name: str, environment_name: str, seed_script: str | N
         "MNEMOSYS_DOWNGRADE_TARGET": "base",
     }
     with temporary_environment(overrides):
-        upgrade_result = runner.run_upgrade(None)
+        upgrade_result = run_runner(["upgrade"])
         if upgrade_result != 0:
             return upgrade_result
 
@@ -117,18 +137,18 @@ def run_validation(schema_name: str, environment_name: str, seed_script: str | N
         if seed_result != 0:
             return seed_result
 
-        downgrade_result = runner.run_downgrade(None, "base")
+        downgrade_result = run_runner(["downgrade", "--target", "base"])
         if downgrade_result != 0:
             return downgrade_result
 
-        upgrade_again_result = runner.run_upgrade(None)
+        upgrade_again_result = run_runner(["upgrade"])
         return upgrade_again_result
 
 
 def main(argument_list: Sequence[str] | None = None) -> int:
     """Entry point for migration validation."""
-    if not runner.validate_alembic_command_available():
-        raise SystemExit("Alembic module not found in the current environment.")
+    ensure_alembic_available()
+    ensure_runner_available()
 
     arguments = parse_arguments(argument_list)
     settings = load_admin_settings_from_env()
