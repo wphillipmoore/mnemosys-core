@@ -362,7 +362,20 @@ open htmlcov/index.html
 
 **Rationale**: Ensures consistent dependency resolution, avoids system Python drift, and prevents subtle CI/local mismatches.
 
-**TODO**: Document all required external tooling dependencies for development (e.g., AWS CLI).
+### External Tooling Dependencies (Known)
+
+This list captures non-Python tooling required for development and operations. Keep it minimal and add items only when they become necessary.
+
+**Required for daily workflow:**
+- Git
+- GitHub CLI (`gh`) for PR creation and merge workflow
+- Python 3.13+ with `venv`
+- Poetry
+
+**Required for database/bootstrap operations:**
+- AWS CLI (RDS/security group provisioning, bootstrap access)
+- `psql` (PostgreSQL client)
+- `curl` (IP discovery for allowlisting)
 
 ### Pull Request Submission Process
 
