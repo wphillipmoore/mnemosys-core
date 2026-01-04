@@ -31,6 +31,16 @@ def should_include_object(object_, name, type_, reflected, compare_to):
     return not (type_ == "table" and name == "alembic_version")
 
 
+def should_include_name(name, type_, parent_names):
+    """Limit autogenerate to the configured schema when present."""
+    schema_name = get_schema_name()
+    if not schema_name:
+        return True
+    if type_ == "schema":
+        return name == schema_name
+    return not (parent_names and parent_names.get("schema_name") not in (None, schema_name))
+
+
 def build_schema_rewriter(schema_name: str) -> rewriter.Rewriter:
     """Build a rewriter that strips a fixed schema from generated operations."""
     schema_rewriter = rewriter.Rewriter()
@@ -90,6 +100,7 @@ def run_migrations_offline():
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         version_table_schema=schema_name,
+        include_name=should_include_name,
         include_object=should_include_object,
         process_revision_directives=process_revision_directives,
     )
@@ -113,6 +124,7 @@ def run_migrations_online():
             connection=connection,
             target_metadata=target_metadata,
             version_table_schema=schema_name,
+            include_name=should_include_name,
             include_object=should_include_object,
             process_revision_directives=process_revision_directives,
         )
