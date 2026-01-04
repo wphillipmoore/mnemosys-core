@@ -10,6 +10,15 @@
 
 ---
 
+## Table of Contents
+- [Task 1: Implement GitHub Actions Workflow](#task-1-implement-github-actions-workflow)
+- [Task 2: Test Workflow Execution](#task-2-test-workflow-execution)
+- [Task 3: Update Documentation to Reference Automated CI](#task-3-update-documentation-to-reference-automated-ci)
+- [Task 4: Verify Branch Protection Integration](#task-4-verify-branch-protection-integration)
+- [Task 5: Final Validation](#task-5-final-validation)
+- [Success Criteria](#success-criteria)
+- [Notes](#notes)
+
 ## Task 1: Implement GitHub Actions Workflow
 
 **Files:**

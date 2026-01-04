@@ -1,6 +1,15 @@
 
 # 0001 — Repository Structure
 
+## Table of Contents
+- [Status](#status)
+- [Context](#context)
+- [Decision](#decision)
+- [Consequences](#consequences)
+  - [Positive](#positive)
+  - [Negative](#negative)
+- [Notes](#notes)
+
 ## Status
 Accepted (v0.1)
 

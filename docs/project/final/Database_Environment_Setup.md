@@ -1,5 +1,20 @@
 # MNEMOSYS Database Environment Setup (Bootstrap)
 
+## Table of Contents
+- [Purpose](#purpose)
+- [Environment Model](#environment-model)
+- [Infrastructure Model (Bootstrap)](#infrastructure-model-bootstrap)
+- [Naming Conventions](#naming-conventions)
+- [Bootstrap Setup Steps (Non-Production RDS)](#bootstrap-setup-steps-non-production-rds)
+  - [1) Allow local access (bootstrap only)](#1-allow-local-access-bootstrap-only)
+  - [2) Connect as the RDS master user](#2-connect-as-the-rds-master-user)
+  - [3) Create roles and set passwords](#3-create-roles-and-set-passwords)
+  - [4) Create databases and isolate access](#4-create-databases-and-isolate-access)
+  - [5) Grant schema access (sandbox/dev/test)](#5-grant-schema-access-sandboxdevtest)
+  - [6) Local environment configuration (sandbox only)](#6-local-environment-configuration-sandbox-only)
+- [Production Setup (Dedicated RDS)](#production-setup-dedicated-rds)
+- [Bootstrap Exit (Lockdown)](#bootstrap-exit-lockdown)
+
 ## Purpose
 
 This document captures the concrete, repeatable steps to provision the MNEMOSYS

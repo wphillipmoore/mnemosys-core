@@ -3,6 +3,21 @@
 **Date**: 2025-12-31
 **Status**: Approved for implementation
 
+## Table of Contents
+- [Overview](#overview)
+- [Requirements](#requirements)
+- [Workflow Triggers](#workflow-triggers)
+- [Job Structure](#job-structure)
+- [Python Version Strategy](#python-version-strategy)
+- [Execution Steps](#execution-steps)
+- [Caching Strategy](#caching-strategy)
+- [Concurrency Control](#concurrency-control)
+- [Permissions](#permissions)
+- [Artifacts](#artifacts)
+- [Success Criteria](#success-criteria)
+- [Future Enhancements (Not Implemented)](#future-enhancements-not-implemented)
+- [Philosophy](#philosophy)
+
 ## Overview
 
 Automate enforcement of code quality standards (tests, coverage, linting, type checking) using GitHub Actions. This replaces manual pre-push validation with automated CI checks that block PR merges when standards aren't met.

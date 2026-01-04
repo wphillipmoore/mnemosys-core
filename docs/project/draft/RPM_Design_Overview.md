@@ -7,6 +7,22 @@
 
 ---
 
+## Table of Contents
+- [1. Overview](#1-overview)
+- [2. System Summary](#2-system-summary)
+  - [Core Principles](#core-principles)
+  - [Repertoire States](#repertoire-states)
+  - [Portfolios](#portfolios)
+  - [ProblemSections](#problemsections)
+  - [Maintenance Tiers](#maintenance-tiers)
+  - [Decay Model](#decay-model)
+  - [Scheduler Invariants](#scheduler-invariants)
+- [3. Appendix: Next Steps](#3-appendix-next-steps)
+  - [Immediate](#immediate)
+  - [Short-Term](#short-term)
+  - [Medium-Term](#medium-term)
+  - [Future / Optional](#future-optional)
+
 ## 1. Overview
 
 Repertoire Practice Management (RPM) is a structured system for acquiring, stabilizing, and retaining a large repertoire of technically demanding musical works over long time horizons. It treats repertoire as a portfolio of assets subject to decay, rather than a static list of songs.

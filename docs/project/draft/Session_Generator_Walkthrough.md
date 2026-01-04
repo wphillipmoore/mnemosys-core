@@ -8,6 +8,18 @@
 
 This document is a procedural companion to the FSIPS v0.1 Architecture Overview. It describes, step by step, how the Session Generator produces a concrete, executable practice session from inputs and system state.
 
+## Table of Contents
+- [1. Purpose](#1-purpose)
+- [2. Generator Inputs](#2-generator-inputs)
+  - [SessionRequest](#sessionrequest)
+- [3. Generator State (Conceptual)](#3-generator-state-conceptual)
+- [4. Session Skeleton Construction](#4-session-skeleton-construction)
+- [5. Block-by-Block Resolution](#5-block-by-block-resolution)
+- [6. Overload Assignment Rules](#6-overload-assignment-rules)
+- [7. Fatigue Budgeting](#7-fatigue-budgeting)
+- [8. Executable Output Requirement](#8-executable-output-requirement)
+- [9. Determinism & Explainability](#9-determinism-explainability)
+
 ## 1. Purpose
 
 The Session Generator is responsible for converting:

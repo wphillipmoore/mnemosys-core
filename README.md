@@ -2,6 +2,12 @@
 
 Core backend for the MNEMOSYS system.
 
+## Table of Contents
+- [What It Is](#what-it-is)
+- [Quickstart](#quickstart)
+- [Development](#development)
+- [Where the Rules Live](#where-the-rules-live)
+
 ## What It Is
 
 MNEMOSYS Core is a database-first Python backend with explicit structural

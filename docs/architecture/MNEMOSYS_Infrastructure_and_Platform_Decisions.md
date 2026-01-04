@@ -1,5 +1,12 @@
 # MNEMOSYS — Infrastructure & Platform Decisions (v0.1)
 
+## Table of Contents
+- [Results](#results)
+- [Reasoning](#reasoning)
+- [Options Not Chosen](#options-not-chosen)
+- [Optional: Open Questions](#optional-open-questions)
+- [Status](#status)
+
 ## Results
 
 - The MNEMOSYS project will use **Amazon Web Services (AWS)** as its cloud provider.

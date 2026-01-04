@@ -13,6 +13,24 @@ It represents a frozen **v0.1 snapshot**, intended to support:
 
 ---
 
+## Table of Contents
+- [1. AI Assistance (Explicitly Bounded)](#1-ai-assistance-explicitly-bounded)
+- [2. Version Control Platform](#2-version-control-platform)
+  - [Lock-In Awareness](#lock-in-awareness)
+- [3. Repository Strategy](#3-repository-strategy)
+  - [Core Philosophy](#core-philosophy)
+  - [Boundary Rule](#boundary-rule)
+  - [Explicit Non-Decision](#explicit-non-decision)
+- [4. Python Version Policy](#4-python-version-policy)
+  - [Supported Versions](#supported-versions)
+  - [CI Requirements](#ci-requirements)
+  - [Deployment Rule](#deployment-rule)
+- [5. CI/CD Constraints](#5-cicd-constraints)
+- [6. Locked vs. Flexible Decisions](#6-locked-vs-flexible-decisions)
+  - [Locked at v0.1](#locked-at-v01)
+  - [Explicitly Flexible](#explicitly-flexible)
+- [7. Guiding Principle](#7-guiding-principle)
+
 ## 1. AI Assistance (Explicitly Bounded)
 
 Constraints:

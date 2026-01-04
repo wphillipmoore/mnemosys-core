@@ -1,5 +1,20 @@
 # AI‑Assisted Development Loop — First‑Class Artifact (v0.1)
 
+## Table of Contents
+- [Status](#status)
+- [1. Motivation](#1-motivation)
+- [2. Initial Conditions](#2-initial-conditions)
+- [3. The Core Insight](#3-the-core-insight)
+- [4. The Loop (High Level)](#4-the-loop-high-level)
+- [5. What the AI Is *Not* Doing](#5-what-the-ai-is-not-doing)
+- [6. Dopamine, Velocity, and Control](#6-dopamine-velocity-and-control)
+- [7. Why This Works for Senior Practitioners](#7-why-this-works-for-senior-practitioners)
+- [8. Relationship to MNEMOS Principles](#8-relationship-to-mnemos-principles)
+- [9. Preliminary Outcomes (v0.1)](#9-preliminary-outcomes-v01)
+- [10. Open Questions (Deferred)](#10-open-questions-deferred)
+- [11. Intended Future Use](#11-intended-future-use)
+- [Closing Note](#closing-note)
+
 ## Status
 Draft — exploratory snapshot
 

@@ -1,5 +1,21 @@
 # MNEMOSYS Development — Branching & Deployment Model v0.1
 
+## Table of Contents
+- [Status](#status)
+- [1. Purpose](#1-purpose)
+- [2. Core Invariants](#2-core-invariants)
+- [3. Deployment Environments](#3-deployment-environments)
+- [4. Eternal Branches](#4-eternal-branches)
+  - [Pull Request Requirement](#pull-request-requirement)
+- [5. Short-Lived Branches](#5-short-lived-branches)
+  - [Branch Naming Conventions](#branch-naming-conventions)
+  - [feature/*](#feature)
+  - [bugfix/*](#bugfix)
+  - [hotfix/*](#hotfix)
+- [6. Promotion Flow](#6-promotion-flow)
+- [7. Forbidden Operations](#7-forbidden-operations)
+- [8. Guiding Principle](#8-guiding-principle)
+
 ## Status
 Frozen v0.1 snapshot
 

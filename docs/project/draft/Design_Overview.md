@@ -6,6 +6,28 @@
 
 ---
 
+## Table of Contents
+- [1. Overview](#1-overview)
+- [2. Core Design Principles](#2-core-design-principles)
+- [3. Instrument Abstraction](#3-instrument-abstraction)
+  - [InstrumentProfile](#instrumentprofile)
+- [4. Canonical Exercise Model](#4-canonical-exercise-model)
+  - [Exercise](#exercise)
+- [5. Overload Dimensions](#5-overload-dimensions)
+- [6. Fatigue Model](#6-fatigue-model)
+  - [Fatigue Profiles](#fatigue-profiles)
+- [7. SessionBlocks (Structural Constraint Layer)](#7-sessionblocks-structural-constraint-layer)
+  - [Canonical SessionBlocks](#canonical-sessionblocks)
+  - [Global Invariants](#global-invariants)
+- [8. Session Generator Logic](#8-session-generator-logic)
+  - [Inputs](#inputs)
+  - [Persistent State (future)](#persistent-state-future)
+  - [Generation Algorithm](#generation-algorithm)
+- [9. Executable Output Requirement](#9-executable-output-requirement)
+- [10. Current Capabilities (v0.1)](#10-current-capabilities-v01)
+- [11. Explicit Non-Goals (for now)](#11-explicit-non-goals-for-now)
+- [Appendix A — Identified Next Steps](#appendix-a-identified-next-steps)
+
 ## 1. Overview
 
 The Fretted String Instrument Practice System (FSIPS) is a deterministic, fatigue-aware, instrument-agnostic framework for generating structured daily practice sessions for fretted string instruments (bass guitar, guitar, extended-range variants, alternate tunings).

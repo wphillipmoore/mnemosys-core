@@ -4,6 +4,30 @@ This document captures coding standards, naming conventions, and architectural p
 
 ---
 
+## Table of Contents
+- [Project Terminology](#project-terminology)
+  - [Official Project Name](#official-project-name)
+  - [Deprecated Names](#deprecated-names)
+  - [Name Rationale](#name-rationale)
+  - [Usage in Historical Documents](#usage-in-historical-documents)
+- [Documentation Standards](#documentation-standards)
+  - [Markdown Table of Contents](#markdown-table-of-contents)
+- [Python Coding Standards](#python-coding-standards)
+  - [Philosophy](#philosophy)
+  - [Import-Time Side Effects](#import-time-side-effects)
+  - [Naming Conventions](#naming-conventions)
+  - [Type Hints](#type-hints)
+  - [Unit Testing Policy](#unit-testing-policy)
+- [Development Workflow](#development-workflow)
+  - [Virtual Environment Requirement](#virtual-environment-requirement)
+  - [External Tooling Dependencies (Known)](#external-tooling-dependencies-known)
+  - [Pull Request Submission Process](#pull-request-submission-process)
+  - [Pull Request Finalization Process](#pull-request-finalization-process)
+- [Database Conventions](#database-conventions)
+  - [Table Naming Convention](#table-naming-convention)
+  - [Model File Organization](#model-file-organization)
+- [To Be Organized](#to-be-organized)
+
 ## Project Terminology
 
 ### Official Project Name
@@ -34,6 +58,29 @@ See `docs/project/final/Philosophy.md` for complete philosophical foundation.
 ### Usage in Historical Documents
 
 Early design documents (v0.1 snapshots) may reference deprecated names in their original context. When updating these documents, add a nomenclature note explaining the name evolution while preserving the historical snapshot.
+
+---
+
+## Documentation Standards
+
+### Markdown Table of Contents
+
+**Rule**: All documentation Markdown files must include a `## Table of Contents`
+section near the top of the document.
+
+**Placement**: Insert the Table of Contents after the document title and any
+short metadata or preface block, and before the first `##` section heading.
+
+**Contents**:
+- List every `##` and `###` heading in order (exclude the Table of Contents
+  heading itself).
+- Use a bullet list; indent `###` entries by two spaces.
+- Use GitHub-style anchor links for all entries.
+
+**Maintenance**: Update the Table of Contents whenever headings change.
+
+**Scope**: Applies to documentation Markdown files in this repository,
+including `docs/`, `README.md`, and `alembic/README.md`.
 
 ---
 

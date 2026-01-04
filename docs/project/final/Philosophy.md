@@ -5,6 +5,17 @@
 
 ---
 
+## Table of Contents
+- [1. Why a Name Matters](#1-why-a-name-matters)
+- [2. The Core Thesis](#2-the-core-thesis)
+- [3. What MNEMOS Is](#3-what-mnemos-is)
+- [4. What MNEMOS Is Not](#4-what-mnemos-is-not)
+- [5. Why “MNEMOS”](#5-why-mnemos)
+- [6. Guiding Principle](#6-guiding-principle)
+- [7. Origin and Meaning of the Name “MNEMOS”](#7-origin-and-meaning-of-the-name-mnemos)
+  - [Relation to Mnemosyne](#relation-to-mnemosyne)
+  - [Operational Definition](#operational-definition)
+
 ## 1. Why a Name Matters
 
 Most systems for learning complex skills focus on **acquisition**:

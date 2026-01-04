@@ -6,6 +6,15 @@
 
 ---
 
+## Table of Contents
+- [1. Purpose](#1-purpose)
+- [2. Canonical vs Derivative Artifacts](#2-canonical-vs-derivative-artifacts)
+- [3. Proprietary Tools and Formats](#3-proprietary-tools-and-formats)
+- [4. File Format Standards](#4-file-format-standards)
+- [5. Instrument and Tool Independence](#5-instrument-and-tool-independence)
+- [6. Versioning and Stability](#6-versioning-and-stability)
+- [7. Scope Notes (v0.1)](#7-scope-notes-v01)
+
 ## 1. Purpose
 
 This document defines standards, conventions, and architectural constraints that govern FSIPS-related design and implementation decisions.

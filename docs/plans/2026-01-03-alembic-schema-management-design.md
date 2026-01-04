@@ -3,6 +3,42 @@
 **Date**: 2026-01-03
 **Status**: Draft (ADR captured; implementation in progress)
 
+## Table of Contents
+- [Overview](#overview)
+- [Scope](#scope)
+- [Non-Goals](#non-goals)
+- [Current Repository State](#current-repository-state)
+- [Local Alembic Setup](#local-alembic-setup)
+  - [Schema configuration](#schema-configuration)
+  - [Revision file naming](#revision-file-naming)
+  - [Configuration invariants](#configuration-invariants)
+- [Deployment Automation Model](#deployment-automation-model)
+  - [Branch to environment mapping](#branch-to-environment-mapping)
+  - [Startup migration gate](#startup-migration-gate)
+  - [Deployment wiring (planned)](#deployment-wiring-planned)
+- [Migration Safety and Rollback](#migration-safety-and-rollback)
+- [Developer Workflow (Revision Creation and Testing)](#developer-workflow-revision-creation-and-testing)
+  - [Required databases](#required-databases)
+  - [Recommended database allocation](#recommended-database-allocation)
+  - [When a separate database is required](#when-a-separate-database-is-required)
+  - [Credentials and access model](#credentials-and-access-model)
+  - [Sandbox role isolation (SQL)](#sandbox-role-isolation-sql)
+  - [Bootstrap exit checklist (lockdown)](#bootstrap-exit-checklist-lockdown)
+  - [Standard revision workflow](#standard-revision-workflow)
+  - [Workflow invariants](#workflow-invariants)
+- [Testing Strategy (Planned)](#testing-strategy-planned)
+- [Observability and Audit](#observability-and-audit)
+- [Migration Runner Contract](#migration-runner-contract)
+  - [Inputs](#inputs)
+  - [Behavior (Idempotent)](#behavior-idempotent)
+  - [Exit Codes](#exit-codes)
+  - [Logging Requirements](#logging-requirements)
+  - [Security Constraints](#security-constraints)
+  - [Integration Expectations](#integration-expectations)
+- [Alembic Primary Tooling](#alembic-primary-tooling)
+- [Implementation Plan and Sequence (Status)](#implementation-plan-and-sequence-status)
+- [Open Questions](#open-questions)
+
 ## Overview
 
 This document defines how MNEMOSYS manages PostgreSQL schema changes using Alembic, and how those changes are deployed alongside the REST API. The design favors explicit, deterministic behavior and avoids import-time side effects. A single startup migration gate runs before the API service, validates schema state, and applies pending Alembic revisions.

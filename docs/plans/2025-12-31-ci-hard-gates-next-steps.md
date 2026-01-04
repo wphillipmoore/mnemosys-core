@@ -3,6 +3,9 @@
 Context: shift ruff/mypy enforcement out of pytest and into CI, remove
 tests/test_code_compliance.py, and add a local validation script.
 
+## Table of Contents
+- [TODO (in order)](#todo-in-order)
+
 ## TODO (in order)
 
 1. Ensure working branch is `feature/ci-hard-gates` and clean.

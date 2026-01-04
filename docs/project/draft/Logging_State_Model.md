@@ -10,6 +10,16 @@ This document defines the minimum viable state and logging model required to sup
 
 The goal is to maximize signal while minimizing daily friction.
 
+## Table of Contents
+- [1. Design Goals](#1-design-goals)
+- [2. Core Persistent State](#2-core-persistent-state)
+  - [ExerciseState](#exercisestate)
+- [3. Optional Variant State (Deferred)](#3-optional-variant-state-deferred)
+- [4. Daily Logging Surface](#4-daily-logging-surface)
+- [5. Mastery Estimate Updates](#5-mastery-estimate-updates)
+- [6. Failure & Regression Handling](#6-failure-regression-handling)
+- [7. Cold Start Behavior](#7-cold-start-behavior)
+
 ## 1. Design Goals
 
 - Logging must be fast and lightweight
