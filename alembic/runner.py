@@ -135,7 +135,12 @@ def run_alembic_command(
     )
 
 
-def log_command_result(result: AlembicCommandResult) -> None:
+def log_command_result(
+    result: AlembicCommandResult,
+    *,
+    log_stdout: bool = True,
+    log_stderr: bool = True,
+) -> None:
     """Log command execution result."""
     LOGGER.info(
         "Command finished with code %s in %.2fs: %s",
@@ -143,21 +148,21 @@ def log_command_result(result: AlembicCommandResult) -> None:
         result.duration_seconds,
         " ".join(result.command),
     )
-    if result.standard_output.strip():
+    if log_stdout and result.standard_output.strip():
         LOGGER.info("stdout: %s", result.standard_output.strip())
-    if result.standard_error.strip():
+    if log_stderr and result.standard_error.strip():
         LOGGER.warning("stderr: %s", result.standard_error.strip())
 
 
 def run_upgrade(alembic_configuration_path: str | None) -> int:
     """Run the automated Alembic upgrade sequence."""
     check_result = run_alembic_command(["check"], alembic_configuration_path)
-    log_command_result(check_result)
+    log_command_result(check_result, log_stderr=check_result.return_code == 0)
     if check_result.return_code == 0:
         LOGGER.info("Alembic check succeeded. No upgrade required.")
         return 0
 
-    LOGGER.info("Alembic check failed. Attempting upgrade.")
+    LOGGER.info("Alembic check indicates pending migrations. Attempting upgrade.")
     upgrade_result = run_alembic_command(["upgrade", "heads"], alembic_configuration_path)
     log_command_result(upgrade_result)
     if upgrade_result.return_code == 0:
