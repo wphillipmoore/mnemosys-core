@@ -12,6 +12,7 @@ This document captures coding standards, naming conventions, and architectural p
   - [Usage in Historical Documents](#usage-in-historical-documents)
 - [Documentation Standards](#documentation-standards)
   - [Markdown Table of Contents](#markdown-table-of-contents)
+  - [AI Tooling Exceptions](#ai-tooling-exceptions)
 - [Python Coding Standards](#python-coding-standards)
   - [Philosophy](#philosophy)
   - [Import-Time Side Effects](#import-time-side-effects)
@@ -81,6 +82,13 @@ short metadata or preface block, and before the first `##` section heading.
 
 **Scope**: Applies to documentation Markdown files in this repository,
 including `docs/`, `README.md`, and `alembic/README.md`.
+
+### AI Tooling Exceptions
+
+Files intended only for AI tooling do not require a Table of Contents:
+- `AGENTS.md`
+- `CLAUDE.md`
+- `.github/copilot-instructions.md`
 
 ---
 
@@ -423,6 +431,9 @@ This list captures non-Python tooling required for development and operations. K
 - AWS CLI (RDS/security group provisioning, bootstrap access)
 - `psql` (PostgreSQL client)
 - `curl` (IP discovery for allowlisting)
+
+**Required for deployment/bootstrap operations:**
+- Docker Desktop (container builds and ECR pushes)
 
 ### Pull Request Submission Process
 
