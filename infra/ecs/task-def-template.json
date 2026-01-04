@@ -1,0 +1,80 @@
+{
+  "family": "mnemosys-__ENVIRONMENT__-api",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "__EXECUTION_ROLE_ARN__",
+  "taskRoleArn": "__TASK_ROLE_ARN__",
+  "containerDefinitions": [
+    {
+      "name": "mnemosys-api",
+      "image": "__IMAGE_URI__",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "__LOG_GROUP__",
+          "awslogs-region": "__AWS_REGION__",
+          "awslogs-stream-prefix": "mnemosys"
+        }
+      },
+      "environment": [
+        {
+          "name": "MNEMOSYS_ENV",
+          "value": "__ENVIRONMENT__"
+        },
+        {
+          "name": "MNEMOSYS_DB_SCHEMA",
+          "value": "mnemosys"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "MNEMOSYS_DB_DRIVERNAME",
+          "valueFrom": "/mnemosys/__ENVIRONMENT__/db/drivername"
+        },
+        {
+          "name": "MNEMOSYS_DB_USERNAME",
+          "valueFrom": "/mnemosys/__ENVIRONMENT__/db/username"
+        },
+        {
+          "name": "MNEMOSYS_DB_PASSWORD",
+          "valueFrom": "/mnemosys/__ENVIRONMENT__/db/password"
+        },
+        {
+          "name": "MNEMOSYS_DB_HOST",
+          "valueFrom": "/mnemosys/__ENVIRONMENT__/db/host"
+        },
+        {
+          "name": "MNEMOSYS_DB_PORT",
+          "valueFrom": "/mnemosys/__ENVIRONMENT__/db/port"
+        },
+        {
+          "name": "MNEMOSYS_DB_DATABASE",
+          "valueFrom": "/mnemosys/__ENVIRONMENT__/db/database"
+        },
+        {
+          "name": "MNEMOSYS_DB_SSLMODE",
+          "valueFrom": "/mnemosys/__ENVIRONMENT__/db/sslmode"
+        },
+        {
+          "name": "MNEMOSYS_DB_ADMIN_USERNAME",
+          "valueFrom": "/mnemosys/__ENVIRONMENT__/db_admin/username"
+        },
+        {
+          "name": "MNEMOSYS_DB_ADMIN_PASSWORD",
+          "valueFrom": "/mnemosys/__ENVIRONMENT__/db_admin/password"
+        }
+      ]
+    }
+  ]
+}

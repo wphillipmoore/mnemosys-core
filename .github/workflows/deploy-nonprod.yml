@@ -1,0 +1,86 @@
+name: Deploy Nonprod API
+
+on:
+  push:
+    branches:
+      - develop
+      - release
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: us-east-2
+  ECR_REPOSITORY: mnemosys-core
+  ECS_CLUSTER: mnemosys-nonprod
+  TASK_DEFINITION_TEMPLATE: infra/ecs/task-def-template.json
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select deployment target
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == "develop" ]]; then
+            echo "ENVIRONMENT=development" >> "$GITHUB_ENV"
+            echo "SERVICE_NAME=mnemosys-dev-api" >> "$GITHUB_ENV"
+            echo "LOG_GROUP=/mnemosys/dev/api" >> "$GITHUB_ENV"
+          elif [[ "${GITHUB_REF_NAME}" == "release" ]]; then
+            echo "ENVIRONMENT=test" >> "$GITHUB_ENV"
+            echo "SERVICE_NAME=mnemosys-test-api" >> "$GITHUB_ENV"
+            echo "LOG_GROUP=/mnemosys/test/api" >> "$GITHUB_ENV"
+          else
+            echo "Unsupported branch: ${GITHUB_REF_NAME}" >&2
+            exit 1
+          fi
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_OIDC_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push image
+        env:
+          AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+        run: |
+          IMAGE_TAG="${GITHUB_SHA}"
+          IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}"
+          echo "IMAGE_URI=${IMAGE_URI}" >> "$GITHUB_ENV"
+          docker build -t "${IMAGE_URI}" .
+          docker push "${IMAGE_URI}"
+
+      - name: Render task definition
+        env:
+          AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+        run: |
+          python scripts/deploy/render_task_definition.py \
+            --template "${TASK_DEFINITION_TEMPLATE}" \
+            --output "task-def.rendered.json" \
+            --environment "${ENVIRONMENT}" \
+            --image-uri "${IMAGE_URI}" \
+            --execution-role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/mnemosys-ecs-task-exec" \
+            --task-role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/mnemosys-ecs-task" \
+            --log-group "${LOG_GROUP}" \
+            --aws-region "${AWS_REGION}"
+
+      - name: Register task definition and update service
+        run: |
+          TASK_DEFINITION_ARN=$(aws ecs register-task-definition \
+            --cli-input-json "file://task-def.rendered.json" \
+            --query "taskDefinition.taskDefinitionArn" \
+            --output text)
+          aws ecs update-service \
+            --cluster "${ECS_CLUSTER}" \
+            --service "${SERVICE_NAME}" \
+            --task-definition "${TASK_DEFINITION_ARN}"
+          aws ecs wait services-stable \
+            --cluster "${ECS_CLUSTER}" \
+            --services "${SERVICE_NAME}"
