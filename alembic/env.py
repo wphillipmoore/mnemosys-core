@@ -37,7 +37,7 @@ def should_include_name(name, type_, parent_names):
     if not schema_name:
         return True
     if type_ == "schema":
-        return name == schema_name
+        return name in (None, schema_name)
     return not (parent_names and parent_names.get("schema_name") not in (None, schema_name))
 
 
@@ -64,16 +64,8 @@ def process_revision_directives(context, revision, directives):
     schema_name = get_schema_name()
     if not schema_name:
         return
-
-    script = directives[0]
-    upgrade_ops = getattr(script, "upgrade_ops", None)
-    if upgrade_ops is None:
-        return
-
     schema_rewriter = build_schema_rewriter(schema_name)
-    script.upgrade_ops = schema_rewriter.rewrite_ops(upgrade_ops)
-    if script.downgrade_ops is not None:
-        script.downgrade_ops = schema_rewriter.rewrite_ops(script.downgrade_ops)
+    schema_rewriter(context, revision, directives)
 
 
 def get_url():
@@ -100,6 +92,7 @@ def run_migrations_offline():
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         version_table_schema=schema_name,
+        include_schemas=bool(schema_name),
         include_name=should_include_name,
         include_object=should_include_object,
         process_revision_directives=process_revision_directives,
@@ -124,6 +117,7 @@ def run_migrations_online():
             connection=connection,
             target_metadata=target_metadata,
             version_table_schema=schema_name,
+            include_schemas=bool(schema_name),
             include_name=should_include_name,
             include_object=should_include_object,
             process_revision_directives=process_revision_directives,
