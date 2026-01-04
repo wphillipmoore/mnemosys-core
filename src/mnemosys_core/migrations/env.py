@@ -8,7 +8,7 @@ from alembic import context
 from sqlalchemy import pool
 
 # Import metadata and models
-from mnemosys_core.config.settings import load_settings_from_env
+from mnemosys_core.config.settings import load_admin_settings_from_env
 from mnemosys_core.db.base import Base
 from mnemosys_core.db.engine import create_db_engine
 
@@ -48,13 +48,13 @@ target_metadata = Base.metadata
 
 def get_url():
     """Get database URL from settings."""
-    settings = load_settings_from_env()
+    settings = load_admin_settings_from_env()
     return settings.database_url
 
 
 def get_schema_name():
     """Get database schema name from settings."""
-    settings = load_settings_from_env()
+    settings = load_admin_settings_from_env()
     if settings.database_url.startswith("sqlite"):
         return None
     return settings.database_schema

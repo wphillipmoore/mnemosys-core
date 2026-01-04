@@ -148,12 +148,19 @@ ALTER DEFAULT PRIVILEGES FOR ROLE mnemosys_test_admin IN SCHEMA mnemosys
 
 ### 6) Local environment configuration (sandbox only)
 
-Local `.env` must use sandbox credentials only:
+Local `.env` uses sandbox credentials only (no dev/test/prod secrets). Provide both admin and user credentials:
 
 ```bash
 MNEMOSYS_DB_DATABASE=mnemosys_sandbox
 MNEMOSYS_DB_USERNAME=mnemosys_sandbox_user
 MNEMOSYS_DB_PASSWORD=<sandbox-user-password>
+
+MNEMOSYS_DB_ADMIN_DATABASE=mnemosys_sandbox
+MNEMOSYS_DB_ADMIN_USERNAME=mnemosys_sandbox_admin
+MNEMOSYS_DB_ADMIN_PASSWORD=<sandbox-admin-password>
+
+MNEMOSYS_ENV=sandbox
+MNEMOSYS_DB_SCHEMA=mnemosys
 ```
 
 ## Production Setup (Dedicated RDS)

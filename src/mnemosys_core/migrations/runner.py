@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 from sqlalchemy.engine import make_url
 
 from mnemosys_core.config.environments import Environment
-from mnemosys_core.config.settings import load_settings_from_env
+from mnemosys_core.config.settings import Settings, load_admin_settings_from_env
 
 LOGGER = logging.getLogger(__name__)
 
@@ -97,15 +97,14 @@ def format_database_url(database_url: str) -> str:
         return "<unparseable database url>"
 
 
-def log_environment_context(settings_database_schema: str) -> None:
+def log_environment_context(settings: Settings) -> None:
     """Log migration runner environment context."""
     environment_name = os.getenv("MNEMOSYS_ENV", "<missing>")
-    database_url = os.getenv("DATABASE_URL", "")
 
     LOGGER.info("Migration runner starting.")
     LOGGER.info("Environment: %s", environment_name)
-    LOGGER.info("Database URL: %s", format_database_url(database_url))
-    LOGGER.info("Database schema: %s", settings_database_schema)
+    LOGGER.info("Database URL: %s", format_database_url(settings.database_url))
+    LOGGER.info("Database schema: %s", settings.database_schema)
 
 
 def build_alembic_command(
@@ -239,8 +238,8 @@ def main(argument_list: Sequence[str] | None = None) -> int:
         LOGGER.error("Alembic command not found on PATH.")
         return 2
 
-    settings = load_settings_from_env()
-    log_environment_context(settings.database_schema)
+    settings = load_admin_settings_from_env()
+    log_environment_context(settings)
 
     alembic_configuration_path = resolve_alembic_configuration_path(arguments)
     if arguments.action == "upgrade":

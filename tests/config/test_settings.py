@@ -6,7 +6,7 @@ import pytest
 from sqlalchemy.engine import URL
 
 from mnemosys_core.config.environments import Environment
-from mnemosys_core.config.settings import Settings, load_settings_from_env
+from mnemosys_core.config.settings import Settings, load_admin_settings_from_env, load_settings_from_env
 
 DB_COMPONENT_ENV_VARS = (
     "MNEMOSYS_DB_DRIVERNAME",
@@ -17,11 +17,22 @@ DB_COMPONENT_ENV_VARS = (
     "MNEMOSYS_DB_DATABASE",
 )
 
+DB_ADMIN_COMPONENT_ENV_VARS = (
+    "MNEMOSYS_DB_ADMIN_DRIVERNAME",
+    "MNEMOSYS_DB_ADMIN_USERNAME",
+    "MNEMOSYS_DB_ADMIN_PASSWORD",
+    "MNEMOSYS_DB_ADMIN_HOST",
+    "MNEMOSYS_DB_ADMIN_PORT",
+    "MNEMOSYS_DB_ADMIN_DATABASE",
+)
+
 
 @pytest.fixture(autouse=True)
 def clear_db_component_env(monkeypatch: pytest.MonkeyPatch) -> None:
     """Clear component-based database environment variables for each test."""
     for variable_name in DB_COMPONENT_ENV_VARS:
+        monkeypatch.delenv(variable_name, raising=False)
+    for variable_name in DB_ADMIN_COMPONENT_ENV_VARS:
         monkeypatch.delenv(variable_name, raising=False)
 
 
@@ -69,6 +80,19 @@ def test_load_settings_from_env_development(monkeypatch: pytest.MonkeyPatch) -> 
     assert settings.database_schema == "mnemosys"
     assert settings.debug is False
     assert settings.log_sql is False
+
+
+def test_load_settings_from_env_sandbox(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test loading sandbox settings from environment."""
+    monkeypatch.setenv("MNEMOSYS_ENV", "sandbox")
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+    monkeypatch.delenv("MNEMOSYS_DB_SCHEMA", raising=False)
+
+    settings = load_settings_from_env()
+
+    assert settings.environment == Environment.SANDBOX
+    assert settings.database_url == "postgresql://localhost/mnemosys_sandbox"
+    assert settings.database_schema == "mnemosys"
 
 
 def test_load_settings_from_env_test(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -214,3 +238,53 @@ def test_load_settings_from_env_invalid_port(monkeypatch: pytest.MonkeyPatch) ->
 
     with pytest.raises(ValueError, match="MNEMOSYS_DB_PORT must be an integer"):
         load_settings_from_env()
+
+
+def test_load_admin_settings_from_env_db_components(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test building admin database URL from MNEMOSYS_DB_ADMIN_* components."""
+    monkeypatch.setenv("MNEMOSYS_ENV", "development")
+    monkeypatch.setenv("MNEMOSYS_DB_ADMIN_DRIVERNAME", "postgresql")
+    monkeypatch.setenv("MNEMOSYS_DB_ADMIN_USERNAME", "mnemosys_admin")
+    monkeypatch.setenv("MNEMOSYS_DB_ADMIN_PASSWORD", "secret")
+    monkeypatch.setenv("MNEMOSYS_DB_ADMIN_HOST", "db.local")
+    monkeypatch.setenv("MNEMOSYS_DB_ADMIN_PORT", "5433")
+    monkeypatch.setenv("MNEMOSYS_DB_ADMIN_DATABASE", "mnemosys_sandbox")
+
+    settings = load_admin_settings_from_env()
+
+    expected_url = str(
+        URL.create(
+            drivername="postgresql",
+            username="mnemosys_admin",
+            password="secret",
+            host="db.local",
+            port=5433,
+            database="mnemosys_sandbox",
+        )
+    )
+    assert settings.database_url == expected_url
+
+
+def test_load_admin_settings_from_env_fallback(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test admin settings fall back to MNEMOSYS_DB_* values."""
+    monkeypatch.setenv("MNEMOSYS_ENV", "development")
+    monkeypatch.setenv("MNEMOSYS_DB_DRIVERNAME", "postgresql")
+    monkeypatch.setenv("MNEMOSYS_DB_USERNAME", "mnemosys_user")
+    monkeypatch.setenv("MNEMOSYS_DB_PASSWORD", "secret")
+    monkeypatch.setenv("MNEMOSYS_DB_HOST", "db.local")
+    monkeypatch.setenv("MNEMOSYS_DB_PORT", "5433")
+    monkeypatch.setenv("MNEMOSYS_DB_DATABASE", "mnemosys_sandbox")
+
+    settings = load_admin_settings_from_env()
+
+    expected_url = str(
+        URL.create(
+            drivername="postgresql",
+            username="mnemosys_user",
+            password="secret",
+            host="db.local",
+            port=5433,
+            database="mnemosys_sandbox",
+        )
+    )
+    assert settings.database_url == expected_url

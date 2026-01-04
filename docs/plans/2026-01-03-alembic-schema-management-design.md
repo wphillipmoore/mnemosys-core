@@ -1,7 +1,7 @@
 # Alembic Schema Change Management Design
 
 **Date**: 2026-01-03
-**Status**: Draft (awaiting AWS tooling comparison and final ADR)
+**Status**: Draft (ADR captured; implementation in progress)
 
 ## Overview
 
@@ -27,8 +27,8 @@ This is a design and workflow document. It captures current repository setup and
 ## Current Repository State
 
 - Alembic is configured under `src/mnemosys_core/migrations` with `alembic.ini`.
-- `env.py` loads database settings explicitly from `MNEMOSYS_ENV` and `DATABASE_URL`.
-- There is no migration runner script in the repo yet.
+- `env.py` loads database settings explicitly from environment variables (including admin credentials).
+- Migration runner and validation tooling exist under `src/mnemosys_core/migrations/` and `scripts/dev/`.
 - Deployment automation is not implemented yet.
 
 ## Local Alembic Setup
@@ -58,8 +58,9 @@ Implementation target:
 ### Configuration invariants
 
 - Alembic must use explicit settings loading (no import-time side effects).
-- `DATABASE_URL` always overrides defaults.
+- `DATABASE_URL` always overrides defaults for application connections.
 - `MNEMOSYS_ENV` is the canonical environment selector.
+- `MNEMOSYS_DB_ADMIN_*` is used for Alembic/admin operations (falls back to `MNEMOSYS_DB_*`).
 
 ## Deployment Automation Model
 
@@ -71,12 +72,14 @@ Implementation target:
 
 Each merge into an eternal branch triggers a deployment to its mapped environment.
 
+Sandbox is a pre-PR environment for feature/bugfix/hotfix work and is updated manually.
+
 ### Startup migration gate
 
 The REST API startup sequence must run an explicit migration gate before the API service starts. This gate is the only automatic schema application path. The logic is intentionally minimal and delegates concurrency handling to the database/Alembic.
 
 Required behavior:
-1. Read `MNEMOSYS_ENV` and `DATABASE_URL`.
+1. Read `MNEMOSYS_ENV` and database credentials (`MNEMOSYS_DB_ADMIN_*` or `DATABASE_URL`).
 2. Run `alembic check` to compare database revision to `heads`.
 3. If check succeeds, start the API service.
 4. If check fails, run `alembic upgrade heads` (transactional).
@@ -153,7 +156,8 @@ Default position: use the shared development sandbox database with per-branch sc
 ### Credentials and access model
 
 - Alembic tooling uses **admin credentials** to create schemas and apply migrations in the sandbox database.
-- The REST API should use a **non-admin** database user in all environments; application testing must never use admin credentials.
+- Admin credentials are provided via `MNEMOSYS_DB_ADMIN_*`; if unset, the tooling falls back to `MNEMOSYS_DB_*`.
+- The REST API uses a **non-admin** database user via `MNEMOSYS_DB_*`; application testing must never use admin credentials.
 - The development deployment database remains API-only; direct admin access is not assumed.
 - Bootstrap exception: the development RDS instance may be publicly accessible with IP allowlisting, but local environments must store only sandbox credentials and the sandbox role must be denied `CONNECT` on `mnemosys_dev`. Bootstrap ends when end-to-end automation updates `mnemosys_dev` and restarts the REST API service, at which point `mnemosys_dev` must be fully locked down.
 
@@ -201,17 +205,17 @@ ALTER DEFAULT PRIVILEGES FOR ROLE mnemosys_sandbox_admin IN SCHEMA mnemosys
 1. Update SQLAlchemy models.
 2. Generate a revision:
    ```bash
-   alembic revision --autogenerate -m "describe change"
+   python scripts/dev/alembic_revision.py short_snake_case_message
    ```
 3. Review the revision and edit by hand if needed.
 4. Create a temporary schema for validation.
 5. Apply upgrades to the temporary schema:
    ```bash
-   MNEMOSYS_ENV=development MNEMOSYS_DB_SCHEMA=<temp_schema> DATABASE_URL=<dev_db_url> alembic upgrade head
+   MNEMOSYS_ENV=sandbox MNEMOSYS_DB_SCHEMA=<temp_schema> alembic upgrade head
    ```
 6. Validate downgrade safety in the temporary schema:
    ```bash
-   MNEMOSYS_ENV=development MNEMOSYS_DB_SCHEMA=<temp_schema> DATABASE_URL=<dev_db_url> alembic downgrade -1
+   MNEMOSYS_ENV=sandbox MNEMOSYS_DB_SCHEMA=<temp_schema> alembic downgrade -1
    ```
 7. Re-apply upgrade and run tests against the upgraded temporary schema if needed.
 8. Drop the temporary schema.
@@ -255,8 +259,10 @@ This section defines the required contract for the startup migration runner. Imp
 
 ### Inputs
 
-- `MNEMOSYS_ENV` (required): `development`, `test`, `production`
-- `DATABASE_URL` (required): target database connection string
+- `MNEMOSYS_ENV` (required): `sandbox`, `development`, `test`, `production`
+- `MNEMOSYS_DB_ADMIN_*` (required for migrations): database admin credentials (driver, username, password, host, port, database)
+- `MNEMOSYS_DB_*` (fallback): non-admin database credentials used when admin variables are unset
+- `DATABASE_URL` (optional): application connection string override
 - `MNEMOSYS_DB_SCHEMA` (optional): target schema name (defaults to canonical schema)
 - `ALEMBIC_CONFIG` (optional): path to `alembic.ini` (defaults to repo root)
 - `MNEMOSYS_DOWNGRADE_TARGET` (required for downgrade): revision identifier or `base`
@@ -293,7 +299,7 @@ This section defines the required contract for the startup migration runner. Imp
 ### Security Constraints
 
 - Never log full database URLs with credentials.
-- Never run `alembic downgrade` automatically.
+- Never run `alembic downgrade` in the startup gate; downgrades require explicit rollback invocation.
 - Never run against production unless `MNEMOSYS_ENV=production`.
 
 ### Integration Expectations

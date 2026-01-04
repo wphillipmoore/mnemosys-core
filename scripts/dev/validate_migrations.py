@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 from sqlalchemy import text
 from sqlalchemy.pool import NullPool
 
-from mnemosys_core.config.settings import load_settings_from_env
+from mnemosys_core.config.settings import load_admin_settings_from_env
 from mnemosys_core.db.engine import create_db_engine
 from mnemosys_core.migrations import runner
 
@@ -132,7 +132,7 @@ def main(argument_list: Sequence[str] | None = None) -> int:
         raise SystemExit("Alembic command not found on PATH.")
 
     arguments = parse_arguments(argument_list)
-    settings = load_settings_from_env()
+    settings = load_admin_settings_from_env()
     environment_name = settings.environment.value
     database_url = settings.database_url
 

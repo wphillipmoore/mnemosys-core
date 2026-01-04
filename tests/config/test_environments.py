@@ -7,6 +7,7 @@ from mnemosys_core.config.environments import Environment
 
 def test_environment_enum_values() -> None:
     """Test that all environment values are accessible."""
+    assert Environment.SANDBOX.value == "sandbox"
     assert Environment.DEVELOPMENT.value == "development"
     assert Environment.TEST.value == "test"
     assert Environment.PRODUCTION.value == "production"
@@ -14,6 +15,7 @@ def test_environment_enum_values() -> None:
 
 def test_environment_enum_from_string() -> None:
     """Test creating Environment from string values."""
+    assert Environment("sandbox") == Environment.SANDBOX
     assert Environment("development") == Environment.DEVELOPMENT
     assert Environment("test") == Environment.TEST
     assert Environment("production") == Environment.PRODUCTION
@@ -22,7 +24,8 @@ def test_environment_enum_from_string() -> None:
 def test_environment_enum_members() -> None:
     """Test that all expected members exist."""
     members = list(Environment)
-    assert len(members) == 3
+    assert len(members) == 4
+    assert Environment.SANDBOX in members
     assert Environment.DEVELOPMENT in members
     assert Environment.TEST in members
     assert Environment.PRODUCTION in members
