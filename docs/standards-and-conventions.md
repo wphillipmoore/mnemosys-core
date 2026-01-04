@@ -266,6 +266,8 @@ def create_instrument(name, string_count):
 
 **Default Assumption**: All code is tested unless explicitly documented otherwise.
 
+**Exception**: Generated Alembic artifacts under `alembic/` are excluded from unit tests, linting, and coverage. Validation occurs via migration tooling (see `scripts/dev/validate_migrations.py`).
+
 #### Coverage Target
 
 - **Goal**: 100% code coverage (lines AND branches) across all production code
