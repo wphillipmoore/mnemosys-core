@@ -5,6 +5,8 @@ Alembic migration environment.
 from logging.config import fileConfig
 
 from alembic import context
+from alembic.autogenerate import rewriter
+from alembic.operations import ops
 from sqlalchemy import pool
 
 # Import metadata and models
@@ -27,6 +29,41 @@ target_metadata = Base.metadata
 def should_include_object(object_, name, type_, reflected, compare_to):
     """Exclude Alembic's version table from autogenerate comparisons."""
     return not (type_ == "table" and name == "alembic_version")
+
+
+def build_schema_rewriter(schema_name: str) -> rewriter.Rewriter:
+    """Build a rewriter that strips a fixed schema from generated operations."""
+    schema_rewriter = rewriter.Rewriter()
+    schema_attributes = ("schema", "table_schema", "source_schema", "referent_schema")
+
+    @schema_rewriter.rewrites(ops.MigrateOperation)
+    def strip_schema(context, revision, op):
+        for attribute_name in schema_attributes:
+            if getattr(op, attribute_name, None) == schema_name:
+                setattr(op, attribute_name, None)
+        return op
+
+    return schema_rewriter
+
+
+def process_revision_directives(context, revision, directives):
+    """Rewrite autogenerate directives to avoid hard-coded schemas."""
+    if not directives:
+        return
+
+    schema_name = get_schema_name()
+    if not schema_name:
+        return
+
+    script = directives[0]
+    upgrade_ops = getattr(script, "upgrade_ops", None)
+    if upgrade_ops is None:
+        return
+
+    schema_rewriter = build_schema_rewriter(schema_name)
+    script.upgrade_ops = schema_rewriter.rewrite_ops(upgrade_ops)
+    if script.downgrade_ops is not None:
+        script.downgrade_ops = schema_rewriter.rewrite_ops(script.downgrade_ops)
 
 
 def get_url():
@@ -54,6 +91,7 @@ def run_migrations_offline():
         dialect_opts={"paramstyle": "named"},
         version_table_schema=schema_name,
         include_object=should_include_object,
+        process_revision_directives=process_revision_directives,
     )
 
     with context.begin_transaction():
@@ -76,6 +114,7 @@ def run_migrations_online():
             target_metadata=target_metadata,
             version_table_schema=schema_name,
             include_object=should_include_object,
+            process_revision_directives=process_revision_directives,
         )
 
         with context.begin_transaction():

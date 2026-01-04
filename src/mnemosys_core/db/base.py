@@ -5,6 +5,8 @@ This module provides the base class for all ORM models and the metadata
 object for schema introspection. No side effects occur at import time.
 """
 
+import os
+
 from sqlalchemy import MetaData
 from sqlalchemy.orm import DeclarativeBase
 
@@ -17,7 +19,9 @@ convention = {
     "pk": "pk_%(table_name)s",
 }
 
-metadata = MetaData(naming_convention=convention)
+schema_name = os.getenv("MNEMOSYS_DB_SCHEMA") or None
+
+metadata = MetaData(naming_convention=convention, schema=schema_name)
 
 
 class Base(DeclarativeBase):
