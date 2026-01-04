@@ -150,7 +150,7 @@ def _build_database_url(
 
 def _load_settings_from_env(prefix: str, fallback_prefix: str | None) -> Settings:
     """Load settings using the specified environment variable prefix."""
-    env_name = os.getenv("MNEMOSYS_ENV", "development")
+    env_name = os.getenv("MNEMOSYS_ENV", "sandbox")
     environment = Environment(env_name)
 
     database_url = _build_database_url(environment, prefix, fallback_prefix)

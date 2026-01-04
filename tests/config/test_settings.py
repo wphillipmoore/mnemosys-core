@@ -156,8 +156,8 @@ def test_load_settings_from_env_default_no_env_var(monkeypatch: pytest.MonkeyPat
 
     settings = load_settings_from_env()
 
-    assert settings.environment == Environment.DEVELOPMENT
-    assert settings.database_url == "postgresql://localhost/mnemosys_dev"
+    assert settings.environment == Environment.SANDBOX
+    assert settings.database_url == "postgresql://localhost/mnemosys_sandbox"
     assert settings.database_schema == "mnemosys"
 
 
