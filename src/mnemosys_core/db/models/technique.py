@@ -29,7 +29,6 @@ class Technique(Base):
         id: Primary key
         name: Technique identifier (e.g., "string skipping", "alternate picking")
         description: Optional explanatory text
-        temporary_alias: Optional temporary label for schema iteration
     """
 
     __tablename__ = "technique"
@@ -37,7 +36,6 @@ class Technique(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    temporary_alias: Mapped[str | None] = mapped_column(String(120), nullable=True)
 
     # Relationships
     instruments: Mapped[list["Instrument"]] = relationship(
