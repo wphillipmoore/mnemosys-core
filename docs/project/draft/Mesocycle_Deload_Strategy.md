@@ -8,6 +8,16 @@
 
 This document outlines how FSIPS extends daily session generation into longer-term periodization, borrowing explicitly from strength-training mesocycles.
 
+## Table of Contents
+- [1. Rationale](#1-rationale)
+- [2. Mesocycle Phases](#2-mesocycle-phases)
+  - [Accumulation](#accumulation)
+  - [Intensification](#intensification)
+  - [Deload](#deload)
+- [3. Typical Mesocycle Length](#3-typical-mesocycle-length)
+- [4. Generator Interaction](#4-generator-interaction)
+- [5. Transition Criteria](#5-transition-criteria)
+
 ## 1. Rationale
 
 Unbounded daily progression leads to:

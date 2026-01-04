@@ -1,5 +1,27 @@
 # AI Code Review Guidelines (v0.1)
 
+## Table of Contents
+- [Purpose](#purpose)
+- [Core Philosophy](#core-philosophy)
+  - [1. Design First, Tests Second (Iterative, Not Dogmatic)](#1-design-first-tests-second-iterative-not-dogmatic)
+  - [2. Passing Tests Are Necessary, Not Sufficient](#2-passing-tests-are-necessary-not-sufficient)
+- [Reviewer Role Definition](#reviewer-role-definition)
+- [Review Focus Areas (In Priority Order)](#review-focus-areas-in-priority-order)
+  - [1. Namespace Integrity (Highest Priority)](#1-namespace-integrity-highest-priority)
+  - [2. Contract Alignment Across Layers](#2-contract-alignment-across-layers)
+  - [3. Architectural Coherence](#3-architectural-coherence)
+  - [4. Tooling Integration as Architecture (Not Hygiene)](#4-tooling-integration-as-architecture-not-hygiene)
+  - [5. Survivability Without Original Author](#5-survivability-without-original-author)
+- [Explicit Non-Goals of Review](#explicit-non-goals-of-review)
+- [Review Output Expectations](#review-output-expectations)
+- [Guiding Principle](#guiding-principle)
+- [Appendix A — Common Failure Modes (Observed)](#appendix-a-common-failure-modes-observed)
+  - [A.1 Test-Driven Namespace Drift](#a1-test-driven-namespace-drift)
+  - [A.2 Tests as Architectural Camouflage](#a2-tests-as-architectural-camouflage)
+- [Appendix B — Canonical Reviewer Prompts (Future Enhancement)](#appendix-b-canonical-reviewer-prompts-future-enhancement)
+- [Appendix C — Non-Blocking Design Smells (Future Enhancement)](#appendix-c-non-blocking-design-smells-future-enhancement)
+- [Status](#status)
+
 ## Purpose
 
 This document defines **how AI-assisted code reviews are to be performed** for this project.

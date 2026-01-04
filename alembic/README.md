@@ -2,6 +2,14 @@
 
 This directory contains Alembic database migration scripts for the mnemosys-core project.
 
+## Table of Contents
+- [Generating Migrations](#generating-migrations)
+- [Applying Migrations](#applying-migrations)
+- [Rolling Back Migrations](#rolling-back-migrations)
+- [Migration Validation](#migration-validation)
+- [Migration History](#migration-history)
+- [Environment Configuration](#environment-configuration)
+
 ## Generating Migrations
 
 Create a new migration after modifying models (message must be short `snake_case`, <= 60 chars):

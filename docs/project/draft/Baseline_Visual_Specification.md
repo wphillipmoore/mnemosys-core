@@ -6,6 +6,15 @@
 
 ---
 
+## Table of Contents
+- [Purpose](#purpose)
+- [Core Principle](#core-principle)
+- [Required Visual Elements](#required-visual-elements)
+- [Defaults](#defaults)
+- [Optional Elements](#optional-elements)
+- [Explicit Exclusions](#explicit-exclusions)
+- [Scope](#scope)
+
 ## Purpose
 
 Defines the minimum visual contract for FSIPS exercise notation.

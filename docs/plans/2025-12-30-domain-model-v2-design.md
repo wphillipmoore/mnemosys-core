@@ -6,6 +6,31 @@
 
 ---
 
+## Table of Contents
+- [Context](#context)
+- [Fundamental Principle](#fundamental-principle)
+  - [What You're Maintaining](#what-youre-maintaining)
+  - [What Connects Them](#what-connects-them)
+- [Entity Architecture](#entity-architecture)
+  - [Entities with State (What You Measure)](#entities-with-state-what-you-measure)
+  - [Polymorphic Hierarchies](#polymorphic-hierarchies)
+  - [Connector Entities (Relationships, No State)](#connector-entities-relationships-no-state)
+- [Session Structure](#session-structure)
+  - [Practice Flow](#practice-flow)
+  - [Session](#session)
+  - [Data Flow](#data-flow)
+- [Deferred Decisions](#deferred-decisions)
+  - [Reusable Session Programs](#reusable-session-programs)
+  - [OverloadDimension Specificity](#overloaddimension-specificity)
+  - [ExerciseDomain Concept](#exercisedomain-concept)
+- [Out of Scope (This Iteration)](#out-of-scope-this-iteration)
+- [Implementation Notes](#implementation-notes)
+  - [Architectural Principles](#architectural-principles)
+  - [Migration Strategy](#migration-strategy)
+  - [Testing Strategy](#testing-strategy)
+  - [Standards Development](#standards-development)
+- [Next Steps](#next-steps)
+
 ## Context
 
 This design represents a fundamental rethinking of the MNEMOSYS domain model. The initial implementation (6 classes: Instrument, Exercise, ExerciseState, Session, SessionBlock, BlockLog) was generated rapidly from design documents without proper discussion of relationships and domain concepts. This design session establishes the proper entity hierarchy, relationships, and architectural patterns for the system.

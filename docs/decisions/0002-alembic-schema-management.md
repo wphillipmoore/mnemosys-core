@@ -1,5 +1,15 @@
 # 0002 — Alembic-First Schema Management
 
+## Table of Contents
+- [Status](#status)
+- [Context](#context)
+- [Decision](#decision)
+- [Consequences](#consequences)
+  - [Positive](#positive)
+  - [Negative](#negative)
+- [Revisit Triggers](#revisit-triggers)
+- [Notes](#notes)
+
 ## Status
 Accepted
 

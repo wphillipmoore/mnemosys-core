@@ -2,6 +2,11 @@
 
 Auto-generated diagram showing entity relationships.
 
+## Table of Contents
+- [Diagram](#diagram)
+
+## Diagram
+
 ```mermaid
 classDiagram
 

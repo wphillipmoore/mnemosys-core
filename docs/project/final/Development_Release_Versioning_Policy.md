@@ -1,5 +1,16 @@
 # MNEMOSYS Development — Release & Versioning Policy v0.1
 
+## Table of Contents
+- [Status](#status)
+- [1. Purpose](#1-purpose)
+- [2. Release Definition](#2-release-definition)
+- [3. Versioning](#3-versioning)
+- [4. Artifact Properties](#4-artifact-properties)
+- [5. Relationship to Branches](#5-relationship-to-branches)
+- [6. Rollback Strategy](#6-rollback-strategy)
+- [7. Forbidden Practices](#7-forbidden-practices)
+- [8. Guiding Principle](#8-guiding-principle)
+
 ## Status
 Frozen v0.1 snapshot
 

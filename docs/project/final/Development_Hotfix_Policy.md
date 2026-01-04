@@ -1,5 +1,16 @@
 # MNEMOSYS Development — Hotfix Policy v0.1
 
+## Table of Contents
+- [Status](#status)
+- [1. Purpose](#1-purpose)
+- [2. Definition](#2-definition)
+- [3. Branching Rules](#3-branching-rules)
+- [4. Merge Requirements](#4-merge-requirements)
+- [5. Cultural Invariant](#5-cultural-invariant)
+- [6. Postmortem Requirement](#6-postmortem-requirement)
+- [7. Forbidden Practices](#7-forbidden-practices)
+- [8. Guiding Principle](#8-guiding-principle)
+
 ## Status
 Frozen v0.1 snapshot
 

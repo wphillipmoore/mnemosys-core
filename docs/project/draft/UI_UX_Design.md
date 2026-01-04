@@ -8,6 +8,20 @@
 
 This document captures high-level UX/UI requirements and architectural design goals for the Fretted String Instrument Practice System (FSIPS), with emphasis on long-term survivability, platform independence, and instructor–student shared state.
 
+## Table of Contents
+- [Core Invariants](#core-invariants)
+- [Platform Targets](#platform-targets)
+  - [Primary](#primary)
+  - [Secondary](#secondary)
+- [Build Order (Strict)](#build-order-strict)
+- [Cloud & Shared Access Model](#cloud-shared-access-model)
+- [Roles](#roles)
+  - [Student](#student)
+  - [Instructor](#instructor)
+- [Data-Centric Architecture](#data-centric-architecture)
+- [Non-Goals (Explicit)](#non-goals-explicit)
+- [UI Philosophy](#ui-philosophy)
+
 ## Core Invariants
 
 - Data model is the product

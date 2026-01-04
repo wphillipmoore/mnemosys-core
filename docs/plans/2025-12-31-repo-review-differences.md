@@ -2,6 +2,9 @@
 
 Scope: high-level scan of docs, config, CI, core modules, and tests. Not every file was read line-by-line.
 
+## Table of Contents
+- [Significant Differences I Would Make](#significant-differences-i-would-make)
+
 ## Significant Differences I Would Make
 
 1. Remove module-level session state
