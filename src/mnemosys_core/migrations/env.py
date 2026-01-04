@@ -9,31 +9,9 @@ from sqlalchemy import pool
 
 # Import metadata and models
 from mnemosys_core.config.settings import load_admin_settings_from_env
+from mnemosys_core.db import models  # noqa: F401
 from mnemosys_core.db.base import Base
 from mnemosys_core.db.engine import create_db_engine
-
-# Ensure all models are imported for autogenerate
-from mnemosys_core.db.models import (  # noqa: F401
-    BlockLog,
-    Exercise,
-    ExerciseInstance,
-    ExerciseLog,
-    ExerciseState,
-    Instrument,
-    KeyboardInstrument,
-    KeyboardInstrumentTuning,
-    OverloadDimension,
-    PercussionInstrument,
-    PercussionInstrumentTuning,
-    Session,
-    SessionBlock,
-    StringedInstrument,
-    StringedInstrumentTuning,
-    Technique,
-    Tuning,
-    WindInstrument,
-    WindInstrumentTuning,
-)
 
 # Alembic Config object
 config = context.config

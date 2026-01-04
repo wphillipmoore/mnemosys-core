@@ -8,9 +8,10 @@
 - The primary persistent datastore will be **Managed PostgreSQL on AWS RDS**.
 - PostgreSQL will be used as a **relational, schema-first database**.
 - The initial PostgreSQL major version selected is **16.x**.
-- Provider-native capabilities will be preferred before introducing custom tooling.
+- Alembic is the primary schema migration tooling for MNEMOSYS (see `docs/decisions/0002-alembic-schema-management.md`).
 - SQLAlchemy is selected for ORM and schema definition.
-- Alembic or equivalent migration tooling is **not assumed by default** and will be introduced only if provider tooling proves insufficient.
+- Alembic is treated as sufficient for schema automation; provider-native migration workflows are not planned.
+- Migration tooling remains provider-neutral even though infrastructure is single-provider.
 - Database access will be mediated through an API layer; direct client access is not a supported model.
 - Temporary public database access is permitted only for controlled bootstrap or diagnostics and must be removed afterward.
 - Bootstrap exception: the development RDS instance may be made public with IP allowlisting to provision and use `mnemosys_sandbox`; local environments must store only sandbox credentials, and sandbox roles must be denied `CONNECT` on `mnemosys_dev`. Bootstrap ends when end-to-end automation updates `mnemosys_dev` and restarts the REST API service, at which point `mnemosys_dev` must be fully locked down.
@@ -29,8 +30,9 @@
 - PostgreSQL was preferred due to strong consistency guarantees, mature tooling, and deep existing expertise.
 - Managed RDS was chosen to eliminate undifferentiated operational work (patching, backups, durability) and allow focus on schema and system design.
 - PostgreSQL 16.x was selected as a conservative choice (N−1 policy) to balance maturity and longevity while avoiding early-adopter risk.
-- Provider-native tooling is to be evaluated first to avoid carrying forward solutions to problems that may no longer exist.
-- Past experience with schema tooling (SQLAlchemy + Alembic) shaped the desire to reuse familiar patterns, but only where they add clear value.
+- Alembic is adopted as the primary and sufficient migration tooling; provider-native alternatives are out of scope.
+- This selection reduces schema automation coupling without implying a multi-cloud strategy.
+- Past experience with schema tooling (SQLAlchemy + Alembic) shaped the desire to reuse familiar patterns and reduce execution risk.
 - The API-mediated access model is an implicit consequence of the database and security posture rather than a separately debated decision.
 - Security discussions emphasized minimizing blast radius and treating public exposure as a temporary exception.
 
@@ -55,16 +57,16 @@ Reasoning regarding some decisions (e.g., exact future criteria for abandoning A
   - Status: Rejected.
   - Revisit triggers: If future requirements demand high-volume unstructured or event-only data.
 
-- **Option: Immediate adoption of custom migration tooling**
-  - Reason: Risk of solving a problem that may not exist given modern provider tooling.
-  - Status: Deferred.
-  - Revisit triggers: Demonstrated gaps or friction in provider-native schema evolution support.
+- **Option: Provider-native migration tooling**
+  - Reason: Adds provider-specific coupling without benefits that exceed Alembic's capabilities.
+  - Status: Rejected in favor of Alembic as the sufficient tooling.
+  - Revisit triggers: Only if Alembic fails to meet operational constraints.
 
 ---
 
 ## Optional: Open Questions
 
-- Under what concrete conditions would Alembic become necessary beyond provider-native tooling?
+- Under what conditions would alternative migration tooling become materially safer or simpler than Alembic?
 - What formal criteria will trigger reconsideration of the cloud provider decision?
 
 ---

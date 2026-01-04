@@ -64,8 +64,8 @@ alembic current
 
 Migrations use the database URL from environment variables:
 - Set `MNEMOSYS_ENV` to control environment (sandbox/development/test/production)
-- Set `DATABASE_URL` to override the default database connection string
-- Or set `MNEMOSYS_DB_*` components (`DRIVERNAME`, `USERNAME`, `PASSWORD`, `HOST`, `PORT`, `DATABASE`) to build the URL
+- Set `MNEMOSYS_DB_*` components (`DRIVERNAME`, `USERNAME`, `PASSWORD`, `HOST`, `PORT`, `DATABASE`)
+  to build the URL (optionally include `SSLMODE`)
 - Set `MNEMOSYS_DB_SCHEMA` to target a specific database schema
 
 For migration tooling, admin credentials are expected via `MNEMOSYS_DB_ADMIN_*` (same component names). If admin

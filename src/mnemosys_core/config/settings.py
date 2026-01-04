@@ -112,36 +112,48 @@ def _build_database_url(
     environment: Environment,
     prefix: str,
     fallback_prefix: str | None = None,
-    url_override_env_var: str | None = None,
 ) -> str:
     """Build a database URL from environment variables."""
-    if url_override_env_var is not None:
-        override_value = os.getenv(url_override_env_var)
-        if override_value is not None:
-            return override_value
-
     defaults = _default_db_components()[environment]
     port_value = _get_env_value(prefix, "PORT", fallback_prefix)
     port = _parse_port(port_value, defaults.port, f"{prefix}PORT")
 
-    return str(
-        URL.create(
-            drivername=_get_env_value(prefix, "DRIVERNAME", fallback_prefix) or defaults.drivername,
-            username=_get_env_value(prefix, "USERNAME", fallback_prefix) or defaults.username,
-            password=_get_env_value(prefix, "PASSWORD", fallback_prefix) or defaults.password,
-            host=_get_env_value(prefix, "HOST", fallback_prefix) or defaults.host,
+    drivername = _get_env_value(prefix, "DRIVERNAME", fallback_prefix) or defaults.drivername
+    username = _get_env_value(prefix, "USERNAME", fallback_prefix) or defaults.username
+    password = _get_env_value(prefix, "PASSWORD", fallback_prefix) or defaults.password
+    host = _get_env_value(prefix, "HOST", fallback_prefix) or defaults.host
+    database = _get_env_value(prefix, "DATABASE", fallback_prefix) or defaults.database
+    ssl_mode = _get_env_value(prefix, "SSLMODE", fallback_prefix)
+
+    if ssl_mode is None:
+        url = URL.create(
+            drivername=drivername,
+            username=username,
+            password=password,
+            host=host,
             port=port,
-            database=_get_env_value(prefix, "DATABASE", fallback_prefix) or defaults.database,
+            database=database,
         )
+        return url.render_as_string(hide_password=False)
+
+    url = URL.create(
+        drivername=drivername,
+        username=username,
+        password=password,
+        host=host,
+        port=port,
+        database=database,
+        query={"sslmode": ssl_mode},
     )
+    return url.render_as_string(hide_password=False)
 
 
-def _load_settings_from_env(prefix: str, fallback_prefix: str | None, url_override_env_var: str | None) -> Settings:
+def _load_settings_from_env(prefix: str, fallback_prefix: str | None) -> Settings:
     """Load settings using the specified environment variable prefix."""
     env_name = os.getenv("MNEMOSYS_ENV", "development")
     environment = Environment(env_name)
 
-    database_url = _build_database_url(environment, prefix, fallback_prefix, url_override_env_var)
+    database_url = _build_database_url(environment, prefix, fallback_prefix)
     database_schema = os.getenv("MNEMOSYS_DB_SCHEMA", _default_database_schemas()[environment])
     debug = os.getenv("DEBUG", "false").lower() == "true"
     log_sql = os.getenv("LOG_SQL", "false").lower() == "true"
@@ -161,13 +173,13 @@ def load_settings_from_env() -> Settings:
 
     Environment Variables:
         MNEMOSYS_ENV: Environment name (sandbox/development/test/production)
-        DATABASE_URL: Database connection string (override)
         MNEMOSYS_DB_DRIVERNAME: SQLAlchemy driver name (e.g., postgresql, sqlite)
         MNEMOSYS_DB_USERNAME: Database username
         MNEMOSYS_DB_PASSWORD: Database password
         MNEMOSYS_DB_HOST: Database host
         MNEMOSYS_DB_PORT: Database port
         MNEMOSYS_DB_DATABASE: Database name
+        MNEMOSYS_DB_SSLMODE: SSL mode for database connections
         MNEMOSYS_DB_SCHEMA: Database schema name
         DEBUG: Enable debug mode (true/false)
         LOG_SQL: Log SQL statements (true/false)
@@ -175,7 +187,7 @@ def load_settings_from_env() -> Settings:
     Returns:
         Configured Settings object
     """
-    return _load_settings_from_env("MNEMOSYS_DB_", None, "DATABASE_URL")
+    return _load_settings_from_env("MNEMOSYS_DB_", None)
 
 
 def load_admin_settings_from_env() -> Settings:
@@ -190,6 +202,7 @@ def load_admin_settings_from_env() -> Settings:
         MNEMOSYS_DB_ADMIN_HOST: Database host
         MNEMOSYS_DB_ADMIN_PORT: Database port
         MNEMOSYS_DB_ADMIN_DATABASE: Database name
+        MNEMOSYS_DB_ADMIN_SSLMODE: SSL mode for database connections
         MNEMOSYS_DB_SCHEMA: Database schema name
         DEBUG: Enable debug mode (true/false)
         LOG_SQL: Log SQL statements (true/false)
@@ -197,4 +210,4 @@ def load_admin_settings_from_env() -> Settings:
     Notes:
         Falls back to MNEMOSYS_DB_* when admin variables are not set.
     """
-    return _load_settings_from_env("MNEMOSYS_DB_ADMIN_", "MNEMOSYS_DB_", None)
+    return _load_settings_from_env("MNEMOSYS_DB_ADMIN_", "MNEMOSYS_DB_")

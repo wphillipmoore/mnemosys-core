@@ -14,13 +14,13 @@ This is a design and workflow document. It captures current repository setup and
 - Alembic configuration in the repo
 - Revision naming conventions
 - Automated schema deployment on service startup
-- Environment mapping (develop, release, main)
+- Environment mapping (develop, release, main) and sandbox semantics
 - Developer workflow for creating and testing revisions
 - Migration safety and failure handling
 
 ## Non-Goals
 
-- Choosing the final AWS-native deployment mechanism (decision pending)
+- Choosing the final REST API deployment mechanism (decision pending)
 - Implementing CI/CD or cloud deploy automation (documented requirements only)
 - Building multi-environment or multi-tenant migration tooling (out of scope for v0.1)
 
@@ -58,9 +58,9 @@ Implementation target:
 ### Configuration invariants
 
 - Alembic must use explicit settings loading (no import-time side effects).
-- `DATABASE_URL` always overrides defaults for application connections.
 - `MNEMOSYS_ENV` is the canonical environment selector.
 - `MNEMOSYS_DB_ADMIN_*` is used for Alembic/admin operations (falls back to `MNEMOSYS_DB_*`).
+- Component values are sourced from `MNEMOSYS_DB_*` or `MNEMOSYS_DB_ADMIN_*`, with environment defaults as fallback.
 
 ## Deployment Automation Model
 
@@ -79,7 +79,7 @@ Sandbox is a pre-PR environment for feature/bugfix/hotfix work and is updated ma
 The REST API startup sequence must run an explicit migration gate before the API service starts. This gate is the only automatic schema application path. The logic is intentionally minimal and delegates concurrency handling to the database/Alembic.
 
 Required behavior:
-1. Read `MNEMOSYS_ENV` and database credentials (`MNEMOSYS_DB_ADMIN_*` or `DATABASE_URL`).
+1. Read `MNEMOSYS_ENV` and database credentials (`MNEMOSYS_DB_ADMIN_*` with fallback to `MNEMOSYS_DB_*`).
 2. Run `alembic check` to compare database revision to `heads`.
 3. If check succeeds, start the API service.
 4. If check fails, run `alembic upgrade heads` (transactional).
@@ -260,9 +260,8 @@ This section defines the required contract for the startup migration runner. Imp
 ### Inputs
 
 - `MNEMOSYS_ENV` (required): `sandbox`, `development`, `test`, `production`
-- `MNEMOSYS_DB_ADMIN_*` (required for migrations): database admin credentials (driver, username, password, host, port, database)
+- `MNEMOSYS_DB_ADMIN_*` (required for migrations): database admin credentials (driver, username, password, host, port, database, sslmode)
 - `MNEMOSYS_DB_*` (fallback): non-admin database credentials used when admin variables are unset
-- `DATABASE_URL` (optional): application connection string override
 - `MNEMOSYS_DB_SCHEMA` (optional): target schema name (defaults to canonical schema)
 - `ALEMBIC_CONFIG` (optional): path to `alembic.ini` (defaults to repo root)
 - `MNEMOSYS_DOWNGRADE_TARGET` (required for downgrade): revision identifier or `base`
@@ -286,7 +285,7 @@ This section defines the required contract for the startup migration runner. Imp
 
 - `0`: schema is at head (either initially or after upgrade).
 - `1`: schema is not at head after upgrade attempt.
-- `2`: configuration error (missing env var, invalid URL).
+- `2`: configuration error (missing env var, invalid database settings).
 
 ### Logging Requirements
 
@@ -308,69 +307,11 @@ This section defines the required contract for the startup migration runner. Imp
 - Must be the first step in the container or service startup.
 - Fail-fast on configuration errors.
 
-## Decision Checkpoint: AWS Tooling Comparison
+## Alembic Primary Tooling
 
-Before implementation is finalized, compare this Alembic-first design with AWS-native options. Evaluation criteria:
-
-- Operational safety (locking, failure recovery, rollback support)
-- Auditability and traceability
-- Integration with RDS operational controls (snapshots, blue/green)
-- Automation complexity
-- Long-term maintainability for non-authors
-
-The outcome should be captured as an Architecture Decision Record (ADR).
-
-## ADR Draft: Alembic-First vs AWS-Native Schema Tooling
-
-**Status**: Decision made, pending formal ADR
-
-### Context
-
-MNEMOSYS currently uses SQLAlchemy and Alembic for schema management. Deployment automation is not yet implemented. The AWS platform decision explicitly states provider-native tooling should be preferred when it reduces complexity without harming durability.
-
-### Decision Drivers
-
-- Operational safety and recoverability
-- Schema change auditability
-- Ability to run in all environments consistently
-- Automation complexity and survivability without original authors
-- Fit with current application startup model
-
-### Options
-
-1. **Alembic-first (current design)**
-2. **AWS-native migration tooling** (RDS automation, migration via deployment hooks, or managed workflows)
-3. **Hybrid** (AWS-native orchestration, Alembic execution inside a controlled step)
-
-### Pros / Cons (Initial)
-
-**Alembic-first**
-- Pros: already in repo; deterministic; portable across environments; supports offline review of revision history.
-- Cons: requires custom orchestration; app startup coupling; needs explicit failure handling.
-
-**AWS-native**
-- Pros: reduces custom tooling; integrates with RDS operational controls; may simplify deployments.
-- Cons: potentially less portable; may require provider-specific workflows; might reduce local parity.
-
-**Hybrid**
-- Pros: keep Alembic semantics while delegating orchestration to AWS.
-- Cons: risk of split ownership; more moving parts.
-
-### Decision
-
-Adopt Alembic end-to-end for schema management and deployment automation in the near term. Revisit AWS-native tooling after the Alembic workflow is implemented and stabilized.
-
-### Rationale
-
-- Prefer a single tooling path that works across environments and providers.
-- Team has existing expertise with Alembic, reducing near-term execution risk.
-- Acknowledge tension: provider independence is not a strategic priority, but the practical benefits of Alembic justify the choice for now.
-
-### Revisit Triggers
-
-- AWS-native tooling demonstrably reduces operational risk or complexity.
-- Alembic-based automation creates persistent deployment friction.
-- Organizational constraints shift toward deeper AWS-specific integration.
+Alembic is the primary and sufficient tooling for schema management and deployment automation. No alternative
+migration frameworks are planned. Revisit only if Alembic cannot satisfy operational constraints (see
+`docs/decisions/0002-alembic-schema-management.md`).
 
 ## Implementation Plan and Sequence (Status)
 

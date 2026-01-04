@@ -101,11 +101,10 @@ def run_seed_script(seed_script: str | None) -> int:
     return result.returncode
 
 
-def run_validation(database_url: str, schema_name: str, environment_name: str, seed_script: str | None) -> int:
+def run_validation(schema_name: str, environment_name: str, seed_script: str | None) -> int:
     """Run upgrade and downgrade validation against the temporary schema."""
     overrides = {
         "MNEMOSYS_ENV": environment_name,
-        "DATABASE_URL": database_url,
         "MNEMOSYS_DB_SCHEMA": schema_name,
         "MNEMOSYS_DOWNGRADE_TARGET": "base",
     }
@@ -129,7 +128,7 @@ def run_validation(database_url: str, schema_name: str, environment_name: str, s
 def main(argument_list: Sequence[str] | None = None) -> int:
     """Entry point for migration validation."""
     if not runner.validate_alembic_command_available():
-        raise SystemExit("Alembic command not found on PATH.")
+        raise SystemExit("Alembic module not found in the current environment.")
 
     arguments = parse_arguments(argument_list)
     settings = load_admin_settings_from_env()
@@ -141,7 +140,7 @@ def main(argument_list: Sequence[str] | None = None) -> int:
     schema_name = build_schema_name(arguments.schema_prefix)
     create_schema(database_url, schema_name)
     try:
-        return run_validation(database_url, schema_name, environment_name, arguments.seed_script)
+        return run_validation(schema_name, environment_name, arguments.seed_script)
     finally:
         if not arguments.keep_schema:
             drop_schema(database_url, schema_name)

@@ -15,6 +15,7 @@ DB_COMPONENT_ENV_VARS = (
     "MNEMOSYS_DB_HOST",
     "MNEMOSYS_DB_PORT",
     "MNEMOSYS_DB_DATABASE",
+    "MNEMOSYS_DB_SSLMODE",
 )
 
 DB_ADMIN_COMPONENT_ENV_VARS = (
@@ -24,6 +25,7 @@ DB_ADMIN_COMPONENT_ENV_VARS = (
     "MNEMOSYS_DB_ADMIN_HOST",
     "MNEMOSYS_DB_ADMIN_PORT",
     "MNEMOSYS_DB_ADMIN_DATABASE",
+    "MNEMOSYS_DB_ADMIN_SSLMODE",
 )
 
 
@@ -68,7 +70,6 @@ def test_settings_dataclass_defaults() -> None:
 def test_load_settings_from_env_development(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test loading development settings from environment."""
     monkeypatch.setenv("MNEMOSYS_ENV", "development")
-    monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.delenv("MNEMOSYS_DB_SCHEMA", raising=False)
     monkeypatch.delenv("DEBUG", raising=False)
     monkeypatch.delenv("LOG_SQL", raising=False)
@@ -85,7 +86,6 @@ def test_load_settings_from_env_development(monkeypatch: pytest.MonkeyPatch) -> 
 def test_load_settings_from_env_sandbox(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test loading sandbox settings from environment."""
     monkeypatch.setenv("MNEMOSYS_ENV", "sandbox")
-    monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.delenv("MNEMOSYS_DB_SCHEMA", raising=False)
 
     settings = load_settings_from_env()
@@ -98,7 +98,6 @@ def test_load_settings_from_env_sandbox(monkeypatch: pytest.MonkeyPatch) -> None
 def test_load_settings_from_env_test(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test loading test settings from environment."""
     monkeypatch.setenv("MNEMOSYS_ENV", "test")
-    monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.delenv("MNEMOSYS_DB_SCHEMA", raising=False)
 
     settings = load_settings_from_env()
@@ -111,26 +110,12 @@ def test_load_settings_from_env_test(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_load_settings_from_env_production(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test loading production settings from environment."""
     monkeypatch.setenv("MNEMOSYS_ENV", "production")
-    monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.delenv("MNEMOSYS_DB_SCHEMA", raising=False)
 
     settings = load_settings_from_env()
 
     assert settings.environment == Environment.PRODUCTION
     assert settings.database_url == "postgresql://localhost/mnemosys_prod"
-    assert settings.database_schema == "mnemosys"
-
-
-def test_load_settings_from_env_custom_database_url(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test custom DATABASE_URL override."""
-    monkeypatch.setenv("MNEMOSYS_ENV", "development")
-    monkeypatch.setenv("DATABASE_URL", "postgresql://custom:5432/customdb")
-    monkeypatch.setenv("MNEMOSYS_DB_HOST", "ignored.example.com")
-    monkeypatch.delenv("MNEMOSYS_DB_SCHEMA", raising=False)
-
-    settings = load_settings_from_env()
-
-    assert settings.database_url == "postgresql://custom:5432/customdb"
     assert settings.database_schema == "mnemosys"
 
 
@@ -167,7 +152,6 @@ def test_load_settings_from_env_log_sql_true(monkeypatch: pytest.MonkeyPatch) ->
 def test_load_settings_from_env_default_no_env_var(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test default environment when MNEMOSYS_ENV is not set."""
     monkeypatch.delenv("MNEMOSYS_ENV", raising=False)
-    monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.delenv("MNEMOSYS_DB_SCHEMA", raising=False)
 
     settings = load_settings_from_env()
@@ -177,10 +161,9 @@ def test_load_settings_from_env_default_no_env_var(monkeypatch: pytest.MonkeyPat
     assert settings.database_schema == "mnemosys"
 
 
-def test_load_settings_from_env_all_custom(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test all settings customized via environment."""
+def test_load_settings_from_env_custom_flags_and_schema(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test custom schema and debug/log flags."""
     monkeypatch.setenv("MNEMOSYS_ENV", "test")
-    monkeypatch.setenv("DATABASE_URL", "sqlite:///test.db")
     monkeypatch.setenv("MNEMOSYS_DB_SCHEMA", "mnemosys_custom")
     monkeypatch.setenv("DEBUG", "true")
     monkeypatch.setenv("LOG_SQL", "true")
@@ -188,7 +171,7 @@ def test_load_settings_from_env_all_custom(monkeypatch: pytest.MonkeyPatch) -> N
     settings = load_settings_from_env()
 
     assert settings.environment == Environment.TEST
-    assert settings.database_url == "sqlite:///test.db"
+    assert settings.database_url == "sqlite:///:memory:"
     assert settings.database_schema == "mnemosys_custom"
     assert settings.debug is True
     assert settings.log_sql is True
@@ -207,7 +190,6 @@ def test_load_settings_from_env_custom_schema(monkeypatch: pytest.MonkeyPatch) -
 def test_load_settings_from_env_db_components(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test building database URL from MNEMOSYS_DB_* components."""
     monkeypatch.setenv("MNEMOSYS_ENV", "development")
-    monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.setenv("MNEMOSYS_DB_DRIVERNAME", "postgresql")
     monkeypatch.setenv("MNEMOSYS_DB_USERNAME", "mnemosys_user")
     monkeypatch.setenv("MNEMOSYS_DB_PASSWORD", "secret")
@@ -217,23 +199,45 @@ def test_load_settings_from_env_db_components(monkeypatch: pytest.MonkeyPatch) -
 
     settings = load_settings_from_env()
 
-    expected_url = str(
-        URL.create(
-            drivername="postgresql",
-            username="mnemosys_user",
-            password="secret",
-            host="db.local",
-            port=5433,
-            database="mnemosys_dev",
-        )
-    )
+    expected_url = URL.create(
+        drivername="postgresql",
+        username="mnemosys_user",
+        password="secret",
+        host="db.local",
+        port=5433,
+        database="mnemosys_dev",
+    ).render_as_string(hide_password=False)
+    assert settings.database_url == expected_url
+
+
+def test_load_settings_from_env_sslmode(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test SSL mode is included in the database URL."""
+    monkeypatch.setenv("MNEMOSYS_ENV", "development")
+    monkeypatch.setenv("MNEMOSYS_DB_DRIVERNAME", "postgresql")
+    monkeypatch.setenv("MNEMOSYS_DB_USERNAME", "mnemosys_user")
+    monkeypatch.setenv("MNEMOSYS_DB_PASSWORD", "secret")
+    monkeypatch.setenv("MNEMOSYS_DB_HOST", "db.local")
+    monkeypatch.setenv("MNEMOSYS_DB_PORT", "5433")
+    monkeypatch.setenv("MNEMOSYS_DB_DATABASE", "mnemosys_dev")
+    monkeypatch.setenv("MNEMOSYS_DB_SSLMODE", "require")
+
+    settings = load_settings_from_env()
+
+    expected_url = URL.create(
+        drivername="postgresql",
+        username="mnemosys_user",
+        password="secret",
+        host="db.local",
+        port=5433,
+        database="mnemosys_dev",
+        query={"sslmode": "require"},
+    ).render_as_string(hide_password=False)
     assert settings.database_url == expected_url
 
 
 def test_load_settings_from_env_invalid_port(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test invalid MNEMOSYS_DB_PORT raises a ValueError."""
     monkeypatch.setenv("MNEMOSYS_ENV", "development")
-    monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.setenv("MNEMOSYS_DB_PORT", "not-a-number")
 
     with pytest.raises(ValueError, match="MNEMOSYS_DB_PORT must be an integer"):
@@ -249,19 +253,19 @@ def test_load_admin_settings_from_env_db_components(monkeypatch: pytest.MonkeyPa
     monkeypatch.setenv("MNEMOSYS_DB_ADMIN_HOST", "db.local")
     monkeypatch.setenv("MNEMOSYS_DB_ADMIN_PORT", "5433")
     monkeypatch.setenv("MNEMOSYS_DB_ADMIN_DATABASE", "mnemosys_sandbox")
+    monkeypatch.setenv("MNEMOSYS_DB_ADMIN_SSLMODE", "verify-full")
 
     settings = load_admin_settings_from_env()
 
-    expected_url = str(
-        URL.create(
-            drivername="postgresql",
-            username="mnemosys_admin",
-            password="secret",
-            host="db.local",
-            port=5433,
-            database="mnemosys_sandbox",
-        )
-    )
+    expected_url = URL.create(
+        drivername="postgresql",
+        username="mnemosys_admin",
+        password="secret",
+        host="db.local",
+        port=5433,
+        database="mnemosys_sandbox",
+        query={"sslmode": "verify-full"},
+    ).render_as_string(hide_password=False)
     assert settings.database_url == expected_url
 
 
@@ -274,17 +278,17 @@ def test_load_admin_settings_from_env_fallback(monkeypatch: pytest.MonkeyPatch) 
     monkeypatch.setenv("MNEMOSYS_DB_HOST", "db.local")
     monkeypatch.setenv("MNEMOSYS_DB_PORT", "5433")
     monkeypatch.setenv("MNEMOSYS_DB_DATABASE", "mnemosys_sandbox")
+    monkeypatch.setenv("MNEMOSYS_DB_SSLMODE", "require")
 
     settings = load_admin_settings_from_env()
 
-    expected_url = str(
-        URL.create(
-            drivername="postgresql",
-            username="mnemosys_user",
-            password="secret",
-            host="db.local",
-            port=5433,
-            database="mnemosys_sandbox",
-        )
-    )
+    expected_url = URL.create(
+        drivername="postgresql",
+        username="mnemosys_user",
+        password="secret",
+        host="db.local",
+        port=5433,
+        database="mnemosys_sandbox",
+        query={"sslmode": "require"},
+    ).render_as_string(hide_password=False)
     assert settings.database_url == expected_url

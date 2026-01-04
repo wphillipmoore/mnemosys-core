@@ -5,9 +5,9 @@ Automated Alembic migration runners for upgrade and downgrade.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import logging
 import os
-import shutil
 import subprocess
 import sys
 import time
@@ -70,8 +70,6 @@ def validate_required_environment() -> list[str]:
     missing_variables: list[str] = []
     if not os.getenv("MNEMOSYS_ENV"):
         missing_variables.append("MNEMOSYS_ENV")
-    if not os.getenv("DATABASE_URL"):
-        missing_variables.append("DATABASE_URL")
     return missing_variables
 
 
@@ -85,8 +83,8 @@ def validate_environment_name(environment_name: str) -> bool:
 
 
 def validate_alembic_command_available() -> bool:
-    """Return True when the alembic command is available on PATH."""
-    return shutil.which("alembic") is not None
+    """Return True when the alembic module is available."""
+    return importlib.util.find_spec("alembic") is not None
 
 
 def format_database_url(database_url: str) -> str:
@@ -112,7 +110,7 @@ def build_alembic_command(
     alembic_configuration_path: str | None,
 ) -> list[str]:
     """Build the Alembic CLI command with optional configuration path."""
-    command: list[str] = ["alembic"]
+    command: list[str] = [sys.executable, "-m", "alembic"]
     if alembic_configuration_path:
         command.extend(["--config", alembic_configuration_path])
     command.extend(command_arguments)
@@ -235,7 +233,7 @@ def main(argument_list: Sequence[str] | None = None) -> int:
         return 2
 
     if not validate_alembic_command_available():
-        LOGGER.error("Alembic command not found on PATH.")
+        LOGGER.error("Alembic module not found in the current environment.")
         return 2
 
     settings = load_admin_settings_from_env()

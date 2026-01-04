@@ -5,8 +5,8 @@ Alembic revision wrapper enforcing message conventions.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import re
-import shutil
 import subprocess
 import sys
 from typing import TYPE_CHECKING
@@ -52,13 +52,13 @@ def validate_message(message: str) -> list[str]:
 
 
 def validate_alembic_available() -> bool:
-    """Return True if alembic is on PATH."""
-    return shutil.which("alembic") is not None
+    """Return True if alembic is available in the environment."""
+    return importlib.util.find_spec("alembic") is not None
 
 
 def build_command(arguments: argparse.Namespace) -> list[str]:
     """Build the Alembic revision command."""
-    command: list[str] = ["alembic"]
+    command: list[str] = [sys.executable, "-m", "alembic"]
     if arguments.alembic_configuration_path:
         command.extend(["--config", arguments.alembic_configuration_path])
     command.extend(["revision", "-m", arguments.message])
@@ -72,7 +72,7 @@ def main(argument_list: Sequence[str] | None = None) -> int:
     arguments = parse_arguments(argument_list)
 
     if not validate_alembic_available():
-        print("ERROR: alembic command not found on PATH.", file=sys.stderr)
+        print("ERROR: alembic module not found in the current environment.", file=sys.stderr)
         return 2
 
     errors = validate_message(arguments.message)

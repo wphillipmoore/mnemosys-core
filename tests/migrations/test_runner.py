@@ -105,7 +105,6 @@ def test_run_downgrade_base_skips_verification(monkeypatch: pytest.MonkeyPatch) 
 def test_main_missing_required_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     """Main returns config error when env vars are missing."""
     monkeypatch.delenv("MNEMOSYS_ENV", raising=False)
-    monkeypatch.delenv("DATABASE_URL", raising=False)
 
     assert runner.main(["upgrade"]) == 2
 
@@ -113,7 +112,6 @@ def test_main_missing_required_environment(monkeypatch: pytest.MonkeyPatch) -> N
 def test_main_invalid_environment_value(monkeypatch: pytest.MonkeyPatch) -> None:
     """Main returns config error for invalid MNEMOSYS_ENV values."""
     monkeypatch.setenv("MNEMOSYS_ENV", "invalid")
-    monkeypatch.setenv("DATABASE_URL", "postgresql://localhost/testdb")
 
     assert runner.main(["upgrade"]) == 2
 
@@ -121,7 +119,6 @@ def test_main_invalid_environment_value(monkeypatch: pytest.MonkeyPatch) -> None
 def test_main_upgrade_path(monkeypatch: pytest.MonkeyPatch) -> None:
     """Main dispatches to upgrade when action is upgrade."""
     monkeypatch.setenv("MNEMOSYS_ENV", "development")
-    monkeypatch.setenv("DATABASE_URL", "postgresql://localhost/testdb")
     monkeypatch.setenv("MNEMOSYS_DB_SCHEMA", "mnemosys")
     monkeypatch.setattr(runner, "validate_alembic_command_available", lambda: True)
     monkeypatch.setattr(runner, "run_upgrade", lambda _: 0)
@@ -132,7 +129,6 @@ def test_main_upgrade_path(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_main_downgrade_requires_target(monkeypatch: pytest.MonkeyPatch) -> None:
     """Main requires MNEMOSYS_DOWNGRADE_TARGET for downgrade."""
     monkeypatch.setenv("MNEMOSYS_ENV", "development")
-    monkeypatch.setenv("DATABASE_URL", "postgresql://localhost/testdb")
     monkeypatch.setenv("MNEMOSYS_DB_SCHEMA", "mnemosys")
     monkeypatch.delenv("MNEMOSYS_DOWNGRADE_TARGET", raising=False)
     monkeypatch.setattr(runner, "validate_alembic_command_available", lambda: True)
@@ -143,7 +139,6 @@ def test_main_downgrade_requires_target(monkeypatch: pytest.MonkeyPatch) -> None
 def test_main_downgrade_path(monkeypatch: pytest.MonkeyPatch) -> None:
     """Main dispatches to downgrade when action is downgrade."""
     monkeypatch.setenv("MNEMOSYS_ENV", "development")
-    monkeypatch.setenv("DATABASE_URL", "postgresql://localhost/testdb")
     monkeypatch.setenv("MNEMOSYS_DB_SCHEMA", "mnemosys")
     monkeypatch.setenv("MNEMOSYS_DOWNGRADE_TARGET", "abcdef12")
     monkeypatch.setattr(runner, "validate_alembic_command_available", lambda: True)
