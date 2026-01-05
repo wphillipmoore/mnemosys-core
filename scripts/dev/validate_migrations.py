@@ -13,11 +13,11 @@ import subprocess
 import sys
 import uuid
 from contextlib import contextmanager
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
+    from subprocess import CompletedProcess
 
 from sqlalchemy import text
 from sqlalchemy.pool import NullPool
@@ -26,7 +26,7 @@ from mnemosys_core.config.settings import load_admin_settings_from_env
 from mnemosys_core.db.engine import create_db_engine
 
 SCHEMA_PATTERN = re.compile(r"^[a-z0-9_]+$")
-RUNNER_PATH = Path(__file__).resolve().parents[2] / "alembic" / "runner.py"
+REVISION_PATTERN = re.compile(r"\b[0-9a-f]{8,}\b")
 
 
 @contextmanager
@@ -108,17 +108,73 @@ def ensure_alembic_available() -> None:
     if importlib.util.find_spec("alembic") is None:
         raise SystemExit("Alembic module not found in the current environment.")
 
+def run_alembic_command(command_arguments: Sequence[str]) -> CompletedProcess[str]:
+    """Run an Alembic command and capture output."""
+    command = [sys.executable, "-m", "alembic", *command_arguments]
+    return subprocess.run(command, check=False, capture_output=True, text=True)
 
-def ensure_runner_available() -> None:
-    """Ensure the migration runner script exists."""
-    if not RUNNER_PATH.is_file():
-        raise SystemExit(f"Migration runner not found at {RUNNER_PATH}.")
+
+def describe_failure(result: CompletedProcess[str]) -> str:
+    """Format alembic command output for failures."""
+    stdout = result.stdout.strip()
+    stderr = result.stderr.strip()
+    details = []
+    if stdout:
+        details.append(f"stdout: {stdout}")
+    if stderr:
+        details.append(f"stderr: {stderr}")
+    detail_text = "\n".join(details) if details else "No output captured."
+    command_text = " ".join(map(str, result.args))
+    return f"Command failed ({result.returncode}): {command_text}\n{detail_text}"
 
 
-def run_runner(command_arguments: Sequence[str]) -> int:
-    """Run the Alembic migration runner script."""
-    command = [sys.executable, str(RUNNER_PATH), *command_arguments]
-    return subprocess.run(command, check=False).returncode
+def parse_revision_ids(output: str) -> list[str]:
+    """Extract Alembic revision IDs from output."""
+    revisions = REVISION_PATTERN.findall(output)
+    return list(dict.fromkeys(revisions))
+
+
+def get_single_head_revision() -> str:
+    """Return the single Alembic head revision ID."""
+    result = run_alembic_command(["heads"])
+    if result.returncode != 0:
+        raise SystemExit(describe_failure(result))
+    revisions = parse_revision_ids(f"{result.stdout}\n{result.stderr}")
+    if not revisions:
+        raise SystemExit("No Alembic head revision found.")
+    if len(revisions) > 1:
+        raise SystemExit(f"Multiple Alembic heads detected: {', '.join(revisions)}")
+    return revisions[0]
+
+
+def assert_current_revision(expected_revision: str | None) -> None:
+    """Assert that alembic current matches the expected revision."""
+    result = run_alembic_command(["current"])
+    if result.returncode != 0:
+        raise SystemExit(describe_failure(result))
+    current_revisions = parse_revision_ids(f"{result.stdout}\n{result.stderr}")
+    if expected_revision is None:
+        if current_revisions:
+            raise SystemExit(f"Expected no current revision, found: {', '.join(current_revisions)}")
+        return
+    if expected_revision not in current_revisions:
+        raise SystemExit(
+            f"Expected revision {expected_revision} not found in current output: {', '.join(current_revisions)}"
+        )
+
+
+def run_upgrade() -> None:
+    """Run alembic upgrade to head."""
+    result = run_alembic_command(["upgrade", "heads"])
+    if result.returncode != 0:
+        raise SystemExit(describe_failure(result))
+
+
+def run_downgrade(target_revision: str) -> None:
+    """Run alembic downgrade to a target revision."""
+    result = run_alembic_command(["downgrade", target_revision])
+    if result.returncode != 0:
+        raise SystemExit(describe_failure(result))
 
 
 def run_validation(schema_name: str, environment_name: str, seed_script: str | None) -> int:
@@ -126,29 +182,28 @@ def run_validation(schema_name: str, environment_name: str, seed_script: str | N
     overrides = {
         "MNEMOSYS_ENV": environment_name,
         "MNEMOSYS_DB_SCHEMA": schema_name,
-        "MNEMOSYS_DOWNGRADE_TARGET": "base",
     }
     with temporary_environment(overrides):
-        upgrade_result = run_runner(["upgrade"])
-        if upgrade_result != 0:
-            return upgrade_result
+        head_revision = get_single_head_revision()
+
+        run_upgrade()
+        assert_current_revision(head_revision)
 
         seed_result = run_seed_script(seed_script)
         if seed_result != 0:
             return seed_result
 
-        downgrade_result = run_runner(["downgrade", "--target", "base"])
-        if downgrade_result != 0:
-            return downgrade_result
+        run_downgrade("base")
+        assert_current_revision(None)
 
-        upgrade_again_result = run_runner(["upgrade"])
-        return upgrade_again_result
+        run_upgrade()
+        assert_current_revision(head_revision)
+        return 0
 
 
 def main(argument_list: Sequence[str] | None = None) -> int:
     """Entry point for migration validation."""
     ensure_alembic_available()
-    ensure_runner_available()
 
     arguments = parse_arguments(argument_list)
     settings = load_admin_settings_from_env()
