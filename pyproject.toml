@@ -114,6 +114,8 @@ filterwarnings = [
     # Also applies to pytest-cov's internal SQLite usage
     "ignore:unclosed database:ResourceWarning",
     "ignore::ResourceWarning",
+    # Suppress Testcontainers deprecation emitted by dependency internals
+    "ignore:The @wait_container_is_ready decorator is deprecated:DeprecationWarning",
 ]
 
 [tool.coverage.run]
