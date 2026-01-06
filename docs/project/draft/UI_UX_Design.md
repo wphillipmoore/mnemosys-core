@@ -1,12 +1,8 @@
-# FSIPS UI/UX Design
+# MNEMOSYS UI/UX Design
 
 **Version:** v0.1
 
-> **Nomenclature Note:** This document uses the original project name "FSIPS" (Fretted String Instrument Practice System) and references "SIPF" (String Instrument Practice Framework). The project has since been renamed to **MNEMOSYS**. This historical document is preserved in draft form pending revision to reflect current terminology.
-
----
-
-This document captures high-level UX/UI requirements and architectural design goals for the Fretted String Instrument Practice System (FSIPS), with emphasis on long-term survivability, platform independence, and instructor–student shared state.
+This document captures high-level UX/UI requirements and architectural design goals for MNEMOSYS, with emphasis on long-term survivability, platform independence, and instructor–student shared state.
 
 ## Table of Contents
 - [Core Invariants](#core-invariants)

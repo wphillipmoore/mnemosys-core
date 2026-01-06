@@ -16,7 +16,7 @@
 - [Closing Note](#closing-note)
 
 ## Status
-Draft — exploratory snapshot
+Frozen v0.1 snapshot
 
 This document captures a first‑pass articulation of an **AI‑assisted development loop** as practiced during the early MNEMOSYS project. It is intentionally written as a *system description*, not a manifesto, tutorial, or productivity guide.
 
@@ -220,4 +220,3 @@ The value lies not in speed, but in **clarity that compounds**.
 ---
 
 *End of v0.1 snapshot*
-

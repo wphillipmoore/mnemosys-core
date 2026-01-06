@@ -112,7 +112,7 @@ The system uses a **two-pass approach**:
 **1. Inference Pass** - Extract structure automatically from SQLAlchemy models:
 - Entity names and inheritance hierarchies
 - Relationships with cardinality (1:1, 1:many, many:many)
-- Namespace-based grouping (Exercise*, Instrument*, Session*)
+- Namespace-based grouping (Exercise*, Instrument*, Practice*)
 
 **2. Annotation Pass** - Apply human-provided metadata:
 - Omit infrastructure entities (history tables, association tables)
@@ -151,7 +151,7 @@ The system uses a **two-pass approach**:
 **`diagram_group`**: string or None
 - Default: inferred from namespace prefix (e.g., "Exercise" from ExerciseState)
 - Use: Override when inference is wrong or add entities to non-obvious groups
-- Example: SessionBlock might need explicit `group="Session"`
+- Example: PracticeBlock might need explicit `group="Practice"`
 
 **`diagram_group_label`**: string or None
 - Default: prettified group name (e.g., "Exercise Management")
@@ -211,7 +211,7 @@ The system uses a **two-pass approach**:
 **Inheritance hierarchies:** parent at top, children below (vertical flow)
 
 **Composition chains:** follow containment order
-- Example: Session → ExerciseInstance → ExerciseLog flows top-to-bottom
+- Example: Practice → ExerciseInstance → ExerciseLog flows top-to-bottom
 
 **Peers:** arrange to minimize crossing lines to other groups
 
@@ -247,7 +247,7 @@ We can suggest structure via subgraph order and entity ordering, but Mermaid's r
 
 **Visual:** Solid line with cardinality markers
 
-**Example:** `Session ||--o{ ExerciseInstance` (Session has many instances)
+**Example:** `Practice ||--o{ ExerciseInstance` (Practice has many instances)
 
 ### Association (RELATES-TO / Many-to-Many)
 
@@ -318,7 +318,7 @@ classDiagram
     Instrument <|-- KeyboardInstrument
 
     %% Relationships
-    Session ||--o{ ExerciseInstance : contains
+    Practice ||--o{ ExerciseInstance : contains
     ExerciseInstance ||--|| ExerciseLog : logged_as
     Exercise }o--o{ Technique : uses
 ```
@@ -405,7 +405,7 @@ Entities with common prefixes cluster together:
 
 We have overlapping hierarchies to represent in 2D:
 - **Inheritance:** Instrument → StringedInstrument/KeyboardInstrument
-- **Composition:** Session → ExerciseInstance → ExerciseLog
+- **Composition:** Practice → ExerciseInstance → ExerciseLog
 - **Association:** Exercise ↔ Technique (M:M)
 - **Namespace grouping:** Exercise cluster, Instrument cluster
 

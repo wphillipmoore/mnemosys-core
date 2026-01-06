@@ -1,10 +1,6 @@
-# FSIPS — Baseline Visual Specification
+# MNEMOSYS — Baseline Visual Specification
 
 **Version:** v0.1
-
-> **Nomenclature Note:** This document uses the original project name "FSIPS" (Fretted String Instrument Practice System). The project has since been renamed to **MNEMOSYS**. This historical document is preserved in draft form pending revision to reflect current terminology.
-
----
 
 ## Table of Contents
 - [Purpose](#purpose)
@@ -17,7 +13,7 @@
 
 ## Purpose
 
-Defines the minimum visual contract for FSIPS exercise notation.
+Defines the minimum visual contract for MNEMOSYS exercise notation.
 
 ## Core Principle
 

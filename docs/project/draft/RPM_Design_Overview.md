@@ -1,11 +1,7 @@
 # Repertoire Practice Management (RPM)
 
-**Integrated with the String Instrument Practice Framework (SIPF)**
+**Integrated with MNEMOSYS**
 **Design Overview – v0.1**
-
-> **Nomenclature Note:** This document references "SIPF" (String Instrument Practice Framework), which is related to the project formerly known as "FSIPS". The project has since been renamed to **MNEMOSYS**. This historical document is preserved in draft form pending revision to reflect current terminology.
-
----
 
 ## Table of Contents
 - [1. Overview](#1-overview)
@@ -66,7 +62,7 @@ FAST (3–5 days), MED (7–14 days), SLOW (21–45 days). Intervals expand or c
 - Decay outranks difficulty
 - Sections outrank songs
 - Lowest effective tier always preferred
-- Fatigue limits are enforced via SIPF
+- Fatigue limits are enforced via MNEMOSYS
 
 ## 3. Appendix: Next Steps
 

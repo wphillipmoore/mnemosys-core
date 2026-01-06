@@ -15,12 +15,12 @@
   - [Entities with State (What You Measure)](#entities-with-state-what-you-measure)
   - [Polymorphic Hierarchies](#polymorphic-hierarchies)
   - [Connector Entities (Relationships, No State)](#connector-entities-relationships-no-state)
-- [Session Structure](#session-structure)
+- [Practice Structure](#practice-structure)
   - [Practice Flow](#practice-flow)
-  - [Session](#session)
+  - [Practice](#practice)
   - [Data Flow](#data-flow)
 - [Deferred Decisions](#deferred-decisions)
-  - [Reusable Session Programs](#reusable-session-programs)
+  - [Reusable Practice Programs](#reusable-practice-programs)
   - [OverloadDimension Specificity](#overloaddimension-specificity)
   - [ExerciseDomain Concept](#exercisedomain-concept)
 - [Out of Scope (This Iteration)](#out-of-scope-this-iteration)
@@ -33,7 +33,7 @@
 
 ## Context
 
-This design represents a fundamental rethinking of the MNEMOSYS domain model. The initial implementation (6 classes: Instrument, Exercise, ExerciseState, Session, SessionBlock, BlockLog) was generated rapidly from design documents without proper discussion of relationships and domain concepts. This design session establishes the proper entity hierarchy, relationships, and architectural patterns for the system.
+This design represents a fundamental rethinking of the MNEMOSYS domain model. The initial implementation (6 classes: Instrument, Exercise, ExerciseState, Practice, PracticeBlock, PracticeBlockLog) was generated rapidly from design documents without proper discussion of relationships and domain concepts. This design session establishes the proper entity hierarchy, relationships, and architectural patterns for the system.
 
 **Key principle guiding this design:** Model what you can measure, infer what you cannot.
 
@@ -97,7 +97,7 @@ Per-exercise memory and performance tracking (one row per exercise being tracked
 Parameterized exercise for a specific practice session.
 
 **Attributes:**
-- `session_id` - foreign key to Session
+- `practice_id` - foreign key to Practice
 - `exercise_id` - foreign key to Exercise template
 - `sequence_order` - position within session
 - `parameters` - key, tempo, technique pattern, duration, etc. (implementation TBD)
@@ -154,7 +154,7 @@ Minimal common attributes across all instrument types:
 **Relationships:**
 - Links to Tunings (many-to-many, type-specific)
 - Links to Techniques (many-to-many - instruments support techniques)
-- Has many Sessions (instrument used in practice sessions)
+- Has many Practices (instrument used in practice sessions)
 
 #### Tuning Hierarchy
 
@@ -218,12 +218,12 @@ Dimensions for progressive overload (tempo, duration, complexity, etc.).
 
 ---
 
-## Session Structure
+## Practice Structure
 
 ### Practice Flow
 
 ```
-Session (practice event on specific date)
+Practice (practice event on specific date)
   ↓ contains
 ExerciseInstance (parameterized from Exercise template)
   ↓ logged as
@@ -232,7 +232,7 @@ ExerciseLog (performance/completion/quality)
 ExerciseState (aggregate memory/mastery over time)
 ```
 
-### Session
+### Practice
 Represents a single practice event.
 
 **Attributes:**
@@ -247,8 +247,8 @@ Represents a single practice event.
 
 ### Data Flow
 
-1. User plans a practice session (creates Session)
-2. Session contains multiple ExerciseInstances (parameterized from Exercise templates)
+1. User plans a practice session (creates Practice)
+2. Practice contains multiple ExerciseInstances (parameterized from Exercise templates)
 3. User performs exercises and logs results (creates ExerciseLogs)
 4. Exercise performance data updates ExerciseState (memory, mastery, practice frequency)
 5. Over time, ExerciseState reflects memory decay and mastery progression
@@ -259,7 +259,7 @@ Represents a single practice event.
 
 The following design decisions have high cost-of-change and require additional input before implementation:
 
-### Reusable Session Programs
+### Reusable Practice Programs
 **Question:** Should session programs be reusable templates, or ad-hoc per session?
 
 **Considerations:**
@@ -295,7 +295,7 @@ The following are explicitly deferred to future iterations:
 - **RepertoireEntry implementation** - full RPM (Repertoire Practice Management) feature set (second wave)
 - **Memory decay algorithms** - forgetting curves, half-life calculations
 - **Spaced repetition scheduling** - optimal recall timing, review intervals
-- **Session program templates** - reusable practice routines
+- **Practice program templates** - reusable practice routines
 
 ---
 
@@ -318,8 +318,8 @@ The following are explicitly deferred to future iterations:
 The existing 6-class model will need significant refactoring:
 - Instrument → polymorphic Instrument hierarchy
 - Exercise, ExerciseState → preserved with relationship updates
-- Session → updated to use Instrument base class
-- SessionBlock → replaced with ExerciseInstance
+- Practice → updated to use Instrument base class
+- PracticeBlock → replaced with ExerciseInstance
 - BlockLog → replaced with ExerciseLog
 
 ### Testing Strategy
@@ -349,7 +349,7 @@ Future iterations will build on these established patterns.
 4. Implement polymorphic Instrument hierarchy (establish pattern)
 5. Implement polymorphic Tuning hierarchy (parallel pattern)
 6. Implement Technique entity and relationships
-7. Refactor Session structure (ExerciseInstance, ExerciseLog)
+7. Refactor Practice structure (ExerciseInstance, ExerciseLog)
 8. Update ExerciseState to work with new structure
 9. Write comprehensive test suite
 10. Validate with instructor (surface deferred decisions)

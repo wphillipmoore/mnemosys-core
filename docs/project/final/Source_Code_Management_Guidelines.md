@@ -116,15 +116,16 @@ This decision may be revisited once:
 
 - Python **3.13** — current deployment target
 - Python **3.14** — forward-compatibility target
+- Python **3.15** — early warning target (informational)
 
 ### CI Requirements
 
 All CI pipelines must validate in parallel against:
 
-- Current version (3.13)
-- Next version (3.14)
+- Current version (3.13) — required
+- Next versions (3.14, 3.15) — informational
 
-Failures on the next-version track inform upgrade planning but do **not** block production deployment.
+Failures on the forward-compatibility tracks inform upgrade planning but do **not** block production deployment.
 
 ### Deployment Rule
 
@@ -164,7 +165,7 @@ Clever automation that cannot be reasonably expressed outside GitHub.
 - GitHub as the initial hosting provider
 - GitHub Actions for CI/CD
 - Python-first implementation
-- Parallel testing on current and next Python versions
+- Parallel testing on current and next Python versions (3.14, 3.15 informational)
 
 ### Explicitly Flexible
 

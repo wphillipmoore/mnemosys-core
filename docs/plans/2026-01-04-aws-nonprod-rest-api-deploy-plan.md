@@ -74,13 +74,13 @@ and TLS-based routing later.
   - ECS task execution role (ECR pull + CloudWatch logs).
   - ECS task role (read secrets).
   - GitHub Actions OIDC role for deploys.
-- **Logging**: CloudWatch log groups per environment.
+- **Logging**: CloudWatch log groups per environment (`/mnemosys/dev/api`, `/mnemosys/test/api`).
 - **Secrets**: SSM Parameter Store (SecureString) for DB credentials.
 
 ## Secrets and Parameter Naming (SSM)
 
 Parameters are stored under `/mnemosys/<environment>/` using SecureString values.
-Environment values are `development` and `test`.
+Environment values are `development` and `test` (log group names use `dev`/`test` shorthand for consistency with ECS service names).
 
 Required parameters per environment:
 

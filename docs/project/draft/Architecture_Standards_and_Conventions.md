@@ -1,10 +1,6 @@
-# FSIPS Architecture — Standards and Conventions
+# MNEMOSYS Architecture — Standards and Conventions
 
 **Version:** v0.1
-
-> **Nomenclature Note:** This document uses the original project name "FSIPS" (Fretted String Instrument Practice System). The project has since been renamed to **MNEMOSYS**. This historical document is preserved in draft form pending revision to reflect current terminology.
-
----
 
 ## Table of Contents
 - [1. Purpose](#1-purpose)
@@ -17,7 +13,7 @@
 
 ## 1. Purpose
 
-This document defines standards, conventions, and architectural constraints that govern FSIPS-related design and implementation decisions.
+This document defines standards, conventions, and architectural constraints that govern MNEMOSYS-related design and implementation decisions.
 
 Its role is explicitly normative, not descriptive.
 
@@ -36,7 +32,7 @@ They are treated as optional integrations and must never be authoritative.
 **Guitar Pro (GP) Policy:**
 - Guitar Pro is explicitly non-core.
 - GP files are export-only artifacts.
-- FSIPS must not depend on GP for exercise definition, progression, or visualization.
+- MNEMOSYS must not depend on GP for exercise definition, progression, or visualization.
 
 ## 4. File Format Standards
 
