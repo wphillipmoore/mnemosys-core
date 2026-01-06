@@ -2,9 +2,11 @@
 Instrument API endpoints.
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session as DBSession
 
 from ...db.models import Instrument
 from ...db.models.instrument import StringedInstrument
@@ -12,6 +14,9 @@ from ..dependencies import get_db
 from ..schemas.instruments import InstrumentCreate, InstrumentResponse, InstrumentUpdate
 
 router = APIRouter()
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session as DBSession
 
 
 @router.post("/", response_model=InstrumentResponse, status_code=status.HTTP_201_CREATED)
@@ -57,7 +62,7 @@ def update_instrument(
     return db_instrument
 
 
-@router.delete("/{instrument_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{instrument_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 def delete_instrument(instrument_id: int, db_session: DBSession = Depends(get_db)) -> None:
     """Delete instrument by ID."""
     db_instrument = db_session.query(Instrument).filter(Instrument.id == instrument_id).first()

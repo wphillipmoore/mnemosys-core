@@ -4,7 +4,7 @@
 
 **Goal:** Implement automated CI/CD pipeline that enforces 100% test coverage, code quality checks, and Python version compatibility on all PRs and eternal branch pushes.
 
-**Architecture:** GitHub Actions workflow with a unit/coverage gate and a separate integration-test job. Matrix testing across Python 3.13 (required), 3.14, and 3.15 (informational) for unit coverage; integration tests run on Python 3.13.
+**Architecture:** GitHub Actions workflow with a unit/coverage gate and a separate integration-test job. Unit coverage runs on Python 3.14; integration tests run on Python 3.14.
 
 **Tech Stack:** GitHub Actions, Poetry, pytest, pytest-cov, ruff, mypy, Testcontainers
 
@@ -52,9 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.13", "3.14", "3.15"]
-      fail-fast: false
-    continue-on-error: ${{ matrix.python-version != '3.13' }}
+        python-version: ["3.14"]
 
     steps:
       - name: Checkout code
@@ -109,7 +107,7 @@ jobs:
             --cov-fail-under=100
 
       - name: Upload coverage report
-        if: matrix.python-version == '3.13'
+        if: matrix.python-version == '3.14'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
@@ -122,10 +120,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.13
+      - name: Set up Python 3.14
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: Cache Poetry installation
         uses: actions/cache@v4
@@ -133,7 +131,7 @@ jobs:
           path: |
             ~/.local/share/pypoetry
             ~/.local/bin/poetry
-          key: poetry-install-${{ runner.os }}-3.13
+          key: poetry-install-${{ runner.os }}-3.14
 
       - name: Install Poetry
         run: |
@@ -147,9 +145,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pypoetry/virtualenvs
-          key: poetry-${{ runner.os }}-py3.13-${{ hashFiles('poetry.lock') }}
+          key: poetry-${{ runner.os }}-py3.14-${{ hashFiles('poetry.lock') }}
           restore-keys: |
-            poetry-${{ runner.os }}-py3.13-
+            poetry-${{ runner.os }}-py3.14-
 
       - name: Install dependencies
         run: poetry install --no-interaction
@@ -174,16 +172,16 @@ Replace placeholder CI workflow with full implementation that enforces:
 - 100% test coverage (line and branch)
 - All tests passing
 - Code quality checks (ruff, mypy as explicit CI steps)
-- Python 3.13 (required), 3.14, 3.15 (informational)
+- Python 3.14 (required)
 
 Workflow features:
 - Triggers on PRs and pushes to eternal branches (develop, main, release/*)
 - Poetry dependency caching for 10-20x speedup
-- Matrix testing across Python versions
+- Single-version testing on Python 3.14
 - Concurrency control (cancel stale runs)
 - Coverage XML artifact upload for future integrations
 
-Branch protection requires: test-and-validate (3.13) and integration-tests status checks
+Branch protection requires: test-and-validate (3.14) and integration-tests status checks
 
 🤖 Generated with Codex CLI
 
@@ -217,7 +215,7 @@ Expected: See workflow run starting/in-progress
 **Step 3: Wait for workflow completion and check status**
 
 Run: `gh run watch`
-Expected: `test-and-validate` completes successfully for Python 3.13 (required), may pass or fail for 3.14/3.15 (informational), and `integration-tests` completes successfully on Python 3.13.
+Expected: `test-and-validate` completes successfully for Python 3.14 and `integration-tests` completes successfully on Python 3.14.
 
 **Step 4: If workflow fails, investigate and fix**
 
@@ -225,7 +223,6 @@ Run: `gh run view --log`
 Expected: Review logs, identify issue, fix locally, commit, push again
 
 **Note:** This step may require iteration. Common issues:
-- Python 3.14/3.15 compatibility (acceptable failures - informational only)
 - Docker/Testcontainers availability in GitHub Actions runners
 - Cache key issues (workflow should fallback gracefully)
 - Poetry installation issues (verify installer script)
@@ -241,7 +238,7 @@ Expected: Review logs, identify issue, fix locally, commit, push again
 
 **Step 1: Update standards to describe current CI**
 - Document `test-and-validate` and `integration-tests` jobs.
-- Note Python 3.13 required; 3.14/3.15 informational.
+- Note Python 3.14 is required.
 - Note integration tests use Testcontainers and require Docker.
 
 **Step 2: Verify Table of Contents entries remain accurate**
@@ -278,18 +275,18 @@ Expected: Push succeeds, triggers another CI run (should pass)
 Run: `gh api repos/:owner/:repo/branches/develop/protection/required_status_checks`
 Expected: See existing required status checks for develop branch
 
-**Step 2: Verify test-and-validate (3.13) and integration-tests are available as status checks**
+**Step 2: Verify test-and-validate (3.14) and integration-tests are available as status checks**
 
 After workflow completes, check:
 Run: `gh pr create --base develop --title "Test PR" --body "Testing CI" --draft`
-Expected: Draft PR created, shows "test-and-validate (3.13)" and "integration-tests" as pending/required checks
+Expected: Draft PR created, shows "test-and-validate (3.14)" and "integration-tests" as pending/required checks
 
 **Step 3: Close draft PR if created**
 
 Run: `gh pr close --delete-branch=false`
 Expected: Draft PR closed (keep branch for actual PR creation later)
 
-**Note:** If branch protection doesn't automatically pick up the new status checks, add "test-and-validate (3.13)" and "integration-tests" to required status checks in GitHub UI.
+**Note:** If branch protection doesn't automatically pick up the new status checks, add "test-and-validate (3.14)" and "integration-tests" to required status checks in GitHub UI.
 
 ---
 
@@ -326,9 +323,8 @@ Next: Create PR following standard process (validation → user approval → pus
 
 - ✅ GitHub Actions workflow file replaces placeholder
 - ✅ Workflow triggers on PRs and eternal branch pushes
-- ✅ Matrix testing on Python 3.13, 3.14, 3.15
-- ✅ Python 3.13 failures block PR merges
-- ✅ Python 3.14/3.15 failures are informational only
+- ✅ Unit testing on Python 3.14
+- ✅ Python 3.14 failures block PR merges
 - ✅ Caching implemented for Poetry and dependencies
 - ✅ Coverage enforcement at 100% (lines and branches)
 - ✅ Documentation updated to reference automated CI
@@ -336,7 +332,7 @@ Next: Create PR following standard process (validation → user approval → pus
 
 ## Notes
 
-- Python 3.14/3.15 may fail - this is expected and acceptable (informational only)
+- Python 3.14 must pass for merge readiness
 - First workflow run may be slower due to cache misses
 - Subsequent runs should be 10-20x faster with caching
 - Workflow automatically enforces same standards as manual validation

@@ -2,7 +2,12 @@
 Instrument API tests.
 """
 
-from fastapi.testclient import TestClient
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from fastapi.testclient import TestClient
 
 
 def test_health_check(client: TestClient) -> None:

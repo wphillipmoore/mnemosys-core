@@ -2,6 +2,8 @@
 Technique entity - connector for exercises, repertoire, and instruments.
 """
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Integer, String, Text
@@ -40,12 +42,12 @@ class Technique(Base):
     temporary_alias: Mapped[str | None] = mapped_column(String(120), nullable=True)
 
     # Relationships
-    instruments: Mapped[list["Instrument"]] = relationship(
+    instruments: Mapped[list[Instrument]] = relationship(
         "Instrument",
         secondary="instrument_technique_association",
         back_populates="techniques",
     )
-    exercises: Mapped[list["Exercise"]] = relationship(
+    exercises: Mapped[list[Exercise]] = relationship(
         "Exercise",
         secondary="exercise_technique_association",
         back_populates="techniques",

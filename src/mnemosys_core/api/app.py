@@ -2,10 +2,16 @@
 FastAPI application factory.
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from fastapi import FastAPI
-from sqlalchemy import Engine
 
 from .dependencies import configure_dependencies
+
+if TYPE_CHECKING:
+    from sqlalchemy import Engine
 
 
 def create_app(engine: Engine) -> FastAPI:

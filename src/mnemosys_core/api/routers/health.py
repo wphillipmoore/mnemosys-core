@@ -2,15 +2,19 @@
 Health check endpoints.
 """
 
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import text
-from sqlalchemy.orm import Session as DBSession
 
 from ..dependencies import get_db
 
 router = APIRouter()
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session as DBSession
 
 
 @router.get("/")

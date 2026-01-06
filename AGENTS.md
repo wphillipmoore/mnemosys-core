@@ -260,7 +260,7 @@ mnemosys-core/
 
 ## Technology Stack
 
-- **Python**: 3.13+
+- **Python**: 3.14+
 - **Database ORM**: SQLAlchemy (no specific version constraint yet)
 - **Testing**: pytest
 - **Package Layout**: `src/` layout with single top-level package

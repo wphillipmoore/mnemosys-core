@@ -2,7 +2,9 @@
 Exercise and exercise state models.
 """
 
-from datetime import date
+from __future__ import annotations
+
+from datetime import date  # noqa: TC003
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Column, Date, Float, ForeignKey, Integer, String, Table
@@ -59,17 +61,17 @@ class Exercise(Base):
     instrument_compatibility: Mapped[list[str] | None] = mapped_column(JSONEncodedList, nullable=True)
 
     # Relationships
-    exercise_state: Mapped["ExerciseState | None"] = relationship(
+    exercise_state: Mapped[ExerciseState | None] = relationship(
         "ExerciseState", back_populates="exercise", cascade="all, delete-orphan", uselist=False
     )
-    exercise_instances: Mapped[list["ExerciseInstance"]] = relationship("ExerciseInstance", back_populates="exercise")
-    practice_blocks: Mapped[list["PracticeBlock"]] = relationship("PracticeBlock", back_populates="exercise")
-    overload_dimensions: Mapped[list["OverloadDimension"]] = relationship(
+    exercise_instances: Mapped[list[ExerciseInstance]] = relationship("ExerciseInstance", back_populates="exercise")
+    practice_blocks: Mapped[list[PracticeBlock]] = relationship("PracticeBlock", back_populates="exercise")
+    overload_dimensions: Mapped[list[OverloadDimension]] = relationship(
         "OverloadDimension",
         secondary=exercise_overload_dimension_association,
         back_populates="exercises",
     )
-    techniques: Mapped[list["Technique"]] = relationship(
+    techniques: Mapped[list[Technique]] = relationship(
         "Technique",
         secondary=exercise_technique_association,
         back_populates="exercises",
@@ -104,7 +106,7 @@ class ExerciseState(Base):
     last_fatigue_profile: Mapped[FatigueProfile | None] = mapped_column(DatabaseEnum(FatigueProfile), nullable=True)
 
     # Relationships
-    exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="exercise_state")
+    exercise: Mapped[Exercise] = relationship("Exercise", back_populates="exercise_state")
 
     def __repr__(self) -> str:
         return (

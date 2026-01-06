@@ -2,7 +2,12 @@
 Model smoke tests.
 """
 
-from sqlalchemy.orm import Session
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session
 
 from mnemosys_core.db.models import (
     BlockType,

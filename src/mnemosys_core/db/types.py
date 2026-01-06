@@ -5,13 +5,17 @@ These types enable PostgreSQL features while maintaining SQLite compatibility
 for testing.
 """
 
+from __future__ import annotations
+
 import enum
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from sqlalchemy import JSON, String, TypeDecorator
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.engine import Dialect
+
+if TYPE_CHECKING:
+    from sqlalchemy.engine import Dialect
 
 
 class JSONEncodedList(TypeDecorator[list[str]]):

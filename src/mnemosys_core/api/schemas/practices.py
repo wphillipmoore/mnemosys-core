@@ -2,11 +2,12 @@
 Pydantic schemas for practice API.
 """
 
-from datetime import date
+# Pydantic resolves these types at runtime; keep imports out of TYPE_CHECKING.
+from datetime import date  # noqa: TC003
 
 from pydantic import BaseModel, Field
 
-from ...db.models import BlockType, CompletionStatus, QualityRating, SessionType
+from ...db.models import BlockType, CompletionStatus, QualityRating, SessionType  # noqa: TC001
 
 
 class PracticeBase(BaseModel):

@@ -2,7 +2,9 @@
 Practice session model.
 """
 
-from datetime import date
+from __future__ import annotations
+
+from datetime import date  # noqa: TC003
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Date, ForeignKey, Integer, String
@@ -41,11 +43,11 @@ class Practice(Base):
     temporary_label: Mapped[str | None] = mapped_column(String(120), nullable=True)
 
     # Relationships
-    instrument: Mapped["Instrument"] = relationship("Instrument", back_populates="practices")
-    exercise_instances: Mapped[list["ExerciseInstance"]] = relationship(
+    instrument: Mapped[Instrument] = relationship("Instrument", back_populates="practices")
+    exercise_instances: Mapped[list[ExerciseInstance]] = relationship(
         "ExerciseInstance", back_populates="practice", cascade="all, delete-orphan", order_by="ExerciseInstance.sequence_order"
     )
-    blocks: Mapped[list["PracticeBlock"]] = relationship(
+    blocks: Mapped[list[PracticeBlock]] = relationship(
         "PracticeBlock", back_populates="practice", cascade="all, delete-orphan"
     )
 

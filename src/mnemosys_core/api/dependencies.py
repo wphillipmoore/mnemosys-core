@@ -2,13 +2,20 @@
 Dependency injection configuration for FastAPI.
 """
 
-from collections.abc import Generator
+from __future__ import annotations
 
-from fastapi import FastAPI, Request
-from sqlalchemy import Engine
-from sqlalchemy.orm import Session as DBSession
+from typing import TYPE_CHECKING
+
+from fastapi import Request  # noqa: TC002
 
 from ..db.session import create_session_factory, get_session_dependency
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from fastapi import FastAPI
+    from sqlalchemy import Engine
+    from sqlalchemy.orm import Session as DBSession
 
 
 def configure_dependencies(app: FastAPI, engine: Engine) -> None:

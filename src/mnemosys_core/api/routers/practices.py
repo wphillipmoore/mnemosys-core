@@ -2,9 +2,11 @@
 Practice API endpoints.
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session as DBSession
 
 from ...db.models import Practice, PracticeBlock, PracticeBlockLog
 from ..dependencies import get_db
@@ -21,6 +23,9 @@ from ..schemas.practices import (
 )
 
 router = APIRouter()
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session as DBSession
 
 
 # Practice endpoints
@@ -65,7 +70,7 @@ def update_practice(
     return db_practice
 
 
-@router.delete("/{practice_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{practice_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 def delete_practice(practice_id: int, db_session: DBSession = Depends(get_db)) -> None:
     """Delete practice by ID."""
     db_practice = db_session.query(Practice).filter(Practice.id == practice_id).first()
@@ -120,7 +125,7 @@ def update_practice_block(
     return db_block
 
 
-@router.delete("/blocks/{block_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/blocks/{block_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 def delete_practice_block(block_id: int, db_session: DBSession = Depends(get_db)) -> None:
     """Delete practice block by ID."""
     db_block = db_session.query(PracticeBlock).filter(PracticeBlock.id == block_id).first()
@@ -177,7 +182,7 @@ def update_practice_block_log(
     return db_log
 
 
-@router.delete("/logs/{log_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/logs/{log_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 def delete_practice_block_log(log_id: int, db_session: DBSession = Depends(get_db)) -> None:
     """Delete practice block log by ID."""
     db_log = db_session.query(PracticeBlockLog).filter(PracticeBlockLog.id == log_id).first()
