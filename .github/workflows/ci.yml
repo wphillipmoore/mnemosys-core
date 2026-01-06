@@ -70,6 +70,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           poetry run pytest \
+            -m "not integration" \
             --cov=mnemosys_core \
             --cov-report=term-missing \
             --cov-branch \
@@ -82,3 +83,45 @@ jobs:
         with:
           name: coverage-report
           path: coverage.xml
+
+  integration-tests:
+    name: integration-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Cache Poetry installation
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.local/share/pypoetry
+            ~/.local/bin/poetry
+          key: poetry-install-${{ runner.os }}-3.13
+
+      - name: Install Poetry
+        run: |
+          if ! command -v poetry &> /dev/null; then
+            curl -sSL https://install.python-poetry.org | python3 -
+            echo "$HOME/.local/bin" >> $GITHUB_PATH
+          fi
+          poetry --version
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-${{ runner.os }}-py3.13-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            poetry-${{ runner.os }}-py3.13-
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Run integration tests
+        run: poetry run pytest -m integration
