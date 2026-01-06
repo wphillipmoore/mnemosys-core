@@ -1,10 +1,6 @@
-# Fretted String Instrument Practice System (FSIPS)
+# MNEMOSYS
 
 **Version 0.1 — Architecture & Design Summary**
-
-> **Nomenclature Note:** This document uses the original project name "FSIPS" (Fretted String Instrument Practice System). The project has since been renamed to **MNEMOSYS**. This historical document is preserved in draft form pending revision to reflect current terminology.
-
----
 
 ## Table of Contents
 - [1. Overview](#1-overview)
@@ -16,10 +12,10 @@
 - [5. Overload Dimensions](#5-overload-dimensions)
 - [6. Fatigue Model](#6-fatigue-model)
   - [Fatigue Profiles](#fatigue-profiles)
-- [7. SessionBlocks (Structural Constraint Layer)](#7-sessionblocks-structural-constraint-layer)
-  - [Canonical SessionBlocks](#canonical-sessionblocks)
+- [7. PracticeBlocks (Structural Constraint Layer)](#7-practiceblocks-structural-constraint-layer)
+  - [Canonical PracticeBlocks](#canonical-practiceblocks)
   - [Global Invariants](#global-invariants)
-- [8. Session Generator Logic](#8-session-generator-logic)
+- [8. Practice Generator Logic](#8-practice-generator-logic)
   - [Inputs](#inputs)
   - [Persistent State (future)](#persistent-state-future)
   - [Generation Algorithm](#generation-algorithm)
@@ -30,7 +26,7 @@
 
 ## 1. Overview
 
-The Fretted String Instrument Practice System (FSIPS) is a deterministic, fatigue-aware, instrument-agnostic framework for generating structured daily practice sessions for fretted string instruments (bass guitar, guitar, extended-range variants, alternate tunings).
+MNEMOSYS is a deterministic, fatigue-aware, instrument-agnostic framework for generating structured daily practice sessions for fretted string instruments (bass guitar, guitar, extended-range variants, alternate tunings).
 
 The system is explicitly modeled after periodized strength training rather than ad-hoc music practice. Exercises are treated as reusable training primitives, sessions are composed from constrained blocks, and progression is driven by explicit overload dimensions rather than intuition or randomness.
 
@@ -43,14 +39,14 @@ The design goals are:
 - Deterministic, debuggable session generation
 - Preservation of instructor intuition while eliminating memory loss and inconsistency
 
-FSIPS is not an app yet. It is a formal system specification that can later be implemented as a CLI tool, notebook workflow, or application.
+MNEMOSYS is not an app yet. It is a formal system specification that can later be implemented as a CLI tool, notebook workflow, or application.
 
 ## 2. Core Design Principles
 
 1. Exercises are abstract; instruments are configurations
 2. Overload is explicit and orthogonal (one knob at a time)
 3. Fatigue is stateful and variant-dependent
-4. Session structure constrains exercise choice
+4. Practice structure constrains exercise choice
 5. Determinism beats randomness
 6. Instructor heuristics are encoded, not replaced
 
@@ -120,11 +116,11 @@ Fatigue is modeled simply and intentionally.
 
 Fatigue is assigned to exercise variants, not exercises.
 
-## 7. SessionBlocks (Structural Constraint Layer)
+## 7. PracticeBlocks (Structural Constraint Layer)
 
-A SessionBlock is a constraint envelope that defines what kind of work is allowed in that portion of a session.
+A PracticeBlock is a constraint envelope that defines what kind of work is allowed in that portion of a session.
 
-### Canonical SessionBlocks
+### Canonical PracticeBlocks
 
 1. Warmup / Calibration
 2. Technique Development
@@ -145,7 +141,7 @@ Each block defines:
 - Cognitive and mechanical peaks are separated
 - Application always occurs last
 
-## 8. Session Generator Logic
+## 8. Practice Generator Logic
 
 The generator is deterministic and state-driven.
 
@@ -153,7 +149,7 @@ The generator is deterministic and state-driven.
 
 - InstrumentProfile
 - Available time
-- Session type (normal / light / heavy / deload)
+- Practice type (normal / light / heavy / deload)
 - Goal weights
 
 ### Persistent State (future)
@@ -166,7 +162,7 @@ The generator is deterministic and state-driven.
 ### Generation Algorithm
 
 1. Build session skeleton based on time
-2. For each SessionBlock:
+2. For each PracticeBlock:
    3. Filter compatible exercises
    4. Score candidates using a need model
    5. Select highest-need exercise
@@ -178,7 +174,7 @@ No machine learning is required.
 
 ## 9. Executable Output Requirement
 
-A session is considered invalid unless each SessionBlock emits:
+A session is considered invalid unless each PracticeBlock emits:
 
 - Selected exercise
 - Concrete playable variant
@@ -190,7 +186,7 @@ This guarantees immediate usability.
 
 ## 10. Current Capabilities (v0.1)
 
-At this milestone, FSIPS can:
+At this milestone, MNEMOSYS can:
 
 - Generate structured 20–75 minute practice sessions
 - Balance technique, harmony, rhythm, and application

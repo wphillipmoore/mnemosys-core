@@ -141,12 +141,12 @@ Variables representing a class instance use the `snake_case` version of the clas
 # ✅ Correct
 instrument = Instrument(...)
 exercise_state = ExerciseState(...)
-session_block = SessionBlock(...)
+practice_block = PracticeBlock(...)
 
 # ❌ Wrong
 inst = Instrument(...)
 ex_state = ExerciseState(...)
-block = SessionBlock(...)
+block = PracticeBlock(...)
 ```
 
 **2. Minimum Length: 3+ Characters (Accessibility)**
@@ -327,8 +327,8 @@ def create_instrument(name, string_count):
 
 - **Goal**: 100% code coverage (lines AND branches) across all production code
 - **Tool**: pytest with pytest-cov plugin
-- **Measurement**: Run `pytest --cov=src --cov-report=html --cov-report=term --cov-branch`
-- **CI/CD**: Coverage checks run automatically in test suite
+- **Measurement**: Run `poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch`
+- **CI/CD**: Coverage checks run automatically in CI
 - **Branch Coverage**: Tests all code paths (if/else, try/except, boolean operators, loops, etc.), not just that lines were executed
 
 #### Untestable Code Documentation
@@ -483,7 +483,7 @@ poetry run pytest
 ```
 
 **Critical**:
-- Running only a subset (e.g., `pytest tests/db/`) is **not sufficient**. Changes to one area often break tests in another area (as demonstrated by the Session → Practice rename breaking API tests).
+- Running only a subset (e.g., `pytest tests/db/`) is **not sufficient**. Changes to one area often break tests in another area (as demonstrated by the Session → Practice terminology change breaking API tests).
 - **ALL tests must pass**. Zero failures, zero skips (unless explicitly documented).
 
 **2. Code Quality Checks (REQUIRED: Zero Errors; docs-only exception may skip)**
@@ -597,17 +597,19 @@ Co-Authored-By: mnemosys-foo <ID+mnemosys-foo@users.noreply.github.com>
 
 **Why**: GitHub contributor attribution is email-based. A dedicated service account prevents misattribution to unrelated accounts.
 
-#### CI/CD Integration (Future)
+#### CI/CD Integration
 
-**Status**: Not yet implemented
+**Status**: Implemented (GitHub Actions)
 
-**Planned enforcement**:
-- GitHub Actions will run full test suite on every PR
-- PRs cannot merge unless all checks pass
-- Coverage reports will be posted to PR comments
-- Ruff and mypy errors will block merge
+**Current enforcement**:
+- GitHub Actions runs on PRs and pushes to `develop`, `release/**`, and `main`.
+- `test-and-validate` runs ruff, mypy, and pytest with coverage on Python 3.13 (required), 3.14/3.15 (informational), excluding integration tests.
+- `integration-tests` runs `pytest -m integration` on Python 3.13 using Testcontainers.
+- Coverage reports are uploaded as artifacts (Python 3.13).
 
-**Until CI/CD is implemented**: Developer discipline is the **only** enforcement mechanism.
+**Branch protection** should require:
+- `test-and-validate (3.13)`
+- `integration-tests`
 
 ### Pull Request Finalization Process
 
@@ -781,7 +783,7 @@ poetry run ruff check && poetry run mypy src/
 git checkout -b fix/test-failures  # Used this name before
 
 # ✅ CORRECT
-git checkout -b fix/test-timeout-in-api-layer  # Fresh, descriptive name
+git checkout -b bugfix/test-timeout-in-api-layer  # Fresh, descriptive name
 ```
 
 **Mistake 3: Not switching to develop before starting new work**
@@ -793,7 +795,7 @@ git checkout -b feat/new-feature  # Branching from wrong base!
 # ✅ CORRECT
 git checkout develop
 git pull origin develop
-git checkout -b feat/new-feature  # Branching from clean develop
+git checkout -b feature/new-feature  # Branching from clean develop
 ```
 
 #### Rationale
@@ -821,9 +823,9 @@ git checkout -b feat/new-feature  # Branching from clean develop
 **Examples**:
 - ✅ `instrument` (not `instruments`)
 - ✅ `exercise` (not `exercises`)
-- ✅ `session` (not `sessions`)
-- ✅ `session_block` (not `session_blocks`)
-- ✅ `block_log` (not `block_logs`)
+- ✅ `practice` (not `practices`)
+- ✅ `practice_block` (not `practice_blocks`)
+- ✅ `practice_block_log` (not `practice_block_logs`)
 - ✅ `exercise_state` (already singular)
 
 **Implementation**: Use `__tablename__` attribute in SQLAlchemy ORM models:

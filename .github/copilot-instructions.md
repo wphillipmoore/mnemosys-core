@@ -12,7 +12,7 @@ No implicit state or side effects at import time. The database engine, models, a
 - **`src/mnemosys_core/config/`** - Environment parsing and settings (no side effects at import)
 - **`src/mnemosys_core/db/`** - Database engine, base declarations, and ORM models
 - **`src/mnemosys_core/util/`** - Explicit utilities (e.g., UTC-only time handling)
-- **`src/mnemosys_core/migrations/`** - Will contain Alembic migrations (not yet implemented)
+- **`src/mnemosys_core/migrations/`** - Reserved for future package-level migrations; Alembic config lives under `alembic/`
 - **`tests/`** - Test organization mirrors source structure
 
 ## Project Conventions
@@ -31,12 +31,12 @@ No implicit state or side effects at import time. The database engine, models, a
 ### 3. Database Layer
 - All ORM models inherit from declarative base in `db/base.py`
 - Engine factories are in `db/engine.py`
-- Models live in `db/models/` (currently empty, awaiting development)
+- Models live in `db/models/`
 - Migrations will use Alembic under `src/mnemosys_core/migrations/`
 
 ### 4. Development Workflow
 - Local database bootstrapping via `scripts/dev/bootstrap_db.py`
-- CI pipeline defined in `.github/workflows/ci.yml` (currently placeholder)
+- CI pipeline defined in `.github/workflows/ci.yml` (unit coverage + integration tests)
 - EditorConfig enforces LF line endings and final newlines across all files
 
 ## When Adding New Features

@@ -20,8 +20,8 @@ test semantics with production and eliminate reliance on the sandbox database.
 
 ## Context
 
-Current unit tests run against SQLite. Alembic migration validation now runs against
-the sandbox Postgres database using a temporary schema.
+Current unit tests run against SQLite. Alembic migration validation runs against
+a Testcontainers Postgres instance via integration tests using a temporary schema.
 
 ## Goal
 
@@ -86,6 +86,6 @@ reliable unit tests.
 
 ## Open Questions
 
-- Do we want to replace the sandbox Postgres validation with Testcontainers, or keep both?
+- Do we want to keep a sandbox Postgres path for manual validation, or rely solely on Testcontainers?
 - Should migration validation always run locally, or only in CI?
 - What performance budget is acceptable for the full test suite?

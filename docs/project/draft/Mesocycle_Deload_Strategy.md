@@ -1,12 +1,8 @@
-# FSIPS — Mesocycle & Deload Strategy
+# MNEMOSYS — Mesocycle & Deload Strategy
 
 **Version:** 0.1
 
-> **Nomenclature Note:** This document uses the original project name "FSIPS" (Fretted String Instrument Practice System). The project has since been renamed to **MNEMOSYS**. This historical document is preserved in draft form pending revision to reflect current terminology.
-
----
-
-This document outlines how FSIPS extends daily session generation into longer-term periodization, borrowing explicitly from strength-training mesocycles.
+This document outlines how MNEMOSYS extends daily session generation into longer-term periodization, borrowing explicitly from strength-training mesocycles.
 
 ## Table of Contents
 - [1. Rationale](#1-rationale)
@@ -25,7 +21,7 @@ Unbounded daily progression leads to:
 - CNS fatigue
 - skill plateaus
 
-FSIPS therefore supports explicit mesocycle structure.
+MNEMOSYS therefore supports explicit mesocycle structure.
 
 ## 2. Mesocycle Phases
 

@@ -1,12 +1,12 @@
 # GitHub Actions CI Implementation Plan
 
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+**Status:** Implemented
 
 **Goal:** Implement automated CI/CD pipeline that enforces 100% test coverage, code quality checks, and Python version compatibility on all PRs and eternal branch pushes.
 
-**Architecture:** Single GitHub Actions workflow file that runs pytest with coverage enforcement, utilizing Poetry for dependency management and caching for performance. Matrix testing across Python 3.13 (required), 3.14, and 3.15 (informational).
+**Architecture:** GitHub Actions workflow with a unit/coverage gate and a separate integration-test job. Matrix testing across Python 3.13 (required), 3.14, and 3.15 (informational) for unit coverage; integration tests run on Python 3.13.
 
-**Tech Stack:** GitHub Actions, Poetry, pytest, pytest-cov, ruff, mypy
+**Tech Stack:** GitHub Actions, Poetry, pytest, pytest-cov, ruff, mypy, Testcontainers
 
 ---
 
@@ -101,6 +101,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           poetry run pytest \
+            -m "not integration" \
             --cov=mnemosys_core \
             --cov-report=term-missing \
             --cov-branch \
@@ -113,6 +114,48 @@ jobs:
         with:
           name: coverage-report
           path: coverage.xml
+
+  integration-tests:
+    name: integration-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Cache Poetry installation
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.local/share/pypoetry
+            ~/.local/bin/poetry
+          key: poetry-install-${{ runner.os }}-3.13
+
+      - name: Install Poetry
+        run: |
+          if ! command -v poetry &> /dev/null; then
+            curl -sSL https://install.python-poetry.org | python3 -
+            echo "$HOME/.local/bin" >> $GITHUB_PATH
+          fi
+          poetry --version
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-${{ runner.os }}-py3.13-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            poetry-${{ runner.os }}-py3.13-
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Run integration tests
+        run: poetry run pytest -m integration
 ```
 
 **Step 2: Verify YAML syntax**
@@ -122,8 +165,9 @@ Expected: Complete workflow file with proper YAML formatting
 
 **Step 3: Commit workflow**
 
-```bash
-cat > /tmp/commit-msg.txt << 'EOF'
+Create `/tmp/commit-msg.txt` (no heredoc) with:
+
+```
 feat: implement automated CI/CD pipeline with GitHub Actions
 
 Replace placeholder CI workflow with full implementation that enforces:
@@ -139,13 +183,16 @@ Workflow features:
 - Concurrency control (cancel stale runs)
 - Coverage XML artifact upload for future integrations
 
-Branch protection requires: test-and-validate (3.13) status check
+Branch protection requires: test-and-validate (3.13) and integration-tests status checks
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+🤖 Generated with Codex CLI
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
-EOF
+Co-Authored-By: mnemosys-codex <252598091+mnemosys-codex@users.noreply.github.com>
+```
 
+Then run:
+
+```bash
 git add .github/workflows/ci.yml
 git commit -F /tmp/commit-msg.txt
 rm /tmp/commit-msg.txt
@@ -170,7 +217,7 @@ Expected: See workflow run starting/in-progress
 **Step 3: Wait for workflow completion and check status**
 
 Run: `gh run watch`
-Expected: Workflow completes successfully for Python 3.13 (required), may pass or fail for 3.14/3.15 (informational)
+Expected: `test-and-validate` completes successfully for Python 3.13 (required), may pass or fail for 3.14/3.15 (informational), and `integration-tests` completes successfully on Python 3.13.
 
 **Step 4: If workflow fails, investigate and fix**
 
@@ -179,6 +226,7 @@ Expected: Review logs, identify issue, fix locally, commit, push again
 
 **Note:** This step may require iteration. Common issues:
 - Python 3.14/3.15 compatibility (acceptable failures - informational only)
+- Docker/Testcontainers availability in GitHub Actions runners
 - Cache key issues (workflow should fallback gracefully)
 - Poetry installation issues (verify installer script)
 
@@ -187,36 +235,16 @@ Expected: Review logs, identify issue, fix locally, commit, push again
 ## Task 3: Update Documentation to Reference Automated CI
 
 **Files:**
-- Modify: `CLAUDE.md` (section: "User Confirmation Checkpoints")
+**Files:**
+- Modify: `docs/standards-and-conventions.md` (CI/CD Integration section)
+- Optional: `README.md` (quick reference for `validate_local.py`)
 
-**Step 1: Update CLAUDE.md pre-push validation section**
+**Step 1: Update standards to describe current CI**
+- Document `test-and-validate` and `integration-tests` jobs.
+- Note Python 3.13 required; 3.14/3.15 informational.
+- Note integration tests use Testcontainers and require Docker.
 
-Find the section starting with "**REQUIRED PRE-PUSH VALIDATION:**" (around line 110) and update it to:
-
-```markdown
-**REQUIRED PRE-PUSH VALIDATION:**
-
-Before pushing the branch or creating a PR, you MUST run and pass the full local validation:
-
-```bash
-# Run local validation (mirrors CI hard gates)
-python scripts/dev/validate_local.py
-```
-
-**All checks must pass with:**
-- ✅ 100% test success (no failures, no errors)
-- ✅ 100% line and branch coverage (includes all source files)
-- ✅ ruff check (zero violations)
-- ✅ mypy src/ (zero errors)
-- ✅ poetry sync --dry-run has zero changes
-
-**Automated CI Enforcement:**
-
-GitHub Actions automatically runs these same checks when you push your branch and create a PR. The CI workflow:
-- Runs on PRs and pushes to eternal branches (develop, main, release/**)
-- Tests on Python 3.13 (required to pass), 3.14, 3.15 (informational)
-- Enforces 100% coverage - PRs cannot merge if checks fail
-- Branch protection requires the `test-and-validate (3.13)` status check
+**Step 2: Verify Table of Contents entries remain accurate**
 
 **If any test fails:**
 1. Fix the issue
@@ -227,38 +255,14 @@ GitHub Actions automatically runs these same checks when you push your branch an
 
 **Step 2: Verify update**
 
-Run: `grep -A 20 "REQUIRED PRE-PUSH VALIDATION" CLAUDE.md`
-Expected: See updated section with CI automation references
+Run: `rg -n "CI/CD Integration" docs/standards-and-conventions.md`
+Expected: CI/CD section reflects two jobs, Python version policy, and integration tests
 
 **Step 3: Commit documentation update**
 
-```bash
-cat > /tmp/commit-msg.txt << 'EOF'
-docs: update CLAUDE.md to reference automated CI enforcement
-
-Add section explaining that GitHub Actions now automatically enforces the
-same validation checks (tests, coverage, code quality) that were previously
-manual pre-push requirements.
-
-Clarify:
-- CI runs on PRs and eternal branch pushes
-- Python 3.13 required to pass (blocks merge)
-- Python 3.14/3.15 informational only
-- Branch protection enforces test-and-validate (3.13) status check
-
-Local validation still required before push to catch issues early.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
-EOF
-
-git add CLAUDE.md
-git commit -F /tmp/commit-msg.txt
-rm /tmp/commit-msg.txt
-```
-
-Expected: Commit created successfully
+- Create a temp commit message file (no heredoc).
+- `git add docs/standards-and-conventions.md`
+- `git commit -F /tmp/commit-msg.txt`
 
 **Step 4: Push documentation update**
 
@@ -274,18 +278,18 @@ Expected: Push succeeds, triggers another CI run (should pass)
 Run: `gh api repos/:owner/:repo/branches/develop/protection/required_status_checks`
 Expected: See existing required status checks for develop branch
 
-**Step 2: Verify test-and-validate (3.13) will be available as status check**
+**Step 2: Verify test-and-validate (3.13) and integration-tests are available as status checks**
 
 After workflow completes, check:
 Run: `gh pr create --base develop --title "Test PR" --body "Testing CI" --draft`
-Expected: Draft PR created, shows "test-and-validate (3.13)" as pending/required check
+Expected: Draft PR created, shows "test-and-validate (3.13)" and "integration-tests" as pending/required checks
 
 **Step 3: Close draft PR if created**
 
 Run: `gh pr close --delete-branch=false`
 Expected: Draft PR closed (keep branch for actual PR creation later)
 
-**Note:** If branch protection doesn't automatically pick up the new status check, user may need to manually add "test-and-validate (3.13)" to required status checks in GitHub UI.
+**Note:** If branch protection doesn't automatically pick up the new status checks, add "test-and-validate (3.13)" and "integration-tests" to required status checks in GitHub UI.
 
 ---
 

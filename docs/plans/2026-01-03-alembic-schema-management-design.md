@@ -26,7 +26,7 @@
   - [Bootstrap exit checklist (lockdown)](#bootstrap-exit-checklist-lockdown)
   - [Standard revision workflow](#standard-revision-workflow)
   - [Workflow invariants](#workflow-invariants)
-- [Testing Strategy (Planned)](#testing-strategy-planned)
+- [Testing Strategy](#testing-strategy)
 - [Observability and Audit](#observability-and-audit)
 - [Migration Runner Contract](#migration-runner-contract)
   - [Inputs](#inputs)
@@ -56,8 +56,8 @@ This is a design and workflow document. It captures current repository setup and
 
 ## Non-Goals
 
-- Choosing the final REST API deployment mechanism (decision pending)
-- Implementing CI/CD or cloud deploy automation (documented requirements only)
+- Choosing the final production deployment mechanism (decision pending)
+- Expanding deployment automation beyond the current nonprod pipeline
 - Building multi-environment or multi-tenant migration tooling (out of scope for v0.1)
 
 ## Current Repository State
@@ -66,7 +66,7 @@ This is a design and workflow document. It captures current repository setup and
 - `env.py` loads database settings explicitly from environment variables (including admin credentials).
 - Migration runner and validation tooling exist under `alembic/` and `scripts/dev/`.
 - Alembic script contents under `alembic/` are generated artifacts and excluded from linting/testing/coverage; validation is handled via migration tooling.
-- Deployment automation is not implemented yet.
+- Nonprod deployment automation is implemented; production automation is pending.
 
 ## Local Alembic Setup
 
@@ -245,18 +245,15 @@ ALTER DEFAULT PRIVILEGES FOR ROLE mnemosys_sandbox_admin IN SCHEMA mnemosys
    python scripts/dev/alembic_revision.py short_snake_case_message
    ```
 3. Review the revision and edit by hand if needed.
-4. Create a temporary schema for validation.
-5. Apply upgrades to the temporary schema:
+4. Run automated migration validation (temp schema upgrade/downgrade):
    ```bash
-   MNEMOSYS_ENV=sandbox MNEMOSYS_DB_SCHEMA=<temp_schema> alembic upgrade head
+   python scripts/dev/validate_migrations.py
    ```
-6. Validate downgrade safety in the temporary schema:
+   Optional seed script:
    ```bash
-   MNEMOSYS_ENV=sandbox MNEMOSYS_DB_SCHEMA=<temp_schema> alembic downgrade -1
+   python scripts/dev/validate_migrations.py --seed-script <path-to-seed-script>
    ```
-7. Re-apply upgrade and run tests against the upgraded temporary schema if needed.
-8. Drop the temporary schema.
-9. Commit the revision file and model changes.
+5. Commit the revision file and model changes.
 
 ### Workflow invariants
 
@@ -267,16 +264,14 @@ ALTER DEFAULT PRIVILEGES FOR ROLE mnemosys_sandbox_admin IN SCHEMA mnemosys
 - Table and column renames must be implemented explicitly in revisions; autogenerate treats renames as drop/create by default.
 - Upgrade and downgrade validation is mandatory for every revision.
 
-## Testing Strategy (Planned)
+## Testing Strategy
 
-Planned validation steps for CI or local checks:
+Implemented validation steps (local and CI):
 
-- Create a temporary schema in the development database.
-- Run `alembic upgrade head` against the temporary schema.
-- Seed minimal dummy data required by tests (via optional seed script).
-- Run a targeted smoke test suite against the upgraded schema.
-- Run `alembic downgrade -1` against the temporary schema.
-- Drop the temporary schema after validation.
+- Integration tests spin up Postgres via Testcontainers.
+- `scripts/dev/validate_migrations.py` creates a temporary schema, runs upgrade and downgrade, and cleans up.
+- Optional seed scripts can populate minimal data before validation.
+- CI runs `pytest -m integration` in a dedicated job to enforce migration safety.
 
 ## Observability and Audit
 
@@ -372,9 +367,9 @@ Phase 3: Migration runner (upgrade and downgrade) (completed)
 
 Phase 4: Ephemeral schema validation harness (in progress)
 - Implement tooling to create a temporary schema, apply upgrade, seed minimal data, run smoke tests, run downgrade, and drop schema (see `scripts/dev/validate_migrations.py`).
-- Integrate the harness into local validation and CI (non-docs-only changes). (local: done; CI: pending)
+- Integrate the harness into local validation and CI (non-docs-only changes). (local: done; CI: done)
 - TODO: add a minimal seed script (or document a required seed script contract).
-- TODO: add a targeted pytest subset to run against the temp schema.
+- Add a targeted integration test to run the harness in CI. (done: `tests/integration/test_migrations_postgres.py`)
 
 Phase 5: Operational integration (pending)
 - Wire the migration runner into the service startup path (init step or pre-start script).
@@ -389,5 +384,5 @@ Phase 6: End-to-end validation (pending)
 
 - Should the migration gate run inside the app container or as a separate deploy step?
 - What is the preferred advisory lock strategy for multi-instance startup?
-- What is the minimal migration test suite required for CI?
+- Do we need a broader migration smoke test beyond the current upgrade/downgrade harness?
 - What is the preferred AI-friendly database allocation strategy?

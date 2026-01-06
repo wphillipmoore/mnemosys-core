@@ -1,19 +1,15 @@
-# FSIPS — Session Generator Walkthrough
+# MNEMOSYS — Practice Generator Walkthrough
 
 **Version:** 0.1
 
-> **Nomenclature Note:** This document uses the original project name "FSIPS" (Fretted String Instrument Practice System). The project has since been renamed to **MNEMOSYS**. This historical document is preserved in draft form pending revision to reflect current terminology.
-
----
-
-This document is a procedural companion to the FSIPS v0.1 Architecture Overview. It describes, step by step, how the Session Generator produces a concrete, executable practice session from inputs and system state.
+This document is a procedural companion to the MNEMOSYS v0.1 Architecture Overview. It describes, step by step, how the practice generator produces a concrete, executable practice session from inputs and system state.
 
 ## Table of Contents
 - [1. Purpose](#1-purpose)
 - [2. Generator Inputs](#2-generator-inputs)
-  - [SessionRequest](#sessionrequest)
+  - [PracticeRequest](#practicerequest)
 - [3. Generator State (Conceptual)](#3-generator-state-conceptual)
-- [4. Session Skeleton Construction](#4-session-skeleton-construction)
+- [4. Practice Skeleton Construction](#4-practice-skeleton-construction)
 - [5. Block-by-Block Resolution](#5-block-by-block-resolution)
 - [6. Overload Assignment Rules](#6-overload-assignment-rules)
 - [7. Fatigue Budgeting](#7-fatigue-budgeting)
@@ -22,7 +18,7 @@ This document is a procedural companion to the FSIPS v0.1 Architecture Overview.
 
 ## 1. Purpose
 
-The Session Generator is responsible for converting:
+The Practice Generator is responsible for converting:
 - abstract exercises
 - overload and fatigue rules
 - available practice time
@@ -33,11 +29,11 @@ This document focuses on how the generator thinks, not UI or implementation deta
 
 ## 2. Generator Inputs
 
-### SessionRequest
+### PracticeRequest
 
 - InstrumentProfile
 - Available time (minutes)
-- Session type: normal | light | heavy | deload
+- Practice type: normal | light | heavy | deload
 - Goal weights (domain or technique emphasis)
 
 All inputs are explicit and bounded. No free-text interpretation is required.
@@ -54,9 +50,9 @@ Future state (defined elsewhere) will include:
 
 When state is missing, conservative defaults are used.
 
-## 4. Session Skeleton Construction
+## 4. Practice Skeleton Construction
 
-The generator first builds a SessionBlock skeleton based solely on available time.
+The generator first builds a PracticeBlock skeleton based solely on available time.
 
 **Examples:**
 - ≤25 min: Warmup → Technique → Application
@@ -67,7 +63,7 @@ Block order is invariant.
 
 ## 5. Block-by-Block Resolution
 
-For each SessionBlock, the generator performs the following steps:
+For each PracticeBlock, the generator performs the following steps:
 
 1. Filter exercises by:
    - allowed domains
@@ -84,8 +80,8 @@ The generator never invents new exercises.
 For a selected exercise:
 
 - Exactly one primary overload dimension is progressed at a time
-- All overload values are clamped to SessionBlock bounds
-- Session type may further cap overloads (e.g., deload)
+- All overload values are clamped to PracticeBlock bounds
+- Practice type may further cap overloads (e.g., deload)
 
 If the previous attempt failed or was sloppy:
 - overload is held or reduced
@@ -106,7 +102,7 @@ If fatigue budget is exceeded, the generator:
 
 ## 8. Executable Output Requirement
 
-Each SessionBlock must emit:
+Each PracticeBlock must emit:
 - Selected exercise
 - Concrete playable variant
 - Human-readable instructions
@@ -126,4 +122,4 @@ Every exercise choice is explainable in terms of:
 
 ---
 
-**Status:** Session Generator logic frozen at v0.1
+**Status:** Practice Generator logic frozen at v0.1

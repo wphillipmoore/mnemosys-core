@@ -1,12 +1,8 @@
-# FSIPS — Canonical Exercise Library
+# MNEMOSYS — Canonical Exercise Library
 
 **Version:** 0.1
 
-> **Nomenclature Note:** This document uses the original project name "FSIPS" (Fretted String Instrument Practice System). The project has since been renamed to **MNEMOSYS**. This historical document is preserved in draft form pending revision to reflect current terminology.
-
----
-
-This document is a supplemental reference to the FSIPS v0.1 architecture overview. It enumerates the canonical (foundational) exercises identified so far.
+This document is a supplemental reference to the MNEMOSYS v0.1 architecture overview. It enumerates the canonical (foundational) exercises identified so far.
 
 A canonical exercise represents a conceptual training primitive. Variants (tempo, rhythm, range, constraints, etc.) are produced via overload dimensions and are not separate exercises.
 

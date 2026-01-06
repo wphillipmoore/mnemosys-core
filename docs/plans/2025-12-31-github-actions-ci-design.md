@@ -49,10 +49,16 @@ on:
 
 ## Job Structure
 
-**Single job**: `test-and-validate`
-- Runs on: `ubuntu-latest` (AWS-compatible, deployable to common Linux platforms)
-- Matrix: Python 3.13, 3.14, 3.15
-- Fail-fast: Disabled (see all Python version results)
+**Two jobs**:
+- `test-and-validate` (unit coverage gate)
+  - Runs on: `ubuntu-latest` (AWS-compatible, deployable to common Linux platforms)
+  - Matrix: Python 3.13, 3.14, 3.15
+  - Fail-fast: Disabled (see all Python version results)
+  - Excludes integration tests via marker
+- `integration-tests` (migration + Postgres fidelity)
+  - Runs on: `ubuntu-latest`
+  - Python 3.13 only
+  - Executes `pytest -m integration` (Testcontainers; Docker required)
 
 ## Python Version Strategy
 
@@ -62,10 +68,11 @@ on:
 | 3.14 | Informational | `continue-on-error: true` - nice to know |
 | 3.15 | Informational | `continue-on-error: true` - early warning system |
 
-**Branch protection** requires: `test-and-validate (3.13)` status check
+**Branch protection** requires: `test-and-validate (3.13)` and `integration-tests` status checks
 
 ## Execution Steps
 
+**test-and-validate**
 1. **Checkout code** (`actions/checkout@v4`)
 2. **Set up Python** (`actions/setup-python@v5` with matrix version)
 3. **Cache Poetry installation** (cache `~/.local/share/pypoetry`, `~/.local/bin/poetry`)
@@ -83,9 +90,10 @@ on:
    ```bash
    poetry run mypy src/
    ```
-9. **Run tests with coverage**:
+9. **Run tests with coverage (exclude integration)**:
    ```bash
    poetry run pytest \
+     -m "not integration" \
      --cov=mnemosys_core \
      --cov-report=term-missing \
      --cov-branch \
@@ -95,6 +103,18 @@ on:
    - Validates: tests pass, 100% coverage
    - Fails if coverage < 100% (lines OR branches)
    - Generates XML report for future integration
+
+**integration-tests**
+1. **Checkout code** (`actions/checkout@v4`)
+2. **Set up Python 3.13** (`actions/setup-python@v5`)
+3. **Cache Poetry installation**
+4. **Install Poetry**
+5. **Cache dependencies**
+6. **Install dependencies**
+7. **Run integration tests**:
+   ```bash
+   poetry run pytest -m integration
+   ```
 
 ## Caching Strategy
 
@@ -140,9 +160,9 @@ permissions:
 
 ## Success Criteria
 
-- ✅ Python 3.13 job passes (blocks merge if fails)
-- ✅ 100% line and branch coverage achieved
-- ✅ All tests pass
+- ✅ Python 3.13 `test-and-validate` passes (blocks merge if fails)
+- ✅ `integration-tests` passes (blocks merge if required by branch protection)
+- ✅ 100% line and branch coverage achieved in unit suite
 - ✅ Ruff and mypy checks pass (explicit CI steps)
 - ℹ️ Python 3.14/3.15 results visible but don't block
 

@@ -3,6 +3,8 @@
 **MNEMOS (pronounced “NEE-moss”)**
 *Philosophy & Naming Rationale (v0.3)*
 
+Note: MNEMOS is the system name. MNEMOSYS is the codebase and infrastructure name used for repositories.
+
 ---
 
 ## Table of Contents

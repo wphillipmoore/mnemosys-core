@@ -88,7 +88,7 @@ The following branches always exist and are protected:
 - Changes to `main`: Create a PR from `release` to `main`
 - Exception: `hotfix/*` branches follow special forward-merge rules (see Section 5)
 
-Each merge into these branches triggers **automatic deployment** to the corresponding environment.
+Each merge into these branches triggers **automatic deployment** to the corresponding environment where automation exists; production automation may be pending.
 
 ---
 

@@ -1,10 +1,6 @@
-# FSIPS — Logging & State Model
+# MNEMOSYS — Logging & State Model
 
 **Version:** 0.1
-
-> **Nomenclature Note:** This document uses the original project name "FSIPS" (Fretted String Instrument Practice System). The project has since been renamed to **MNEMOSYS**. This historical document is preserved in draft form pending revision to reflect current terminology.
-
----
 
 This document defines the minimum viable state and logging model required to support deterministic progression, fatigue management, and long-term coverage.
 
