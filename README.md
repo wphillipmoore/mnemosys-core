@@ -17,7 +17,7 @@ are created explicitly.
 
 ## Quickstart
 
-Requires Python 3.13+.
+Requires Python 3.14+.
 
 ```bash
 python -m venv .venv

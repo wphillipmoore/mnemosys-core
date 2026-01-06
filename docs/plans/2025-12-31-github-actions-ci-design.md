@@ -27,7 +27,7 @@ Automate enforcement of code quality standards (tests, coverage, linting, type c
 - **100% code coverage** (line and branch) - strict enforcement
 - **All tests passing** - zero tolerance for failures
 - **Code quality checks** (ruff, mypy) - enforced via explicit CI steps
-- **Forward-looking Python support** - test on 3.13 (required), 3.14, 3.15 (informational)
+- **Python version support** - test on 3.14 only
 - **Eternal branch protection** - run on PRs and pushes to develop/main/release/*
 
 ## Workflow Triggers
@@ -52,23 +52,20 @@ on:
 **Two jobs**:
 - `test-and-validate` (unit coverage gate)
   - Runs on: `ubuntu-latest` (AWS-compatible, deployable to common Linux platforms)
-  - Matrix: Python 3.13, 3.14, 3.15
-  - Fail-fast: Disabled (see all Python version results)
+  - Matrix: Python 3.14
   - Excludes integration tests via marker
 - `integration-tests` (migration + Postgres fidelity)
   - Runs on: `ubuntu-latest`
-  - Python 3.13 only
+  - Python 3.14 only
   - Executes `pytest -m integration` (Testcontainers; Docker required)
 
 ## Python Version Strategy
 
 | Version | Status | Behavior |
 |---------|--------|----------|
-| 3.13 | **Required** | `continue-on-error: false` - blocks PR merge |
-| 3.14 | Informational | `continue-on-error: true` - nice to know |
-| 3.15 | Informational | `continue-on-error: true` - early warning system |
+| 3.14 | **Required** | blocks PR merge |
 
-**Branch protection** requires: `test-and-validate (3.13)` and `integration-tests` status checks
+**Branch protection** requires: `test-and-validate (3.14)` and `integration-tests` status checks
 
 ## Execution Steps
 
@@ -106,7 +103,7 @@ on:
 
 **integration-tests**
 1. **Checkout code** (`actions/checkout@v4`)
-2. **Set up Python 3.13** (`actions/setup-python@v5`)
+2. **Set up Python 3.14** (`actions/setup-python@v5`)
 3. **Cache Poetry installation**
 4. **Install Poetry**
 5. **Cache dependencies**
@@ -154,17 +151,15 @@ permissions:
 
 ## Artifacts
 
-- **Coverage XML report** (uploaded for Python 3.13 only)
+- **Coverage XML report** (uploaded for Python 3.14 only)
 - Enables future Codecov integration
-- Avoids duplicate uploads from 3.14/3.15
 
 ## Success Criteria
 
-- ✅ Python 3.13 `test-and-validate` passes (blocks merge if fails)
+- ✅ Python 3.14 `test-and-validate` passes (blocks merge if fails)
 - ✅ `integration-tests` passes (blocks merge if required by branch protection)
 - ✅ 100% line and branch coverage achieved in unit suite
 - ✅ Ruff and mypy checks pass (explicit CI steps)
-- ℹ️ Python 3.14/3.15 results visible but don't block
 
 ## Future Enhancements (Not Implemented)
 

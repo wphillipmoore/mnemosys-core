@@ -12,7 +12,7 @@ readme = "README.md"
 packages = [{ include = "mnemosys_core", from = "src" }]
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = "^3.14"
 sqlalchemy = "*"
 fastapi = "^0.115.0"
 uvicorn = {extras = ["standard"], version = "^0.34.0"}
@@ -35,7 +35,7 @@ testcontainers = "^4.13.3"
 
 [tool.ruff]
 line-length = 120
-target-version = "py313"
+target-version = "py314"
 src = ["src", "tests"]
 
 [tool.ruff.lint]
@@ -74,7 +74,7 @@ known-first-party = ["mnemosys_core"]
 ]
 
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.14"
 strict = true
 warn_return_any = true
 warn_unused_configs = true
@@ -116,6 +116,8 @@ filterwarnings = [
     "ignore::ResourceWarning",
     # Suppress Testcontainers deprecation emitted by dependency internals
     "ignore:The @wait_container_is_ready decorator is deprecated:DeprecationWarning",
+    # Suppress FastAPI deprecation warning from Python 3.14 asyncio changes
+    "ignore:.*iscoroutinefunction.*:DeprecationWarning:fastapi\\.routing",
 ]
 
 [tool.coverage.run]

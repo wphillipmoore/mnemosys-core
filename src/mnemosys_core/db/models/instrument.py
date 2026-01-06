@@ -2,6 +2,8 @@
 Instrument profile models with polymorphic hierarchy.
 """
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
@@ -58,10 +60,10 @@ class Instrument(Base):
     }
 
     # Relationships
-    practices: Mapped[list["Practice"]] = relationship(
+    practices: Mapped[list[Practice]] = relationship(
         "Practice", back_populates="instrument", cascade="all, delete-orphan"
     )
-    techniques: Mapped[list["Technique"]] = relationship(
+    techniques: Mapped[list[Technique]] = relationship(
         "Technique",
         secondary=instrument_technique_association,
         back_populates="instruments",
@@ -89,7 +91,7 @@ class StringedInstrument(Instrument):
     scale_length: Mapped[float | None] = mapped_column(Float, nullable=True)
 
     # Relationships
-    tunings: Mapped[list["StringedInstrumentTuning"]] = relationship(
+    tunings: Mapped[list[StringedInstrumentTuning]] = relationship(
         "StringedInstrumentTuning",
         secondary=stringed_instrument_tuning_association,
         back_populates="instruments",

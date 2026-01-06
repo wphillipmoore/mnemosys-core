@@ -5,6 +5,8 @@ ExerciseInstance represents a parameterized exercise for a specific practice ses
 ExerciseLog records the performance outcome for an exercise instance (1:1 relationship).
 """
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, Integer, Text
@@ -42,9 +44,9 @@ class ExerciseInstance(Base):
     parameters: Mapped[dict[str, str | int | float]] = mapped_column(JSONEncodedDict, nullable=False, default=dict)
 
     # Relationships
-    practice: Mapped["Practice"] = relationship("Practice", back_populates="exercise_instances")
-    exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="exercise_instances")
-    log: Mapped["ExerciseLog | None"] = relationship(
+    practice: Mapped[Practice] = relationship("Practice", back_populates="exercise_instances")
+    exercise: Mapped[Exercise] = relationship("Exercise", back_populates="exercise_instances")
+    log: Mapped[ExerciseLog | None] = relationship(
         "ExerciseLog", back_populates="exercise_instance", cascade="all, delete-orphan", uselist=False
     )
 
@@ -77,7 +79,7 @@ class ExerciseLog(Base):
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relationships
-    exercise_instance: Mapped["ExerciseInstance"] = relationship("ExerciseInstance", back_populates="log")
+    exercise_instance: Mapped[ExerciseInstance] = relationship("ExerciseInstance", back_populates="log")
 
     def __repr__(self) -> str:
         return (

@@ -2,6 +2,8 @@
 Tuning models with polymorphic hierarchy parallel to Instrument hierarchy.
 """
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, Integer, String
@@ -58,7 +60,7 @@ class StringedInstrumentTuning(Tuning):
     pitch_sequence: Mapped[list[str]] = mapped_column(JSONEncodedList, nullable=False)
 
     # Relationships
-    instruments: Mapped[list["StringedInstrument"]] = relationship(
+    instruments: Mapped[list[StringedInstrument]] = relationship(
         "StringedInstrument",
         secondary="stringed_instrument_tuning_association",
         back_populates="tunings",

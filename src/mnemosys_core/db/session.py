@@ -4,10 +4,17 @@ Database session management for dependency injection.
 Provides session factory and FastAPI dependency functions.
 """
 
-from collections.abc import Callable, Generator
+from __future__ import annotations
 
-from sqlalchemy import Engine
-from sqlalchemy.orm import Session, sessionmaker
+from typing import TYPE_CHECKING
+
+from sqlalchemy.orm import sessionmaker
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Generator
+
+    from sqlalchemy import Engine
+    from sqlalchemy.orm import Session
 
 
 def create_session_factory(engine: Engine) -> sessionmaker[Session]:

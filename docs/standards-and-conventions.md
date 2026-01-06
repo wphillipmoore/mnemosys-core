@@ -424,7 +424,7 @@ This list captures non-Python tooling required for development and operations. K
 **Required for daily workflow:**
 - Git
 - GitHub CLI (`gh`) for PR creation and merge workflow
-- Python 3.13+ with `venv`
+- Python 3.14+ with `venv`
 - Poetry
 - Docker Desktop (integration tests via Testcontainers)
 
@@ -603,12 +603,12 @@ Co-Authored-By: mnemosys-foo <ID+mnemosys-foo@users.noreply.github.com>
 
 **Current enforcement**:
 - GitHub Actions runs on PRs and pushes to `develop`, `release/**`, and `main`.
-- `test-and-validate` runs ruff, mypy, and pytest with coverage on Python 3.13 (required), 3.14/3.15 (informational), excluding integration tests.
-- `integration-tests` runs `pytest -m integration` on Python 3.13 using Testcontainers.
-- Coverage reports are uploaded as artifacts (Python 3.13).
+- `test-and-validate` runs ruff, mypy, and pytest with coverage on Python 3.14, excluding integration tests.
+- `integration-tests` runs `pytest -m integration` on Python 3.14 using Testcontainers.
+- Coverage reports are uploaded as artifacts (Python 3.14).
 
 **Branch protection** should require:
-- `test-and-validate (3.13)`
+- `test-and-validate (3.14)`
 - `integration-tests`
 
 ### Pull Request Finalization Process

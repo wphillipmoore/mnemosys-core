@@ -2,9 +2,11 @@
 Exercise API endpoints.
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session as DBSession
 
 from ...db.models import Exercise, ExerciseState
 from ..dependencies import get_db
@@ -18,6 +20,9 @@ from ..schemas.exercises import (
 )
 
 router = APIRouter()
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session as DBSession
 
 
 # Exercise endpoints
@@ -62,7 +67,7 @@ def update_exercise(
     return db_exercise
 
 
-@router.delete("/{exercise_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{exercise_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 def delete_exercise(exercise_id: int, db_session: DBSession = Depends(get_db)) -> None:
     """Delete exercise by ID."""
     db_exercise = db_session.query(Exercise).filter(Exercise.id == exercise_id).first()
@@ -117,7 +122,7 @@ def update_exercise_state(
     return db_state
 
 
-@router.delete("/states/{state_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/states/{state_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 def delete_exercise_state(state_id: int, db_session: DBSession = Depends(get_db)) -> None:
     """Delete exercise state by ID."""
     db_state = db_session.query(ExerciseState).filter(ExerciseState.id == state_id).first()

@@ -2,11 +2,12 @@
 Pydantic schemas for exercise API.
 """
 
-from datetime import date
+# Pydantic resolves these types at runtime; keep imports out of TYPE_CHECKING.
+from datetime import date  # noqa: TC003
 
 from pydantic import BaseModel, Field
 
-from ...db.models import DomainType, FatigueProfile
+from ...db.models import DomainType, FatigueProfile  # noqa: TC001
 
 
 class ExerciseBase(BaseModel):

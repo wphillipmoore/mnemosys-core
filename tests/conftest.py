@@ -2,13 +2,13 @@
 Shared test fixtures.
 """
 
+from __future__ import annotations
+
 import gc
-from collections.abc import Generator
+from typing import TYPE_CHECKING
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import Engine
-from sqlalchemy.orm import Session as DBSession
 from sqlalchemy.orm import close_all_sessions, sessionmaker
 
 from mnemosys_core.api.app import create_app
@@ -17,6 +17,12 @@ from mnemosys_core.api.app import create_app
 from mnemosys_core.db import models  # noqa: F401
 from mnemosys_core.db.base import Base
 from mnemosys_core.db.engine import create_db_engine
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from sqlalchemy import Engine
+    from sqlalchemy.orm import Session as DBSession
 
 
 @pytest.fixture(scope="function")

@@ -8,6 +8,8 @@ These models are being phased out in favor of ExerciseInstance/ExerciseLog,
 but remain for backward compatibility.
 """
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, Integer, Text
@@ -45,9 +47,11 @@ class PracticeBlock(Base):
     duration_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
 
     # Relationships
-    practice: Mapped["Practice"] = relationship("Practice", back_populates="blocks")
-    exercise: Mapped["Exercise"] = relationship("Exercise", back_populates="practice_blocks")
-    logs: Mapped[list["PracticeBlockLog"]] = relationship("PracticeBlockLog", back_populates="practice_block", cascade="all, delete-orphan")
+    practice: Mapped[Practice] = relationship("Practice", back_populates="blocks")
+    exercise: Mapped[Exercise] = relationship("Exercise", back_populates="practice_blocks")
+    logs: Mapped[list[PracticeBlockLog]] = relationship(
+        "PracticeBlockLog", back_populates="practice_block", cascade="all, delete-orphan"
+    )
 
     def __repr__(self) -> str:
         return f"<PracticeBlock(id={self.id}, order={self.block_order}, " f"type={self.block_type.value})>"
@@ -74,7 +78,7 @@ class PracticeBlockLog(Base):
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relationships
-    practice_block: Mapped["PracticeBlock"] = relationship("PracticeBlock", back_populates="logs")
+    practice_block: Mapped[PracticeBlock] = relationship("PracticeBlock", back_populates="logs")
 
     def __repr__(self) -> str:
         return f"<PracticeBlockLog(id={self.id}, completed={self.completed.value}, " f"quality={self.quality.value})>"

@@ -2,9 +2,12 @@
 Practice API tests.
 """
 
-from typing import Any
+from __future__ import annotations
 
-from fastapi.testclient import TestClient
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from fastapi.testclient import TestClient
 
 
 # Helper function to create required dependencies

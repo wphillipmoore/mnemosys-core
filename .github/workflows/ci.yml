@@ -21,9 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.13", "3.14", "3.15"]
-      fail-fast: false
-    continue-on-error: ${{ matrix.python-version != '3.13' }}
+        python-version: ["3.14"]
 
     steps:
       - name: Checkout code
@@ -78,7 +76,7 @@ jobs:
             --cov-fail-under=100
 
       - name: Upload coverage report
-        if: matrix.python-version == '3.13'
+        if: matrix.python-version == '3.14'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
@@ -91,10 +89,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.13
+      - name: Set up Python 3.14
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: Cache Poetry installation
         uses: actions/cache@v4
@@ -102,7 +100,7 @@ jobs:
           path: |
             ~/.local/share/pypoetry
             ~/.local/bin/poetry
-          key: poetry-install-${{ runner.os }}-3.13
+          key: poetry-install-${{ runner.os }}-3.14
 
       - name: Install Poetry
         run: |
@@ -116,9 +114,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pypoetry/virtualenvs
-          key: poetry-${{ runner.os }}-py3.13-${{ hashFiles('poetry.lock') }}
+          key: poetry-${{ runner.os }}-py3.14-${{ hashFiles('poetry.lock') }}
           restore-keys: |
-            poetry-${{ runner.os }}-py3.13-
+            poetry-${{ runner.os }}-py3.14-
 
       - name: Install dependencies
         run: poetry install --no-interaction
