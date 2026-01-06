@@ -15,6 +15,7 @@ test semantics with production and eliminate reliance on the sandbox database.
 - [Implementation Notes](#implementation-notes)
 - [Recommendation](#recommendation)
 - [Decision Criteria](#decision-criteria)
+- [Risks](#risks)
 - [Open Questions](#open-questions)
 
 ## Context
@@ -76,6 +77,12 @@ reliable unit tests.
 - Confirm CI supports Docker reliably without special handling.
 - Decide whether 100 percent coverage requirements are compatible with Docker availability.
 - Verify that integration-only coverage closes the highest-risk gaps.
+
+## Risks
+
+- Testcontainers currently emits a deprecation warning for its internal
+  `@wait_container_is_ready` decorator. This is inside the dependency,
+  not our code. Track upstream updates and bump when the warning is removed.
 
 ## Open Questions
 
