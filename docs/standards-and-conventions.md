@@ -426,6 +426,7 @@ This list captures non-Python tooling required for development and operations. K
 - GitHub CLI (`gh`) for PR creation and merge workflow
 - Python 3.13+ with `venv`
 - Poetry
+- Docker Desktop (integration tests via Testcontainers)
 
 **Required for database/bootstrap operations:**
 - AWS CLI (RDS/security group provisioning, bootstrap access)
