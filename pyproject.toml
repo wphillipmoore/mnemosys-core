@@ -31,6 +31,7 @@ poetry = "^2"
 poetry-plugin-export = "*"
 pre-commit = "^3.7"
 httpx = "^0.27.0"
+testcontainers = "^4.13.3"
 
 [tool.ruff]
 line-length = 120
@@ -105,6 +106,7 @@ warn_required_dynamic_aliases = true
 minversion = "7.0"
 testpaths = ["tests"]
 addopts = "-v"
+markers = ["integration: Postgres-backed integration tests"]
 filterwarnings = [
     # Ignore SQLite connection ResourceWarnings during tests
     # These are false positives - connections are properly cleaned up by engine.dispose()
