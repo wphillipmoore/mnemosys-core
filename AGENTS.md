@@ -27,6 +27,10 @@ This project follows a **database-first architecture** with explicit structural 
    ```
 3. **If already on a feature branch**: Continue working on that branch
 
+**Guardrail**: Do not rely on earlier branch checks. Before any edit or commit (even mid-session or docs-only),
+re-run `git branch --show-current`. If you are on `develop`, `release`, or `main`, stop and create a feature
+branch before touching files.
+
 **Why this matters**: Direct commits to `develop` violate the project's branching model. ALL changes to eternal branches (develop/main/release) must go through pull requests.
 
 **Branch naming**:
@@ -146,6 +150,11 @@ The 30 seconds spent reading documentation prevents hours of cleanup work.
 ### User Confirmation Checkpoints
 
 **CRITICAL**: Always pause and request user confirmation at these checkpoints in the workflow. Never proceed automatically.
+
+**Docs-Only Exception**: If the diff includes **only** documentation files (anything under `docs/` plus top-level
+`README.md` or `CHANGELOG.md`), skip both confirmation checkpoints and proceed directly through PR creation
+and finalization. Local validation is optional per the docs-only rule in `docs/standards-and-conventions.md`.
+If any non-documentation file changes, the checkpoints remain mandatory.
 
 **Checkpoint: Before Creating Pull Request**
 
