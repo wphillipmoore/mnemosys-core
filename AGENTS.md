@@ -147,6 +147,11 @@ The 30 seconds spent reading documentation prevents hours of cleanup work.
 
 **CRITICAL**: Always pause and request user confirmation at these checkpoints in the workflow. Never proceed automatically.
 
+**Docs-Only Exception**: If the diff includes **only** documentation files (anything under `docs/` plus top-level
+`README.md` or `CHANGELOG.md`), skip both confirmation checkpoints and proceed directly through PR creation
+and finalization. Local validation is optional per the docs-only rule in `docs/standards-and-conventions.md`.
+If any non-documentation file changes, the checkpoints remain mandatory.
+
 **Checkpoint: Before Creating Pull Request**
 
 After completing work and committing to your feature branch, you MUST validate the code before pushing. **STOP** and follow this sequence:
