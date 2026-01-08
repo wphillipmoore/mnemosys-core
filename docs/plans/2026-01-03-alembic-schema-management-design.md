@@ -347,6 +347,9 @@ migration frameworks are planned. Revisit only if Alembic cannot satisfy operati
 
 ## Implementation Plan and Sequence (Status)
 
+See `docs/plans/2026-01-06-alembic-release-squash-and-extraction-plan.md` for the
+pipeline-only validation flow, release-time squashing policy, and extraction plan.
+
 Phase 0: Formalize the decision (completed)
 - Create an ADR under `docs/decisions/` reflecting the Alembic-first decision and revisit triggers. (done: `docs/decisions/0002-alembic-schema-management.md`)
 
