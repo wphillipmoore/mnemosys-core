@@ -115,7 +115,7 @@ Minimal bootstrap must not block a dedicated VPC/TLS setup. To preserve the path
 - Keep all sensitive values in Secrets Manager/SSM from day one.
 - Avoid hardcoding VPC IDs or subnet IDs in code; use variables in CLI scripts.
 
-See `docs/plans/2026-01-07-test-prod-db-parity-plan.md` for the test/production
+See `docs/plans/pending/2026-01-07-test-prod-db-parity-plan.md` for the test/production
 database parity and RDS recreation plan.
 
 ## Runtime Contract (Migration Gate)
@@ -126,7 +126,7 @@ Every container start must execute the migration gate before serving traffic:
 2. Start `uvicorn` only after upgrade runner exits successfully.
 
 This enforces the behavior documented in
-`docs/plans/2026-01-03-alembic-schema-management-design.md`.
+`docs/plans/in-progress/2026-01-03-alembic-schema-management-design.md`.
 
 ## Implementation Plan (Step-by-Step)
 

@@ -22,7 +22,7 @@ Release checkpoints are the natural time to squash revisions into a stable basel
 Development and test database updates must occur only through GitHub Actions pipelines.
 Developers hold only sandbox credentials and should not apply migrations to dev/test out of band.
 
-This plan extends `docs/plans/2026-01-03-alembic-schema-management-design.md`.
+This plan extends `docs/plans/in-progress/2026-01-03-alembic-schema-management-design.md`.
 
 ## Goals
 
@@ -87,7 +87,7 @@ was superseded by the squash. Any other state is a hard failure.
 Phase 1: Documentation extraction (post end-to-end validation)
 - Create a standalone repository for Alembic design and integration guidelines.
 - Migrate and normalize content from:
-  - `docs/plans/2026-01-03-alembic-schema-management-design.md`
+  - `docs/plans/in-progress/2026-01-03-alembic-schema-management-design.md`
   - This plan (release squash + pipeline validation)
 - Provide a repository-agnostic integration contract:
   - Required environment variables

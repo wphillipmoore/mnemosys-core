@@ -23,7 +23,7 @@ used for development into a production-tier configuration and use that pattern f
 the test database (release branch deployments).
 
 This plan builds on:
-- `docs/plans/2026-01-04-aws-nonprod-rest-api-deploy-plan.md`
+- `docs/plans/pending/2026-01-04-aws-nonprod-rest-api-deploy-plan.md`
 - `docs/project/final/Database_Environment_Setup.md`
 
 ## Goals
