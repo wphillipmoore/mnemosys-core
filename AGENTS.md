@@ -105,7 +105,7 @@ rm /tmp/pr-body.txt
 ### Required Reading Before Common Operations
 
 **Git Operations (commit, push, branch, merge)**
-- **MUST READ**: `docs/project/final/Development_Branching_Deployment_Model.md`
+- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/branching-and-deployment.md
 - **Key Rules**:
   - NEVER push directly to develop/main/release (eternal branches)
   - ALL changes to eternal branches MUST go through pull requests
@@ -113,8 +113,8 @@ rm /tmp/pr-body.txt
   - NEVER reuse old branch names
 
 **Pull Request Operations (creating, submitting, merging)**
-- **MUST READ**: `docs/standards-and-conventions.md` → "Pull Request Submission Process"
-- **MUST READ**: `docs/standards-and-conventions.md` → "Pull Request Finalization Process"
+- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/pull-request-workflow.md#pre-submission-requirements
+- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/pull-request-workflow.md#pull-request-finalization
 - **Key Rules**:
   - 100% test success required before PR creation
   - 100% line AND branch coverage required
@@ -122,7 +122,7 @@ rm /tmp/pr-body.txt
   - Follow three-step finalization process after merge
 
 **Code Quality and Standards**
-- **MUST READ**: `docs/standards-and-conventions.md` → "Python Coding Standards"
+- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/development/python/overview.md
 - **Key Rules**:
   - PEP-compliant code only
   - Complete type hints for all public functions
@@ -130,7 +130,7 @@ rm /tmp/pr-body.txt
   - No abbreviations in variable names (minimum 3 characters)
 
 **Database Changes (models, migrations, schema)**
-- **MUST READ**: `docs/standards-and-conventions.md` → "Database Conventions"
+- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/development/database/conventions.md
 - **Key Rules**:
   - Table names are singular, not plural
   - Follow model file organization rules
@@ -153,7 +153,8 @@ The 30 seconds spent reading documentation prevents hours of cleanup work.
 
 **Docs-Only Exception**: If the diff includes **only** documentation files (anything under `docs/` plus top-level
 `README.md` or `CHANGELOG.md`), skip both confirmation checkpoints and proceed directly through PR creation
-and finalization. Local validation is optional per the docs-only rule in `docs/standards-and-conventions.md`.
+and finalization. Local validation is optional per the docs-only rule in
+https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/pull-request-workflow.md.
 If any non-documentation file changes, the checkpoints remain mandatory.
 
 **Checkpoint: Before Creating Pull Request**

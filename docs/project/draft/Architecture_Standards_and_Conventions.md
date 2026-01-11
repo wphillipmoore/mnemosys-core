@@ -1,57 +1,17 @@
-# MNEMOSYS Architecture — Standards and Conventions
+# Architecture Standards and Conventions
 
-**Version:** v0.1
+This document is maintained in the Standards and Conventions repository:
+https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/foundation/architecture-standards.md
 
 ## Table of Contents
-- [1. Purpose](#1-purpose)
-- [2. Canonical vs Derivative Artifacts](#2-canonical-vs-derivative-artifacts)
-- [3. Proprietary Tools and Formats](#3-proprietary-tools-and-formats)
-- [4. File Format Standards](#4-file-format-standards)
-- [5. Instrument and Tool Independence](#5-instrument-and-tool-independence)
-- [6. Versioning and Stability](#6-versioning-and-stability)
-- [7. Scope Notes (v0.1)](#7-scope-notes-v01)
+- [Source of truth](#source-of-truth)
+- [Local deviations](#local-deviations)
 
-## 1. Purpose
+## Source of truth
 
-This document defines standards, conventions, and architectural constraints that govern MNEMOSYS-related design and implementation decisions.
+The canonical version lives at:
+https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/foundation/architecture-standards.md
 
-Its role is explicitly normative, not descriptive.
+## Local deviations
 
-## 2. Canonical vs Derivative Artifacts
-
-Canonical artifacts are sources of truth and must be open, inspectable, and tool-independent.
-
-Derivative artifacts are projections or renderings and may be lossy.
-
-## 3. Proprietary Tools and Formats
-
-Proprietary tools and formats are permitted but constrained.
-
-They are treated as optional integrations and must never be authoritative.
-
-**Guitar Pro (GP) Policy:**
-- Guitar Pro is explicitly non-core.
-- GP files are export-only artifacts.
-- MNEMOSYS must not depend on GP for exercise definition, progression, or visualization.
-
-## 4. File Format Standards
-
-Preference is given to text-based, declarative, diff-friendly formats.
-
-Binary-only formats are discouraged for canonical data.
-
-## 5. Instrument and Tool Independence
-
-Exercises are instrument-agnostic.
-
-Tools may assist but must not define meaning.
-
-## 6. Versioning and Stability
-
-All documents are explicitly versioned.
-
-Breaking changes require version increments and explicit rationale.
-
-## 7. Scope Notes (v0.1)
-
-UI design, rendering aesthetics, and performance optimizations are out of scope.
+None.

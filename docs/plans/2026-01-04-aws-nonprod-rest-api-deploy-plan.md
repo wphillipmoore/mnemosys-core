@@ -30,7 +30,8 @@
 
 This plan defines the AWS bootstrap steps and GitHub Actions automation needed to deploy
 the MNEMOSYS REST API to **development** and **test** environments. It follows the
-branch-to-environment mapping defined in `docs/project/final/Development_Branching_Deployment_Model.md`
+branch-to-environment mapping defined in
+https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/branching-and-deployment.md
 and the database bootstrap constraints in `docs/project/final/Database_Environment_Setup.md`.
 
 The initial implementation uses **minimal AWS infrastructure** (default VPC, HTTP-only ALB)

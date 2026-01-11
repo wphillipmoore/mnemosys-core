@@ -43,6 +43,7 @@ you plan to run the full local checks.
 
 ## Where the Rules Live
 
-- Branching and deployment model: `docs/project/final/Development_Branching_Deployment_Model.md`
-- Coding standards and conventions: `docs/standards-and-conventions.md`
+- Canonical standards and conventions: https://github.com/wphillipmoore/standards-and-conventions
+- Branching and deployment model: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/branching-and-deployment.md
+- Local terminology and overrides: `docs/standards-and-conventions.md`
 - Repository structure ADR: `docs/decisions/0001-repo-structure.md`

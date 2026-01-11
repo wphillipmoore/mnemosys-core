@@ -232,8 +232,7 @@ Expected: Review logs, identify issue, fix locally, commit, push again
 ## Task 3: Update Documentation to Reference Automated CI
 
 **Files:**
-**Files:**
-- Modify: `docs/standards-and-conventions.md` (CI/CD Integration section)
+- Modify: standards-and-conventions repo `docs/code-management/source-control-guidelines.md` (CI/CD constraints)
 - Optional: `README.md` (quick reference for `validate_local.py`)
 
 **Step 1: Update standards to describe current CI**
@@ -252,13 +251,13 @@ Expected: Review logs, identify issue, fix locally, commit, push again
 
 **Step 2: Verify update**
 
-Run: `rg -n "CI/CD Integration" docs/standards-and-conventions.md`
+Run: `rg -n "CI/CD" ../../../github/standards-and-conventions/docs/code-management/source-control-guidelines.md`
 Expected: CI/CD section reflects two jobs, Python version policy, and integration tests
 
 **Step 3: Commit documentation update**
 
 - Create a temp commit message file (no heredoc).
-- `git add docs/standards-and-conventions.md`
+- `git add docs/code-management/source-control-guidelines.md` (in standards-and-conventions repo)
 - `git commit -F /tmp/commit-msg.txt`
 
 **Step 4: Push documentation update**
