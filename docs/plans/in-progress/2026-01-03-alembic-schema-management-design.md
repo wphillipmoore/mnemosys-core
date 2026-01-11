@@ -347,7 +347,7 @@ migration frameworks are planned. Revisit only if Alembic cannot satisfy operati
 
 ## Implementation Plan and Sequence (Status)
 
-See `docs/plans/2026-01-06-alembic-release-squash-and-extraction-plan.md` for the
+See `docs/plans/pending/2026-01-06-alembic-release-squash-and-extraction-plan.md` for the
 pipeline-only validation flow, release-time squashing policy, and extraction plan.
 
 Phase 0: Formalize the decision (completed)

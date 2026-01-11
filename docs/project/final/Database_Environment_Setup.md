@@ -197,4 +197,4 @@ Local environments must never store production credentials.
 
 When automated deployment updates `mnemosys_dev` and restarts the REST API,
 bootstrap ends and the non-prod RDS instance must be locked down. See the
-bootstrap exit checklist in `docs/plans/2026-01-03-alembic-schema-management-design.md`.
+bootstrap exit checklist in `docs/plans/in-progress/2026-01-03-alembic-schema-management-design.md`.

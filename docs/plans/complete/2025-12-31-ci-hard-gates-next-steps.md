@@ -23,6 +23,6 @@ tests/test_code_compliance.py, and add a local validation script.
 5. Updated docs to remove `test_code_compliance.py` references and point to new gates:
    - `AGENTS.md`
    - `docs/standards-and-conventions.md`
-   - `docs/plans/2025-12-31-github-actions-ci-design.md`
-   - `docs/plans/2025-12-31-github-actions-ci-implementation.md`
+   - `docs/plans/pending/2025-12-31-github-actions-ci-design.md`
+   - `docs/plans/complete/2025-12-31-github-actions-ci-implementation.md`
 6. Ran full validation and proceeded with PR/merge per checkpoints.

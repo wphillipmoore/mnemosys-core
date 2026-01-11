@@ -3,7 +3,7 @@
 Generate Mermaid ER diagram from SQLAlchemy models.
 
 This is a prototype implementation to test the design approach documented in
-docs/plans/2025-12-31-data-model-diagram-generation-design.md
+docs/plans/pending/2025-12-31-data-model-diagram-generation-design.md
 """
 
 from collections import defaultdict
