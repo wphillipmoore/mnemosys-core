@@ -325,9 +325,9 @@ def determine_documentation_only(changed_files: list[str], base_reference: str) 
     remaining_files = [path for path in changed_files if path != "pyproject.toml"]
     if not all(is_documentation_path(path) for path in remaining_files):
         return False
-    if "pyproject.toml" in changed_files and not pyproject_only_version_change(base_reference):
-        return False
-    return True
+    return not (
+        "pyproject.toml" in changed_files and not pyproject_only_version_change(base_reference)
+    )
 
 
 def build_default_title(base_reference: str, current_branch: str) -> str:

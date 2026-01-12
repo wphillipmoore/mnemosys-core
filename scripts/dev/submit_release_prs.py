@@ -11,12 +11,11 @@ import re
 import shutil
 import subprocess
 import sys
+import tomllib
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
-
-import tomllib
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -276,7 +275,7 @@ def commit_patch_bump(new_version: Version) -> None:
 
 def create_patch_branch_name(version: Version) -> str:
     """Generate a unique patch branch name."""
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+    timestamp = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
     return f"feature/patch-bump-{version.as_branch_label()}-{timestamp}"
 
 
