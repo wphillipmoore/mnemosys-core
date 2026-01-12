@@ -1,17 +1,16 @@
 # AWS Nonprod REST API Deployment Plan (Bootstrap v0.1)
 
 **Date**: 2026-01-04
-**Status**: In progress (bootstrap complete; parity pending)
+**Status**: Completed (bootstrap + parity complete)
 **Last verified**: 2026-01-12
 
-## Resume Here (Ops)
+## Completion Summary
 
-- Use this doc as the single source of truth for nonprod bootstrap + parity.
-- Execute Step 3 (test RDS rebuild) runbook, then Step 4 (test ECS baseline update).
-- Finish with Step 5 validation (release -> test, migration gate, health checks).
+- Bootstrap and parity steps are complete.
+- This plan remains as historical reference for future rebuilds.
 
 ## Table of Contents
-- [Resume Here (Ops)](#resume-here-ops)
+- [Completion Summary](#completion-summary)
 - [Overview](#overview)
 - [Scope](#scope)
 - [Non-Goals](#non-goals)
@@ -49,7 +48,7 @@ to reduce bootstrap friction, while preserving a clean migration path to a dedic
 and TLS-based routing later.
 
 This plan now consolidates the test/production parity work from
-`docs/plans/pending/2026-01-07-test-prod-db-parity-plan.md` to prevent
+`docs/plans/complete/2026-01-07-test-prod-db-parity-plan.md` to prevent
 rework in deployment automation.
 
 ## Scope
@@ -405,6 +404,7 @@ curl -fsSL http://<alb-dns>:8080/health/
 
 ## Implementation Status (Verified 2026-01-12)
 
+- Parity steps completed; plan closed.
 - Step 0: Complete. `Dockerfile`, `scripts/runtime/entrypoint.sh`,
   `src/mnemosys_core/api/runtime.py`, `infra/ecs/task-def-template.json`,
   `scripts/deploy/render_task_definition.py`, `scripts/deploy/render_iam_templates.py`,
@@ -435,7 +435,7 @@ curl -fsSL http://<alb-dns>:8080/health/
 
 ## Test/Production Parity Plan (Consolidated)
 
-This section replaces `docs/plans/pending/2026-01-07-test-prod-db-parity-plan.md`.
+This section replaces `docs/plans/complete/2026-01-07-test-prod-db-parity-plan.md`.
 Do not execute test/prod parity changes until the baseline decisions are explicit.
 
 ### Baseline Decisions (Locked 2026-01-12)

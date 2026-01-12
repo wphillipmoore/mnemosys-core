@@ -1,6 +1,6 @@
 # Test/Production Environment Parity Plan (RDS + REST API)
 
-**Status:** Merged into `docs/plans/pending/2026-01-04-aws-nonprod-rest-api-deploy-plan.md`
+**Status:** Completed (merged into `docs/plans/complete/2026-01-04-aws-nonprod-rest-api-deploy-plan.md`)
 
 This plan is consolidated into the nonprod deployment plan. Do not execute it
 independently; use the consolidated plan instead.
@@ -28,7 +28,7 @@ REST API service must run with production-like resiliency settings so the API an
 database are evaluated together as a matched pair.
 
 This plan builds on:
-- `docs/plans/pending/2026-01-04-aws-nonprod-rest-api-deploy-plan.md`
+- `docs/plans/complete/2026-01-04-aws-nonprod-rest-api-deploy-plan.md`
 - `docs/project/final/Database_Environment_Setup.md`
 
 ## Goals
