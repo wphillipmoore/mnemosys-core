@@ -49,7 +49,7 @@ git checkout -b feature/add-caching-layer
 git add .
 git commit -m "..."
 
-# Push and create PR
+# Push and submit PR
 git push -u origin feature/add-caching-layer
 gh pr create --base develop --title "..." --body "..."
 ```
@@ -157,13 +157,18 @@ and finalization. Local validation is optional per the docs-only rule in
 https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/pull-request-workflow.md.
 If any non-documentation file changes, the checkpoints remain mandatory.
 
-**Checkpoint: Before Creating Pull Request**
+**Finalize Override**: If the user explicitly says **"Finalize PR"**, treat that as approval to submit and
+finalize the PR for the current work without asking for "Submit PR?" or "Finalize PR?" again. This
+permission expires as soon as new work is performed, defined as any new commit or any new file
+modification after the approval is granted.
+
+**Checkpoint: Before Submitting Pull Request**
 
 After completing work and committing to your feature branch, you MUST validate the code before pushing. **STOP** and follow this sequence:
 
 **REQUIRED PRE-PUSH VALIDATION:**
 
-Before pushing the branch or creating a PR, you MUST run and pass the full local validation:
+Before pushing the branch or submitting a PR, you MUST run and pass the full local validation:
 
 ```bash
 # Run local validation (mirrors CI hard gates)
@@ -186,29 +191,29 @@ python scripts/dev/validate_local.py
 **After validation passes, STOP and ask:**
 
 ```
-Create PR?
+Submit PR?
 ```
 
 **What this gives the user:**
 - Opportunity to review the work before it becomes a PR
 - Chance to decide if the work is actually complete
-- Ability to request additional changes before PR creation
+- Ability to request additional changes before PR submission
 - Control over the workflow pace
 
-**Only proceed with PR creation after explicit user approval.**
+**Only proceed with PR submission after explicit user approval** (or the Finalize Override above).
 
 **Workflow sequence:**
 1. Complete work on feature branch
 2. Commit changes locally
 3. 🔍 **VALIDATE** - Run all tests and quality checks (MUST PASS)
-4. ⏸️ **PAUSE** - Ask: "Create PR?"
+4. ⏸️ **PAUSE** - Ask: "Submit PR?"
 5. Wait for user response
-6. If approved: Push branch and create PR
+6. If approved: Push branch and submit PR
 7. If not approved: Make requested changes, go back to step 2
 
 **Checkpoint: Before Finalizing Pull Request**
 
-After creating the PR, **STOP** and ask:
+After submitting the PR, **STOP** and ask (unless the Finalize Override above applies):
 
 ```
 Finalize PR?
@@ -227,15 +232,15 @@ Finalize PR?
 - Ability to add reviewers or request changes
 - Control over when changes land in develop
 
-**Only proceed with PR finalization after explicit user approval.**
+**Only proceed with PR finalization after explicit user approval** (or the Finalize Override above).
 
 **Complete workflow with both checkpoints:**
 1. Complete work on feature branch
 2. Commit changes locally
 3. 🔍 **VALIDATE** - Run all tests and quality checks (MUST PASS before proceeding)
-4. ⏸️ **PAUSE #1** - Ask: "Create PR?"
-5. If approved: Push branch and create PR
-6. ⏸️ **PAUSE #2** - Ask: "Finalize PR?"
+4. ⏸️ **PAUSE #1** - Ask: "Submit PR?" (unless Finalize Override is active)
+5. If approved: Push branch and submit PR
+6. ⏸️ **PAUSE #2** - Ask: "Finalize PR?" (unless Finalize Override is active)
 7. If approved: Execute finalization (merge, update develop, verify .venv, validate)
 8. If not approved: Wait for user to review/request changes
 

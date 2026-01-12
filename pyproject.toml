@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "mnemosys-core"
-version = "0.1.0"
+version = "0.1.0.1"
 description = "Core backend for the MNEMOSYS system"
 authors = ["Phillip Moore <w.phillip.moore@gmail.com>"]
 license = "LICENSE"

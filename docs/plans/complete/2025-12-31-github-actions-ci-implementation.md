@@ -314,7 +314,7 @@ Status check:
 - ✅ All local tests passing
 - ✅ CI workflow passing on GitHub
 
-Next: Create PR following standard process (validation → user approval → push → create PR → finalize)
+Next: Submit PR following standard process (validation → user approval → push → submit PR → finalize)
 
 ---
 
