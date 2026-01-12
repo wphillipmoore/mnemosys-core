@@ -31,7 +31,6 @@ class Practice(Base):
         session_type: Intensity level
         total_minutes: Total session duration
         temporary_label: Optional label for migration workflow checks
-        deployment_note: Optional deployment pipeline marker
     """
 
     __tablename__ = "practice"
@@ -42,7 +41,6 @@ class Practice(Base):
     session_type: Mapped[SessionType] = mapped_column(DatabaseEnum(SessionType), nullable=False)
     total_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
     temporary_label: Mapped[str | None] = mapped_column(String(120), nullable=True)
-    deployment_note: Mapped[str | None] = mapped_column(String(120), nullable=True)
 
     # Relationships
     instrument: Mapped[Instrument] = relationship("Instrument", back_populates="practices")
