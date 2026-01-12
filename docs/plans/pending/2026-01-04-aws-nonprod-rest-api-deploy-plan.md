@@ -4,7 +4,14 @@
 **Status**: In progress (bootstrap complete; parity pending)
 **Last verified**: 2026-01-12
 
+## Resume Here (Ops)
+
+- Use this doc as the single source of truth for nonprod bootstrap + parity.
+- Execute Step 3 (test RDS rebuild) runbook, then Step 4 (test ECS baseline update).
+- Finish with Step 5 validation (release -> test, migration gate, health checks).
+
 ## Table of Contents
+- [Resume Here (Ops)](#resume-here-ops)
 - [Overview](#overview)
 - [Scope](#scope)
 - [Non-Goals](#non-goals)
