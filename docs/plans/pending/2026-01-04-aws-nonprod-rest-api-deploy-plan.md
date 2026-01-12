@@ -1,9 +1,17 @@
 # AWS Nonprod REST API Deployment Plan (Bootstrap v0.1)
 
 **Date**: 2026-01-04
-**Status**: Draft
+**Status**: In progress (bootstrap complete; parity pending)
+**Last verified**: 2026-01-12
+
+## Resume Here (Ops)
+
+- Use this doc as the single source of truth for nonprod bootstrap + parity.
+- Execute Step 3 (test RDS rebuild) runbook, then Step 4 (test ECS baseline update).
+- Finish with Step 5 validation (release -> test, migration gate, health checks).
 
 ## Table of Contents
+- [Resume Here (Ops)](#resume-here-ops)
 - [Overview](#overview)
 - [Scope](#scope)
 - [Non-Goals](#non-goals)
@@ -22,9 +30,11 @@
   - [Step 6: ECS task definitions and services](#step-6-ecs-task-definitions-and-services)
   - [Step 7: GitHub Actions deployment](#step-7-github-actions-deployment)
   - [Step 8: Validation](#step-8-validation)
+- [Implementation Status (Verified 2026-01-12)](#implementation-status-verified-2026-01-12)
+- [Test/Production Parity Plan (Consolidated)](#testproduction-parity-plan-consolidated)
 - [Known Issues](#known-issues)
 - [Open Questions (Deferred)](#open-questions-deferred)
-- [Bootstrap Outputs (Current State)](#bootstrap-outputs-current-state)
+- [Bootstrap Outputs (Verified 2026-01-12)](#bootstrap-outputs-verified-2026-01-12)
 
 ## Overview
 
@@ -38,12 +48,17 @@ The initial implementation uses **minimal AWS infrastructure** (default VPC, HTT
 to reduce bootstrap friction, while preserving a clean migration path to a dedicated VPC
 and TLS-based routing later.
 
+This plan now consolidates the test/production parity work from
+`docs/plans/pending/2026-01-07-test-prod-db-parity-plan.md` to prevent
+rework in deployment automation.
+
 ## Scope
 
 - Nonprod AWS infrastructure for REST API deployment (development + test).
 - AWS CLI-first provisioning and updates.
 - GitHub Actions automation for deploys on `develop` and `release`.
 - Runtime contract for migration gate + API startup.
+- Test/production parity definition and rollout sequencing (RDS + REST API).
 
 ## Non-Goals
 
@@ -115,8 +130,8 @@ Minimal bootstrap must not block a dedicated VPC/TLS setup. To preserve the path
 - Keep all sensitive values in Secrets Manager/SSM from day one.
 - Avoid hardcoding VPC IDs or subnet IDs in code; use variables in CLI scripts.
 
-See `docs/plans/pending/2026-01-07-test-prod-db-parity-plan.md` for the test/production
-database parity and RDS recreation plan.
+See [Test/Production Parity Plan (Consolidated)](#testproduction-parity-plan-consolidated)
+for the test/production database parity and RDS recreation plan.
 
 ## Runtime Contract (Migration Gate)
 
@@ -388,6 +403,186 @@ curl -fsSL http://<alb-dns>/health/
 curl -fsSL http://<alb-dns>:8080/health/
 ```
 
+## Implementation Status (Verified 2026-01-12)
+
+- Step 0: Complete. `Dockerfile`, `scripts/runtime/entrypoint.sh`,
+  `src/mnemosys_core/api/runtime.py`, `infra/ecs/task-def-template.json`,
+  `scripts/deploy/render_task_definition.py`, `scripts/deploy/render_iam_templates.py`,
+  `infra/iam/*.json`, and `.github/workflows/deploy-nonprod.yml` exist.
+- Step 1: Complete. Default VPC `vpc-06f003b77e593c99a` with subnets
+  `subnet-0c174c9ad03ad6808`, `subnet-07ebe0f6e86eb955b`,
+  `subnet-017aaa23437259fa2`.
+- Step 2: Complete. ALB SG `sg-0899f0b2207153896` allows 80/8080 from 0.0.0.0/0.
+  ECS SG `sg-069f915c6fc98b0a6` allows 8000 from ALB SG.
+  RDS SG `sg-0463c511b48bcbef5` allows 5432 from ECS SG (plus user IP).
+- Step 3: Complete. ECR repo `mnemosys-core` exists. Log groups exist at
+  `/mnemosys/dev/api` and `/mnemosys/test/api`.
+- Step 4: Complete. IAM roles exist (`mnemosys-ecs-task-exec`, `mnemosys-ecs-task`,
+  `mnemosys-gha-deploy`) and include SSM read + KMS decrypt. GitHub OIDC provider exists.
+- Step 5: Complete. ECS cluster `mnemosys-nonprod` active. ALB listeners:
+  80 -> dev target group, 8080 -> test target group.
+- Step 6: Complete. Services running with one task each.
+  Dev task definition `mnemosys-development-api:22` uses ECR tag
+  `0aa05c9dfd551f34cc99d09c1137c856783ea148`.
+  Test task definition `mnemosys-test-api:1` uses ECR tag `bootstrap-20260104104343`
+  (release pipeline not updated since bootstrap).
+- Step 7: Complete in repo and IAM. Workflow exists at
+  `.github/workflows/deploy-nonprod.yml`. OIDC role `mnemosys-gha-deploy` exists.
+  Repository variables (`AWS_ACCOUNT_ID`, `AWS_OIDC_ROLE_ARN`) not verified here.
+- Step 8: Complete. `/health/` returns 200 for both listeners.
+- Test/Dev DB state: SSM parameters exist for both environments and currently
+  point to the same RDS host with separate databases (`mnemosys_dev`, `mnemosys_test`).
+
+## Test/Production Parity Plan (Consolidated)
+
+This section replaces `docs/plans/pending/2026-01-07-test-prod-db-parity-plan.md`.
+Do not execute test/prod parity changes until the baseline decisions are explicit.
+
+### Baseline Decisions (Locked 2026-01-12)
+
+RDS (test):
+
+- Dedicated test instance: required (no longer share dev host).
+- Instance identifier: `mnemosys-test-postgres`.
+- Engine/version: Postgres 16.11 (match current).
+- Instance class: `db.t4g.large` (initial; tuning allowed later).
+- Storage: `gp3` 200 GB, 3000 IOPS, 125 MB/s (initial; tuning allowed later).
+- Multi-AZ: **true** (required for production-intent redundancy).
+- Backup retention: 35 days (initial; adjust later).
+- Deletion protection: true.
+- Performance Insights: enabled, 7-day retention (initial; adjust later).
+- Parameter group: `default.postgres16` (initial; custom group later if needed).
+- Public accessibility: **true for bootstrap** (explicit parity exception until
+  private subnets/VPC migration exists).
+- Subnet group: default VPC subnets (explicit parity exception).
+
+REST API (test):
+
+- Desired count: 2 (minimum redundancy).
+- Autoscaling: off (explicit parity exception during bootstrap).
+- Deployment configuration: minimum healthy percent 100, maximum percent 200.
+- Deployment circuit breaker: enabled with rollback.
+- Health check grace period: 180s.
+- Task sizing: CPU 256, memory 512 (explicit parity exception during bootstrap).
+
+1. Inventory current RDS configuration (already captured in Bootstrap Outputs) and
+   document the delta against the locked baseline above.
+2. Inventory current REST API configuration (desired count, autoscaling, deployment
+   configuration, task sizing, health checks).
+3. Recreate the test database instance (`mnemosys-test-postgres`) to match the locked
+   baseline, then update `/mnemosys/test/db/*` parameters (and `/mnemosys/test/db_admin/*`
+   if credentials are rotated).
+4. Update test ECS service to match the REST API baseline (desired count, deployment
+   configuration, circuit breaker, health check grace period, task sizing).
+5. Validate release pipeline behavior (release -> test), ensure migration gate runs,
+   and confirm health checks succeed post-deploy.
+6. Document parity rules and drift exceptions explicitly in this plan.
+
+Step 3 execution (test RDS rebuild):
+
+If rotating admin credentials, update the `/mnemosys/test/db_admin/*` parameters
+before creating the new instance.
+
+```bash
+TEST_ADMIN_USERNAME=$(aws ssm get-parameter \
+  --name /mnemosys/test/db_admin/username \
+  --with-decryption \
+  --query "Parameter.Value" \
+  --output text)
+
+TEST_ADMIN_PASSWORD=$(aws ssm get-parameter \
+  --name /mnemosys/test/db_admin/password \
+  --with-decryption \
+  --query "Parameter.Value" \
+  --output text)
+
+aws rds create-db-instance \
+  --db-instance-identifier mnemosys-test-postgres \
+  --db-instance-class db.t4g.large \
+  --engine postgres \
+  --engine-version 16.11 \
+  --db-name mnemosys_test \
+  --master-username "${TEST_ADMIN_USERNAME}" \
+  --master-user-password "${TEST_ADMIN_PASSWORD}" \
+  --allocated-storage 200 \
+  --storage-type gp3 \
+  --iops 3000 \
+  --storage-throughput 125 \
+  --backup-retention-period 35 \
+  --multi-az \
+  --publicly-accessible \
+  --storage-encrypted \
+  --deletion-protection \
+  --enable-performance-insights \
+  --performance-insights-retention-period 7 \
+  --db-subnet-group-name default-vpc-06f003b77e593c99a \
+  --vpc-security-group-ids sg-0463c511b48bcbef5
+
+aws rds wait db-instance-available \
+  --db-instance-identifier mnemosys-test-postgres
+
+TEST_ENDPOINT=$(aws rds describe-db-instances \
+  --db-instance-identifier mnemosys-test-postgres \
+  --query "DBInstances[0].Endpoint.Address" \
+  --output text)
+
+aws ssm put-parameter \
+  --name /mnemosys/test/db/host \
+  --type SecureString \
+  --value "${TEST_ENDPOINT}" \
+  --overwrite
+
+aws ssm put-parameter \
+  --name /mnemosys/test/db/port \
+  --type SecureString \
+  --value "5432" \
+  --overwrite
+
+aws ssm put-parameter \
+  --name /mnemosys/test/db/database \
+  --type SecureString \
+  --value "mnemosys_test" \
+  --overwrite
+
+aws ecs update-service \
+  --cluster mnemosys-nonprod \
+  --service mnemosys-test-api \
+  --force-new-deployment
+
+aws ecs wait services-stable \
+  --cluster mnemosys-nonprod \
+  --services mnemosys-test-api
+```
+
+Optional cleanup: drop the `mnemosys_test` database from the shared dev instance
+once the new test instance is live to prevent accidental use.
+
+Step 4 execution (test):
+
+```bash
+aws ecs update-service \
+  --cluster mnemosys-nonprod \
+  --service mnemosys-test-api \
+  --desired-count 2 \
+  --health-check-grace-period-seconds 180 \
+  --deployment-configuration "minimumHealthyPercent=100,maximumPercent=200,deploymentCircuitBreaker={enable=true,rollback=true}"
+
+aws ecs wait services-stable \
+  --cluster mnemosys-nonprod \
+  --services mnemosys-test-api
+```
+
+If task sizing changes later, re-render and register a new task definition before
+running the `update-service` step.
+
+Autoscaling remains off during bootstrap; confirm no scalable target exists:
+
+```bash
+aws application-autoscaling describe-scalable-targets \
+  --service-namespace ecs \
+  --resource-ids service/mnemosys-nonprod/mnemosys-test-api
+```
+
 ## Known Issues
 
 - `brew install --cask docker` can time out during Docker Desktop download; current Docker 20.10.12 is sufficient for nonprod builds.
@@ -400,7 +595,7 @@ curl -fsSL http://<alb-dns>:8080/health/
 - Do we want separate ALBs for dev/test or keep shared until prod?
 - Should migration gate run in container entrypoint or init task?
 
-## Bootstrap Outputs (Current State)
+## Bootstrap Outputs (Verified 2026-01-12)
 
 Captured from the initial bootstrap run (update if re-provisioned):
 
@@ -411,6 +606,10 @@ Captured from the initial bootstrap run (update if re-provisioned):
 - RDS instance: `mnemosys-postgres`
 - RDS endpoint: `mnemosys-postgres.c3uamoeq6wst.us-east-2.rds.amazonaws.com`
 - RDS SG: `sg-0463c511b48bcbef5`
+- RDS configuration: `db.t4g.large`, Postgres `16.11`, `gp3` 200 GB, 3000 IOPS,
+  Multi-AZ `false`, backup retention `7`, deletion protection `true`,
+  performance insights `enabled`.
+- Dev/Test DB names: `mnemosys_dev`, `mnemosys_test` (shared RDS host).
 - ALB name: `mnemosys-nonprod-alb`
 - ALB DNS: `mnemosys-nonprod-alb-1104521642.us-east-2.elb.amazonaws.com`
 - ALB SG: `sg-0899f0b2207153896`

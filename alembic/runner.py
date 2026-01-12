@@ -8,6 +8,7 @@ import argparse
 import importlib.util
 import logging
 import os
+import re
 import subprocess
 import sys
 import time
@@ -23,6 +24,7 @@ from mnemosys_core.config.environments import Environment
 from mnemosys_core.config.settings import Settings, load_admin_settings_from_env
 
 LOGGER = logging.getLogger(__name__)
+REVISION_PATTERN = re.compile(r"\b[0-9a-f]{8,}\b")
 
 
 @dataclass(frozen=True)
@@ -135,6 +137,24 @@ def run_alembic_command(
     )
 
 
+def parse_revision_ids(output: str) -> set[str]:
+    """Extract Alembic revision IDs from command output."""
+    return set(REVISION_PATTERN.findall(output))
+
+
+def get_revision_ids(result: AlembicCommandResult) -> set[str]:
+    """Return revision IDs from stdout and stderr."""
+    combined_output = f"{result.standard_output}\n{result.standard_error}"
+    return parse_revision_ids(combined_output)
+
+
+def is_database_at_head(current_revisions: set[str], head_revisions: set[str]) -> bool:
+    """Return True if the database revision set includes all heads."""
+    if not head_revisions:
+        return False
+    return head_revisions.issubset(current_revisions)
+
+
 def log_command_result(
     result: AlembicCommandResult,
     *,
@@ -156,27 +176,56 @@ def log_command_result(
 
 def run_upgrade(alembic_configuration_path: str | None) -> int:
     """Run the automated Alembic upgrade sequence."""
-    check_result = run_alembic_command(["check"], alembic_configuration_path)
-    log_command_result(check_result, log_stderr=check_result.return_code == 0)
-    if check_result.return_code == 0:
-        LOGGER.info("Alembic check succeeded. No upgrade required.")
+    current_result = run_alembic_command(["current"], alembic_configuration_path)
+    log_command_result(current_result)
+    if current_result.return_code != 0:
+        LOGGER.error("Alembic current failed; cannot determine database state.")
+        return 1
+
+    heads_result = run_alembic_command(["heads"], alembic_configuration_path)
+    log_command_result(heads_result)
+    if heads_result.return_code != 0:
+        LOGGER.error("Alembic heads failed; cannot determine head revisions.")
+        return 1
+
+    current_revisions = get_revision_ids(current_result)
+    head_revisions = get_revision_ids(heads_result)
+    if is_database_at_head(current_revisions, head_revisions):
+        LOGGER.info("Database is at head revisions: %s", ", ".join(sorted(head_revisions)))
         return 0
 
-    LOGGER.info("Alembic check indicates pending migrations. Attempting upgrade.")
+    LOGGER.info(
+        "Database revisions %s do not match heads %s; attempting upgrade.",
+        ", ".join(sorted(current_revisions)) or "<none>",
+        ", ".join(sorted(head_revisions)) or "<none>",
+    )
     upgrade_result = run_alembic_command(["upgrade", "heads"], alembic_configuration_path)
     log_command_result(upgrade_result)
     if upgrade_result.return_code == 0:
-        LOGGER.info("Alembic upgrade completed successfully.")
-        return 0
+        recheck_result = run_alembic_command(["current"], alembic_configuration_path)
+        log_command_result(recheck_result)
+        if recheck_result.return_code != 0:
+            LOGGER.error("Alembic current failed after upgrade.")
+            return 1
+        updated_revisions = get_revision_ids(recheck_result)
+        if is_database_at_head(updated_revisions, head_revisions):
+            LOGGER.info("Alembic upgrade completed successfully.")
+            return 0
+        LOGGER.error("Database remains out of sync after successful upgrade.")
+        return 1
 
-    LOGGER.warning("Alembic upgrade failed. Re-checking schema state.")
-    recheck_result = run_alembic_command(["check"], alembic_configuration_path)
+    LOGGER.warning("Alembic upgrade failed. Re-checking database state.")
+    recheck_result = run_alembic_command(["current"], alembic_configuration_path)
     log_command_result(recheck_result)
-    if recheck_result.return_code == 0:
-        LOGGER.warning("Schema is now at head after failed upgrade; assuming concurrency.")
+    if recheck_result.return_code != 0:
+        LOGGER.error("Alembic current failed after upgrade failure.")
+        return 1
+    updated_revisions = get_revision_ids(recheck_result)
+    if is_database_at_head(updated_revisions, head_revisions):
+        LOGGER.warning("Database is now at head after failed upgrade; assuming concurrency.")
         return 0
 
-    LOGGER.error("Schema remains out of sync after failed upgrade.")
+    LOGGER.error("Database remains out of sync after failed upgrade.")
     return 1
 
 

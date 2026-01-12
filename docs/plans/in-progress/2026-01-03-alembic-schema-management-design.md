@@ -117,13 +117,13 @@ The REST API startup sequence must run an explicit migration gate before the API
 
 Required behavior:
 1. Read `MNEMOSYS_ENV` and database credentials (`MNEMOSYS_DB_ADMIN_*` with fallback to `MNEMOSYS_DB_*`).
-2. Run `alembic check` to compare database revision to `heads`.
-3. If check succeeds, start the API service.
-4. If check fails, run `alembic upgrade heads` (transactional).
-5. If upgrade succeeds, start the API service.
-6. If upgrade fails, re-run `alembic check`:
-   - If check succeeds now, assume another process won the race and proceed.
-   - If check still fails, treat the upgrade failure as fatal and stop startup.
+2. Run `alembic current` and `alembic heads` to compare database revisions to head.
+3. If current includes all head revisions, start the API service.
+4. If current does not include head, run `alembic upgrade heads` (transactional).
+5. If upgrade succeeds, re-run `alembic current` and confirm head is present, then start the API service.
+6. If upgrade fails, re-run `alembic current`:
+   - If current includes head now, assume another process won the race and proceed.
+   - If current still does not include head, treat the upgrade failure as fatal and stop startup.
 
 Fail-closed rules:
 - If `alembic check` fails after a failed upgrade attempt, stop startup and fail loudly.
@@ -301,11 +301,11 @@ This section defines the required contract for the startup migration runner. Imp
 ### Behavior (Idempotent)
 
 **Upgrade runner**
-- Run `alembic check`.
-- If check fails, run `alembic upgrade heads`.
-- If upgrade fails, re-run `alembic check`.
-- Exit success if check succeeds at the end of the sequence.
-- Exit failure if check fails after a failed upgrade attempt.
+- Run `alembic current` and `alembic heads`.
+- If current does not include head, run `alembic upgrade heads`.
+- If upgrade fails, re-run `alembic current`.
+- Exit success if current includes head at the end of the sequence.
+- Exit failure if current does not include head after a failed upgrade attempt.
 
 **Downgrade runner**
 - Run `alembic downgrade <target>`.
@@ -323,7 +323,7 @@ This section defines the required contract for the startup migration runner. Imp
 
 - Emit start/end markers.
 - Log environment name and database host (redact credentials).
-- Log `alembic check` result.
+- Log `alembic current` and `alembic heads` results.
 - Log upgrade attempt status and elapsed time.
 - On failure, emit a short reason and exit code.
 
