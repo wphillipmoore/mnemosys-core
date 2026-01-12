@@ -1,0 +1,25 @@
+{
+  "python.defaultInterpreterPath": ".venv/bin/python",
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.nosetestsEnabled": false,
+  "python.testing.pytestPath": ".venv/bin/pytest",
+  "python.testing.pytestArgs": [
+    "tests",
+    "--cov"
+  ],
+  "python.analysis.extraPaths": [
+    "src"
+  ],
+  "cSpell.words": [
+    "addopts",
+    "minversion",
+    "mnemosys",
+    "mypy",
+    "pytest",
+    "sqlalchemy",
+    "testpaths",
+    "xdist"
+  ],
+  "evenBetterToml.validation.enabled": false
+}

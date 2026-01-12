@@ -1,0 +1,125 @@
+[build-system]
+requires = ["poetry-core>=2.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "mnemosys-core"
+version = "0.1.0.2"
+description = "Core backend for the MNEMOSYS system"
+authors = ["Phillip Moore <w.phillip.moore@gmail.com>"]
+license = "LICENSE"
+readme = "README.md"
+packages = [{ include = "mnemosys_core", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.14"
+sqlalchemy = "*"
+fastapi = "^0.115.0"
+uvicorn = {extras = ["standard"], version = "^0.34.0"}
+pydantic = "^2.10.0"
+psycopg2-binary = "^2.9.11"
+alembic = "^1.17.2"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "*"
+mypy = "*"
+pytest = "*"
+pytest-mock = "*"
+pytest-cov = "*"
+pytest-xdist = "*"
+poetry = "^2"
+poetry-plugin-export = "*"
+pre-commit = "^3.7"
+httpx = "^0.27.0"
+testcontainers = "^4.13.3"
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "SIM",    # flake8-simplify
+    "TCH",    # flake8-type-checking
+    "PTH",    # flake8-use-pathlib
+    "RUF",    # Ruff-specific rules
+]
+ignore = [
+    "E501",   # Line too long (handled by formatter)
+    "B008",   # FastAPI dependency injection pattern - Depends() in function defaults is correct
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["mnemosys_core"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/mnemosys_core/db/models/__init__.py" = [
+    "E402",   # Module imports after code - enums must be defined before model imports
+    "RUF022", # __all__ grouped logically (enums, models) rather than pure alphabetical
+]
+"src/mnemosys_core/db/models/*.py" = [
+    "RUF012", # SQLAlchemy __mapper_args__ is a class-level dict used by the ORM framework
+]
+"tests/**/*.py" = [
+    "N806",   # sessionmaker returns factory classes conventionally named with PascalCase
+]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_any_generics = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = "mnemosys_core.migrations.env"
+ignore_errors = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "-v"
+markers = ["integration: Postgres-backed integration tests"]
+filterwarnings = [
+    # Ignore SQLite connection ResourceWarnings during tests
+    # These are false positives - connections are properly cleaned up by engine.dispose()
+    # but Python's resource tracker complains during garbage collection
+    # Also applies to pytest-cov's internal SQLite usage
+    "ignore:unclosed database:ResourceWarning",
+    "ignore::ResourceWarning",
+    # Suppress Testcontainers deprecation emitted by dependency internals
+    "ignore:The @wait_container_is_ready decorator is deprecated:DeprecationWarning",
+    # Suppress FastAPI deprecation warning from Python 3.14 asyncio changes
+    "ignore:.*iscoroutinefunction.*:DeprecationWarning:fastapi\\.routing",
+]
+
+[tool.coverage.run]
+source = ["src/mnemosys_core"]
+branch = true
