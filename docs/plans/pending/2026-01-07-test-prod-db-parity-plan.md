@@ -1,6 +1,9 @@
 # Test/Production Environment Parity Plan (RDS + REST API)
 
-**Status:** Draft
+**Status:** Merged into `docs/plans/pending/2026-01-04-aws-nonprod-rest-api-deploy-plan.md`
+
+This plan is consolidated into the nonprod deployment plan. Do not execute it
+independently; use the consolidated plan instead.
 
 ## Table of Contents
 - [Context](#context)
