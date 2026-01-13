@@ -26,11 +26,13 @@
   Output: both health checks returned `{"status":"ok"}`.
 - Verified migration gate activity in dev/test logs.
   Commands:
-  - `AWS_PROFILE=mnemosys-admin AWS_REGION=us-east-2 aws logs filter-log-events --log-group-name /mnemosys/test/api --filter-pattern "Command finished with code" --limit 20 --query "events[*].message" --output text`
-  - `AWS_PROFILE=mnemosys-admin AWS_REGION=us-east-2 aws logs filter-log-events --log-group-name /mnemosys/dev/api --filter-pattern "Command finished with code" --limit 20 --query "events[*].message" --output text`
-  - `AWS_PROFILE=mnemosys-admin AWS_REGION=us-east-2 aws logs filter-log-events --log-group-name /mnemosys/test/api --filter-pattern "Target database" --limit 20 --query "events[*].message" --output text`
-  Output: `alembic upgrade heads` returned code 0; `alembic check` returned code 255 with
-  `Target database is not up to date`.
+  - `AWS_PROFILE=mnemosys-admin AWS_REGION=us-east-2 aws logs describe-log-streams --log-group-name /mnemosys/test/api --order-by LastEventTime --descending --max-items 1 --query "logStreams[0].logStreamName" --output text`
+  - `AWS_PROFILE=mnemosys-admin AWS_REGION=us-east-2 aws logs get-log-events --log-group-name /mnemosys/test/api --log-stream-name <stream> --limit 200 --start-from-head --query "events[*].message" --output text | rg -n "alembic"`
+  - `AWS_PROFILE=mnemosys-admin AWS_REGION=us-east-2 aws logs describe-log-streams --log-group-name /mnemosys/dev/api --order-by LastEventTime --descending --max-items 1 --query "logStreams[0].logStreamName" --output text`
+  - `AWS_PROFILE=mnemosys-admin AWS_REGION=us-east-2 aws logs get-log-events --log-group-name /mnemosys/dev/api --log-stream-name <stream> --limit 200 --start-from-head --query "events[*].message" --output text | rg -n "alembic"`
+  Output: test shows `alembic current` at `f71a73e20503`, `alembic heads` at `abe7b3773eff`,
+  then `alembic upgrade heads` and `alembic current` at head; dev shows `alembic current` and
+  `alembic heads` both at `abe7b3773eff` (no upgrade needed).
 
 ## Outcomes and Status
 - Release promotion deployed to test and patch bump deployed to development via GitHub Actions.
@@ -41,5 +43,4 @@
 - None.
 
 ## Problems Unresolved
-- `alembic check` returns `Target database is not up to date` (code 255) in dev/test logs,
-  even though `alembic upgrade heads` succeeds.
+- None.
