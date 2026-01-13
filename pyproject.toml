@@ -1,5 +1,5 @@
 [build-system]
-requires = ["poetry-core>=2.0.0"]
+requires = ["poetry-core>=2,<3"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
@@ -12,26 +12,26 @@ readme = "README.md"
 packages = [{ include = "mnemosys_core", from = "src" }]
 
 [tool.poetry.dependencies]
-python = "^3.14"
-sqlalchemy = "*"
-fastapi = "^0.115.0"
-uvicorn = {extras = ["standard"], version = "^0.34.0"}
-pydantic = "^2.10.0"
-psycopg2-binary = "^2.9.11"
-alembic = "^1.17.2"
+python = ">=3.14,<4.0"
+sqlalchemy = ">=2,<3"
+fastapi = ">=0.115,<0.116"
+uvicorn = {extras = ["standard"], version = ">=0.34,<0.35"}
+pydantic = ">=2,<3"
+psycopg2-binary = ">=2,<3"
+alembic = ">=1,<2"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "*"
-mypy = "*"
-pytest = "*"
-pytest-mock = "*"
-pytest-cov = "*"
-pytest-xdist = "*"
-poetry = "^2"
-poetry-plugin-export = "*"
-pre-commit = "^3.7"
-httpx = "^0.27.0"
-testcontainers = "^4.13.3"
+ruff = ">=0.14,<0.15"
+mypy = ">=1,<2"
+pytest = ">=9,<10"
+pytest-mock = ">=3,<4"
+pytest-cov = ">=7,<8"
+pytest-xdist = ">=3,<4"
+poetry = ">=2,<3"
+poetry-plugin-export = ">=1,<2"
+pre-commit = ">=3,<4"
+httpx = ">=0.27,<0.28"
+testcontainers = ">=4,<5"
 
 [tool.ruff]
 line-length = 120
