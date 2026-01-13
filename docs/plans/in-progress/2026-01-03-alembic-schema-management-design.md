@@ -116,30 +116,30 @@ Sandbox is a pre-PR environment for feature/bugfix/hotfix work and is updated ma
 ```mermaid
 flowchart TD
   subgraph Sandbox
-    SBV[Validate migrations\nscripts/dev/validate_migrations.py\n(temp schema in mnemosys_sandbox)]
+    SBV["Validate migrations<br/>scripts/dev/validate_migrations.py<br/>(temp schema in mnemosys_sandbox)"]
     SB[(Sandbox DB)]
     SBV --> SB
   end
 
   subgraph Development
-    DEV[Merge to develop]
-    DEV_PIPE[CI/CD deploy\n(develop -> development)]
-    DEV_GATE[Alembic runner\nalembic current + heads\nalembic upgrade heads if needed]
-    DEV_APP[Dev API + DB\nmnemosys_dev]
+    DEV["Merge to develop"]
+    DEV_PIPE["CI/CD deploy<br/>(develop -> development)"]
+    DEV_GATE["Alembic runner<br/>alembic current + heads<br/>alembic upgrade heads if needed"]
+    DEV_APP["Dev API + DB<br/>mnemosys_dev"]
   end
 
   subgraph Test
-    REL[Merge to release]
-    TEST_PIPE[CI/CD deploy\n(release -> test)]
-    TEST_GATE[Alembic runner\nalembic current + heads\nalembic upgrade heads if needed]
-    TEST_APP[Test API + DB\nmnemosys_test]
+    REL["Merge to release"]
+    TEST_PIPE["CI/CD deploy<br/>(release -> test)"]
+    TEST_GATE["Alembic runner<br/>alembic current + heads<br/>alembic upgrade heads if needed"]
+    TEST_APP["Test API + DB<br/>mnemosys_test"]
   end
 
   subgraph Production
-    MAIN[Merge to main]
-    PROD_PIPE[CI/CD deploy\n(main -> production)]
-    PROD_GATE[Alembic runner\nalembic current + heads\nalembic upgrade heads if needed]
-    PROD_APP[Prod API + DB\nmnemosys_prod]
+    MAIN["Merge to main"]
+    PROD_PIPE["CI/CD deploy<br/>(main -> production)"]
+    PROD_GATE["Alembic runner<br/>alembic current + heads<br/>alembic upgrade heads if needed"]
+    PROD_APP["Prod API + DB<br/>mnemosys_prod"]
   end
 
   DEV --> DEV_PIPE --> DEV_GATE --> DEV_APP
