@@ -22,6 +22,7 @@ flowchart TB
     DEV_PIPE["CI/CD deploy<br/>(develop -> development)"]
     DEV_GATE["Alembic runner<br/>alembic current + heads<br/>alembic upgrade heads if needed"]
     DEV_APP["Dev API + DB<br/>mnemosys_dev"]
+    DEV --> DEV_PIPE --> DEV_GATE --> DEV_APP
   end
 
   subgraph Test
@@ -30,6 +31,7 @@ flowchart TB
     TEST_PIPE["CI/CD deploy<br/>(release -> test)"]
     TEST_GATE["Alembic runner<br/>alembic current + heads<br/>alembic upgrade heads if needed"]
     TEST_APP["Test API + DB<br/>mnemosys_test"]
+    REL --> TEST_PIPE --> TEST_GATE --> TEST_APP
   end
 
   subgraph Production
@@ -38,11 +40,8 @@ flowchart TB
     PROD_PIPE["CI/CD deploy<br/>(main -> production)"]
     PROD_GATE["Alembic runner<br/>alembic current + heads<br/>alembic upgrade heads if needed"]
     PROD_APP["Prod API + DB<br/>mnemosys_prod"]
+    MAIN --> PROD_PIPE --> PROD_GATE --> PROD_APP
   end
-
-  DEV --> DEV_PIPE --> DEV_GATE --> DEV_APP
-  REL --> TEST_PIPE --> TEST_GATE --> TEST_APP
-  MAIN --> PROD_PIPE --> PROD_GATE --> PROD_APP
 
   %% Layout guides to stack environments top-to-bottom.
   SB --> DEV
