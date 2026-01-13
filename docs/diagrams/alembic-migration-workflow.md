@@ -8,7 +8,7 @@ Deployment workflow diagram for Alembic-driven schema changes.
 ## Diagram
 
 ```mermaid
-flowchart TD
+flowchart TB
   subgraph Sandbox
     SBV["Validate migrations<br/>scripts/dev/validate_migrations.py<br/>(temp schema in mnemosys_sandbox)"]
     SB[(Sandbox DB)]
@@ -39,4 +39,13 @@ flowchart TD
   DEV --> DEV_PIPE --> DEV_GATE --> DEV_APP
   REL --> TEST_PIPE --> TEST_GATE --> TEST_APP
   MAIN --> PROD_PIPE --> PROD_GATE --> PROD_APP
+
+  %% Layout guides to stack environments top-to-bottom.
+  SB --> DEV
+  DEV --> REL
+  REL --> MAIN
+
+  linkStyle 10 stroke:transparent,stroke-width:0px;
+  linkStyle 11 stroke:transparent,stroke-width:0px;
+  linkStyle 12 stroke:transparent,stroke-width:0px;
 ```
