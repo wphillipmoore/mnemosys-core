@@ -111,6 +111,46 @@ Each merge into an eternal branch triggers a deployment to its mapped environmen
 
 Sandbox is a pre-PR environment for feature/bugfix/hotfix work and is updated manually.
 
+### Alembic workflow diagram
+
+```mermaid
+flowchart TD
+  subgraph Sandbox
+    SBV[Validate migrations\nscripts/dev/validate_migrations.py\n(temp schema in mnemosys_sandbox)]
+    SB[(Sandbox DB)]
+    SBV --> SB
+  end
+
+  subgraph Development
+    DEV[Merge to develop]
+    DEV_PIPE[CI/CD deploy\n(develop -> development)]
+    DEV_GATE[Alembic runner\nalembic current + heads\nalembic upgrade heads if needed]
+    DEV_APP[Dev API + DB\nmnemosys_dev]
+  end
+
+  subgraph Test
+    REL[Merge to release]
+    TEST_PIPE[CI/CD deploy\n(release -> test)]
+    TEST_GATE[Alembic runner\nalembic current + heads\nalembic upgrade heads if needed]
+    TEST_APP[Test API + DB\nmnemosys_test]
+  end
+
+  subgraph Production
+    MAIN[Merge to main]
+    PROD_PIPE[CI/CD deploy\n(main -> production)]
+    PROD_GATE[Alembic runner\nalembic current + heads\nalembic upgrade heads if needed]
+    PROD_APP[Prod API + DB\nmnemosys_prod]
+  end
+
+  DEV --> DEV_PIPE --> DEV_GATE --> DEV_APP
+  REL --> TEST_PIPE --> TEST_GATE --> TEST_APP
+  MAIN --> PROD_PIPE --> PROD_GATE --> PROD_APP
+```
+
+Notes:
+- Sandbox validation runs against a temporary schema and does not deploy.
+- Production deployment automation is pending; the runtime migration gate is the target behavior.
+
 ### Startup migration gate
 
 The REST API startup sequence must run an explicit migration gate before the API service starts. This gate is the only automatic schema application path. The logic is intentionally minimal and delegates concurrency handling to the database/Alembic.
