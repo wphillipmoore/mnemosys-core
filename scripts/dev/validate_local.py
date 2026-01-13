@@ -10,7 +10,8 @@ from pathlib import Path
 
 COMMANDS: tuple[tuple[str, ...], ...] = (
     ("python3", "scripts/dev/validate_dependency_specs.py"),
-    ("poetry", "lock", "--check"),
+    ("poetry", "lock", "--no-update"),
+    ("git", "diff", "--exit-code", "poetry.lock"),
     ("poetry", "sync", "--dry-run"),
     ("poetry", "run", "ruff", "check"),
     ("poetry", "run", "mypy", "src/"),
