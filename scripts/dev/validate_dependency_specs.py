@@ -6,10 +6,8 @@ Validate dependency specification rules for pyproject.toml.
 from __future__ import annotations
 
 import re
-from pathlib import Path
-
 import tomllib
-
+from pathlib import Path
 
 ANCHOR_PREFIX = "# Anchor:"
 DEPENDENCY_RECORDS_DIR = Path("docs/dependencies")
@@ -77,17 +75,16 @@ def is_standard_range(spec_text: str) -> bool:
             return False
         if upper_minor != lower_minor + 1:
             return False
-        if lower_patch not in (None, 0) or upper_patch not in (None, 0):
-            return False
-        return True
+        return lower_patch in (None, 0) and upper_patch in (None, 0)
 
     if upper_major != lower_major + 1:
         return False
-    if lower_minor not in (None, 0) or lower_patch not in (None, 0):
-        return False
-    if upper_minor not in (None, 0) or upper_patch not in (None, 0):
-        return False
-    return True
+    return (
+        lower_minor in (None, 0)
+        and lower_patch in (None, 0)
+        and upper_minor in (None, 0)
+        and upper_patch in (None, 0)
+    )
 
 
 def collect_dependency_lines(lines: list[str]) -> dict[tuple[str, str], int]:
