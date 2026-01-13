@@ -47,6 +47,11 @@ jobs:
             echo "$HOME/.local/bin" >> $GITHUB_PATH
           fi
           poetry --version
+      - name: Validate dependency specifications
+        run: python3 scripts/dev/validate_dependency_specs.py
+
+      - name: Verify poetry.lock sync
+        run: poetry check --lock
 
       - name: Cache dependencies
         uses: actions/cache@v4

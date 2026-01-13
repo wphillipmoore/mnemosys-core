@@ -9,6 +9,8 @@ import subprocess
 from pathlib import Path
 
 COMMANDS: tuple[tuple[str, ...], ...] = (
+    ("python3", "scripts/dev/validate_dependency_specs.py"),
+    ("poetry", "check", "--lock"),
     ("poetry", "sync", "--dry-run"),
     ("poetry", "run", "ruff", "check"),
     ("poetry", "run", "mypy", "src/"),
