@@ -87,11 +87,17 @@ build numbers; the CI gate must enforce the rule.
 The PR author (human or AI) owns the bump; CI must reject missing increments.
 
 ## Release workflow
-1. Open a PR from `develop` to `release` using the current `develop` commit.
-2. Immediately open a separate PR to `develop` that increments `PATCH` by 1 and
+1. Create a promotion branch from `develop` and open a PR from that branch to
+   `release`.
+2. If `release` has diverged, merge `release` into the promotion branch and
+   resolve conflicts in the promotion branch before PR merge.
+3. Immediately open a separate PR to `develop` that increments `PATCH` by 1 and
    resets `BUILD` to `0`.
-3. Merge the `develop` to `release` PR after validation.
-4. Merge the `PATCH` bump PR to `develop` before the next feature merge.
+4. Merge the promotion PR after validation using a merge commit (no squash).
+5. Merge the `PATCH` bump PR to `develop` before the next feature merge.
+
+Promotion branch naming:
+- `promotion/release-<version>-<yyyymmddhhmmss>`
 
 If automation exists (for example, a `submit_release_prs` script), it must
 open the two PRs above without direct commits to `develop`.
@@ -105,9 +111,16 @@ python scripts/dev/submit_release_prs.py
 ```
 
 ## Main promotion workflow
-1. Open a PR from `release` to `main` after validation in `release`.
-2. The PR contains no version changes; it promotes the already-versioned
+1. Create a promotion branch from `release` and open a PR from that branch to
+   `main` after validation in `release`.
+2. If `main` has diverged, merge `main` into the promotion branch and resolve
+   conflicts in the promotion branch before PR merge.
+3. Merge the promotion PR using a merge commit (no squash).
+4. The PR contains no version changes; it promotes the already-versioned
    release.
+
+Promotion branch naming:
+- `promotion/main-<version>-<yyyymmddhhmmss>`
 
 Canonical command:
 
