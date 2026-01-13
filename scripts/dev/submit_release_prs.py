@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Create release and patch-bump pull requests from develop.
+Create release promotion and patch-bump pull requests from develop.
 """
 
 from __future__ import annotations
@@ -47,7 +47,7 @@ def parse_arguments(argument_list: Sequence[str] | None = None) -> argparse.Name
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
         description=(
-            "Create a develop->release PR and a patch-bump PR to develop. "
+            "Create a develop->release PR via a promotion branch and a patch-bump PR to develop. "
             "The patch bump increments PATCH and resets BUILD to 0."
         )
     )
@@ -70,6 +70,11 @@ def parse_arguments(argument_list: Sequence[str] | None = None) -> argparse.Name
         "--patch-branch-name",
         default=None,
         help="Explicit branch name for the patch bump PR.",
+    )
+    parser.add_argument(
+        "--promotion-branch-name",
+        default=None,
+        help="Explicit branch name for the release promotion PR.",
     )
     parser.add_argument(
         "--release-title",
@@ -107,6 +112,11 @@ def parse_arguments(argument_list: Sequence[str] | None = None) -> argparse.Name
         "--draft",
         action="store_true",
         help="Create both pull requests as drafts.",
+    )
+    parser.add_argument(
+        "--no-target-merge",
+        action="store_true",
+        help="Skip merging the release branch into the promotion branch.",
     )
     parser.add_argument(
         "--no-fetch",
@@ -279,11 +289,28 @@ def create_patch_branch_name(version: Version) -> str:
     return f"feature/patch-bump-{version.as_branch_label()}-{timestamp}"
 
 
+def create_promotion_branch_name(version: Version) -> str:
+    """Generate a unique release promotion branch name."""
+    timestamp = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
+    return f"promotion/release-{version.as_branch_label()}-{timestamp}"
+
+
 def ensure_branch_available(branch_name: str) -> None:
     """Ensure the branch name is not already in use."""
     result = subprocess.run(("git", "show-ref", "--verify", "--quiet", f"refs/heads/{branch_name}"))
     if result.returncode == 0:
         raise SystemExit(f"Branch already exists: {branch_name}")
+
+
+def merge_target_branch(branch_name: str, target_reference: str) -> None:
+    """Merge the target branch into the promotion branch."""
+    result = run_command(("git", "merge", target_reference), check=False)
+    if result.returncode == 0:
+        return
+    raise SystemExit(
+        "Merge conflict while preparing the promotion branch. "
+        f"Resolve conflicts on '{branch_name}', commit the merge, and retry PR creation."
+    )
 
 
 def run_validation() -> None:
@@ -294,12 +321,12 @@ def run_validation() -> None:
 
 
 def create_release_pull_request(
-    develop_branch: str,
+    promotion_branch: str,
     release_branch: str,
     release_version: Version,
     arguments: argparse.Namespace,
 ) -> None:
-    """Create the develop->release pull request."""
+    """Create the promotion->release pull request."""
     command = [
         "gh",
         "pr",
@@ -307,7 +334,7 @@ def create_release_pull_request(
         "--base",
         release_branch,
         "--head",
-        develop_branch,
+        promotion_branch,
     ]
     if arguments.draft:
         command.append("--draft")
@@ -373,20 +400,28 @@ def main(argument_list: Sequence[str] | None = None) -> int:
     patch_version = bump_patch_version(develop_version)
 
     patch_branch_name = arguments.patch_branch_name or create_patch_branch_name(patch_version)
+    promotion_branch_name = arguments.promotion_branch_name or create_promotion_branch_name(develop_version)
     ensure_branch_available(patch_branch_name)
+    ensure_branch_available(promotion_branch_name)
 
-    run_command(("git", "checkout", "-b", patch_branch_name))
-    update_pyproject_version(develop_version, patch_version)
-    commit_patch_bump(patch_version)
+    run_command(("git", "checkout", "-b", promotion_branch_name))
+    if not arguments.no_target_merge:
+        merge_target_branch(promotion_branch_name, f"{arguments.remote}/{arguments.release_branch}")
     run_validation()
-
-    run_command(("git", "push", "--set-upstream", arguments.remote, patch_branch_name))
+    run_command(("git", "push", "--set-upstream", arguments.remote, promotion_branch_name))
     create_release_pull_request(
-        arguments.develop_branch,
+        promotion_branch_name,
         arguments.release_branch,
         develop_version,
         arguments,
     )
+
+    run_command(("git", "checkout", arguments.develop_branch))
+    run_command(("git", "checkout", "-b", patch_branch_name))
+    update_pyproject_version(develop_version, patch_version)
+    commit_patch_bump(patch_version)
+    run_validation()
+    run_command(("git", "push", "--set-upstream", arguments.remote, patch_branch_name))
     create_patch_pull_request(
         patch_branch_name,
         arguments.develop_branch,
