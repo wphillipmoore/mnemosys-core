@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date  # noqa: TC003
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Date, ForeignKey, Integer, String
+from sqlalchemy import Date, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..base import Base
@@ -30,7 +30,6 @@ class Practice(Base):
         session_date: Date of session
         session_type: Intensity level
         total_minutes: Total session duration
-        temporary_label: Optional label for migration workflow checks
     """
 
     __tablename__ = "practice"
@@ -40,7 +39,6 @@ class Practice(Base):
     session_date: Mapped[date] = mapped_column(Date, nullable=False)
     session_type: Mapped[SessionType] = mapped_column(DatabaseEnum(SessionType), nullable=False)
     total_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
-    temporary_label: Mapped[str | None] = mapped_column(String(120), nullable=True)
 
     # Relationships
     instrument: Mapped[Instrument] = relationship("Instrument", back_populates="practices")

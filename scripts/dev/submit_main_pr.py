@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Create a release->main pull request with validation and guardrails.
+Create a release->main pull request via a promotion branch.
 """
 
 from __future__ import annotations
@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import sys
 import tomllib
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -20,7 +21,9 @@ if TYPE_CHECKING:
 
 def parse_arguments(argument_list: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description="Create a release->main pull request.")
+    parser = argparse.ArgumentParser(
+        description="Create a release->main pull request via a promotion branch."
+    )
     parser.add_argument(
         "--remote",
         default="origin",
@@ -35,6 +38,11 @@ def parse_arguments(argument_list: Sequence[str] | None = None) -> argparse.Name
         "--main-branch",
         default="main",
         help="Branch used for production promotion.",
+    )
+    parser.add_argument(
+        "--promotion-branch-name",
+        default=None,
+        help="Explicit branch name for the promotion pull request.",
     )
     parser.add_argument(
         "--title",
@@ -56,6 +64,11 @@ def parse_arguments(argument_list: Sequence[str] | None = None) -> argparse.Name
         "--draft",
         action="store_true",
         help="Create the pull request as a draft.",
+    )
+    parser.add_argument(
+        "--no-target-merge",
+        action="store_true",
+        help="Skip merging the main branch into the promotion branch.",
     )
     parser.add_argument(
         "--no-fetch",
@@ -172,6 +185,31 @@ def load_version_label() -> str:
     return version_value
 
 
+def create_promotion_branch_name(version_label: str) -> str:
+    """Generate a unique promotion branch name."""
+    timestamp = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
+    sanitized_label = version_label.replace(".", "-")
+    return f"promotion/main-{sanitized_label}-{timestamp}"
+
+
+def ensure_branch_available(branch_name: str) -> None:
+    """Ensure the branch name is not already in use."""
+    result = subprocess.run(("git", "show-ref", "--verify", "--quiet", f"refs/heads/{branch_name}"))
+    if result.returncode == 0:
+        raise SystemExit(f"Branch already exists: {branch_name}")
+
+
+def merge_target_branch(branch_name: str, target_reference: str) -> None:
+    """Merge the target branch into the promotion branch."""
+    result = run_command(("git", "merge", target_reference), check=False)
+    if result.returncode == 0:
+        return
+    raise SystemExit(
+        "Merge conflict while preparing the promotion branch. "
+        f"Resolve conflicts on '{branch_name}', commit the merge, and retry PR creation."
+    )
+
+
 def run_validation() -> None:
     """Run the canonical local validation."""
     result = run_command((sys.executable, "scripts/dev/validate_local.py"), check=False)
@@ -179,16 +217,20 @@ def run_validation() -> None:
         raise SystemExit(result.returncode)
 
 
-def create_pull_request(arguments: argparse.Namespace, release_branch: str, main_branch: str) -> None:
-    """Create the release->main pull request."""
-    command = ["gh", "pr", "create", "--base", main_branch, "--head", release_branch]
+def create_pull_request(
+    arguments: argparse.Namespace,
+    promotion_branch: str,
+    main_branch: str,
+    version_label: str,
+) -> None:
+    """Create the promotion->main pull request."""
+    command = ["gh", "pr", "create", "--base", main_branch, "--head", promotion_branch]
     if arguments.draft:
         command.append("--draft")
 
     if arguments.title:
         command.extend(["--title", arguments.title])
     else:
-        version_label = load_version_label()
         command.extend(["--title", f"Promote release {version_label}"])
 
     if arguments.body_file:
@@ -218,8 +260,17 @@ def main(argument_list: Sequence[str] | None = None) -> int:
     ensure_branch_matches_remote(arguments.remote, arguments.release_branch)
     ensure_no_open_pull_requests(arguments.main_branch)
 
+    version_label = load_version_label()
+    promotion_branch_name = arguments.promotion_branch_name or create_promotion_branch_name(version_label)
+    ensure_branch_available(promotion_branch_name)
+
+    run_command(("git", "checkout", "-b", promotion_branch_name))
+    if not arguments.no_target_merge:
+        merge_target_branch(promotion_branch_name, f"{arguments.remote}/{arguments.main_branch}")
     run_validation()
-    create_pull_request(arguments, arguments.release_branch, arguments.main_branch)
+    run_command(("git", "push", "--set-upstream", arguments.remote, promotion_branch_name))
+    create_pull_request(arguments, promotion_branch_name, arguments.main_branch, version_label)
+    run_command(("git", "checkout", arguments.release_branch))
     return 0
 
 

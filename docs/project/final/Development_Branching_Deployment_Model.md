@@ -14,4 +14,9 @@ https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-m
 
 ## Local deviations
 
-None.
+- Short-lived branch prefixes allow `promotion/` in addition to
+  `feature/`, `bugfix/`, and `hotfix/`.
+- Promotion branches for environment promotions use the `promotion/` prefix
+  with these names: `promotion/release-<version>-<yyyymmddhhmmss>` for
+  develop->release and `promotion/main-<version>-<yyyymmddhhmmss>` for
+  release->main.
