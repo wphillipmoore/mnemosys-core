@@ -10,12 +10,14 @@ Deployment workflow diagram for Alembic-driven schema changes.
 ```mermaid
 flowchart TB
   subgraph Sandbox
+    direction LR
     SBV["Validate migrations<br/>scripts/dev/validate_migrations.py<br/>(temp schema in mnemosys_sandbox)"]
     SB[(Sandbox DB)]
     SBV --> SB
   end
 
   subgraph Development
+    direction LR
     DEV["Merge to develop"]
     DEV_PIPE["CI/CD deploy<br/>(develop -> development)"]
     DEV_GATE["Alembic runner<br/>alembic current + heads<br/>alembic upgrade heads if needed"]
@@ -23,6 +25,7 @@ flowchart TB
   end
 
   subgraph Test
+    direction LR
     REL["Merge to release"]
     TEST_PIPE["CI/CD deploy<br/>(release -> test)"]
     TEST_GATE["Alembic runner<br/>alembic current + heads<br/>alembic upgrade heads if needed"]
@@ -30,6 +33,7 @@ flowchart TB
   end
 
   subgraph Production
+    direction LR
     MAIN["Merge to main"]
     PROD_PIPE["CI/CD deploy<br/>(main -> production)"]
     PROD_GATE["Alembic runner<br/>alembic current + heads<br/>alembic upgrade heads if needed"]
