@@ -14,4 +14,8 @@ https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-m
 
 ## Local deviations
 
-None.
+- Pull requests that resolve a tracked issue must include a closing keyword in
+  the PR description (for example, `Fixes #123`) so the issue auto-closes on
+  merge. If auto-close is not possible, the PR must still reference the issue
+  and the issue must be closed manually after merge. Work is not complete until
+  the issue is closed.
