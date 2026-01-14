@@ -216,12 +216,21 @@ def ensure_branch_divergence(base_reference: str) -> None:
 def load_version_from_toml_text(toml_text: str) -> Version:
     """Load the version from a pyproject.toml text block."""
     data = tomllib.loads(toml_text)
-    try:
-        version_value = data["tool"]["poetry"]["version"]
-    except KeyError as exc:
-        raise SystemExit("Missing tool.poetry.version in pyproject.toml.") from exc
+    version_value = None
+    project_section = data.get("project")
+    if isinstance(project_section, dict):
+        version_value = project_section.get("version")
+    if version_value is None:
+        tool_section = data.get("tool")
+        poetry_section = tool_section.get("poetry") if isinstance(tool_section, dict) else None
+        if isinstance(poetry_section, dict):
+            version_value = poetry_section.get("version")
+    if version_value is None:
+        raise SystemExit(
+            "Missing version in pyproject.toml (expected project.version or tool.poetry.version)."
+        )
     if not isinstance(version_value, str):
-        raise SystemExit("tool.poetry.version must be a string.")
+        raise SystemExit("Version value in pyproject.toml must be a string.")
     return parse_version(version_value)
 
 

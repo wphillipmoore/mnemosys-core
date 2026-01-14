@@ -102,13 +102,3 @@ Co-Authored-By: mnemosys-claude <252602472+mnemosys-claude@users.noreply.github.
 ```
 
 ## In-repo canonical standards
-
-### Dependency management
-
-Dependency management standards are canonical here and will be extracted to the
-Standards and Conventions repository once stable:
-
-- Default dependency specs in `pyproject.toml` use `"*"`.
-- Do not anchor to a major or minor series by default (including pre-1.0 dependencies).
-- Use constrained specs only when necessary, following the anchored dependency documentation rules.
-- Reevaluate constrained dependencies during each upgrade cycle, per the canonical workflow.
