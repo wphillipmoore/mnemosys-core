@@ -2,13 +2,18 @@
 requires = ["poetry-core>=2,<3"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry]
+[project]
 name = "mnemosys-core"
 version = "0.1.3.0"
 description = "Core backend for the MNEMOSYS system"
-authors = ["Phillip Moore <w.phillip.moore@gmail.com>"]
-license = "LICENSE"
 readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [{ name = "Phillip Moore", email = "w.phillip.moore@gmail.com" }]
+requires-python = ">=3.14,<4.0"
+dynamic = ["dependencies"]
+
+[tool.poetry]
 packages = [{ include = "mnemosys_core", from = "src" }]
 
 [tool.poetry.dependencies]
