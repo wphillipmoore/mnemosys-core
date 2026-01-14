@@ -19,6 +19,8 @@ unless explicitly documented here as conventions.
   - [Deprecated names](#deprecated-names)
   - [Name rationale](#name-rationale)
   - [Usage in historical documents](#usage-in-historical-documents)
+- [Project-specific overrides](#project-specific-overrides)
+  - [AI co-author identities](#ai-co-author-identities)
 - [In-repo canonical standards](#in-repo-canonical-standards)
 
 ## Canonical standards
@@ -84,6 +86,20 @@ foundation.
 Early design documents (v0.1 snapshots) may reference deprecated names in their
 original context. When updating these documents, add a nomenclature note
 explaining the name evolution while preserving the historical snapshot.
+
+## Project-specific overrides
+
+These entries supply project-specific values required by the canonical
+standards.
+
+### AI co-author identities
+
+Approved AI co-author trailers for this repository:
+
+```
+Co-Authored-By: mnemosys-codex <252598091+mnemosys-codex@users.noreply.github.com>
+Co-Authored-By: mnemosys-claude <252602472+mnemosys-claude@users.noreply.github.com>
+```
 
 ## In-repo canonical standards
 
