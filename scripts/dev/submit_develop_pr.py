@@ -321,12 +321,39 @@ def pyproject_only_version_change(base_reference: str) -> bool:
     current_text = Path("pyproject.toml").read_text()
     base_data = tomllib.loads(base_text)
     current_data = tomllib.loads(current_text)
-    try:
-        current_version = current_data["tool"]["poetry"]["version"]
-    except KeyError as exc:
-        raise SystemExit("Missing tool.poetry.version in current pyproject.toml.") from exc
-    base_data["tool"]["poetry"]["version"] = current_version
+    current_path, current_version = find_version_path(current_data)
+    base_path, _ = find_version_path(base_data)
+    if current_path != base_path:
+        return False
+    set_nested_value(base_data, base_path, current_version)
     return base_data == current_data
+
+
+def find_version_path(toml_data: dict[str, object]) -> tuple[tuple[str, ...], str]:
+    """Return the version key path and value."""
+    project_section = toml_data.get("project")
+    if isinstance(project_section, dict):
+        project_version = project_section.get("version")
+        if isinstance(project_version, str):
+            return ("project", "version"), project_version
+    tool_section = toml_data.get("tool")
+    poetry_section = tool_section.get("poetry") if isinstance(tool_section, dict) else None
+    if isinstance(poetry_section, dict):
+        poetry_version = poetry_section.get("version")
+        if isinstance(poetry_version, str):
+            return ("tool", "poetry", "version"), poetry_version
+    raise SystemExit("Missing version in pyproject.toml (expected project.version or tool.poetry.version).")
+
+
+def set_nested_value(toml_data: dict[str, object], path: tuple[str, ...], value: str) -> None:
+    """Set a nested TOML value by path."""
+    cursor: dict[str, object] = toml_data
+    for key in path[:-1]:
+        next_value = cursor.get(key)
+        if not isinstance(next_value, dict):
+            raise SystemExit("Version path missing from pyproject.toml.")
+        cursor = next_value
+    cursor[path[-1]] = value
 
 
 def determine_documentation_only(changed_files: list[str], base_reference: str) -> bool:

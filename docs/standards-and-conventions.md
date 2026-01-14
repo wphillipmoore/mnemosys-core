@@ -102,3 +102,10 @@ Co-Authored-By: mnemosys-claude <252602472+mnemosys-claude@users.noreply.github.
 ```
 
 ## In-repo canonical standards
+
+### Database conventions
+
+- Prefer fully normalized schemas with first-class tables and typed columns.
+- JSON/JSONB is acceptable only when the data shape is unstable or evolving fast enough
+  that normalization would churn.
+- Treat JSON storage as provisional; revisit and normalize once the schema stabilizes.
