@@ -41,7 +41,7 @@ Rules:
 
 ## Source of truth
 - The canonical version string lives in `pyproject.toml` under
-  `tool.poetry.version`.
+  `project.version`.
 - All other references must derive from this value; do not duplicate the string
   in code.
 - Runtime reads should use package metadata (for example,

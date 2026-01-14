@@ -49,7 +49,11 @@ on:
 
 ## Job Structure
 
-**Two jobs**:
+**Three jobs**:
+- `dependency-audit` (vulnerability scan)
+  - Runs on: `ubuntu-latest`
+  - Python 3.14 only
+  - Audits `requirements.txt` and `requirements-dev.txt` with pip-audit
 - `test-and-validate` (unit coverage gate)
   - Runs on: `ubuntu-latest` (AWS-compatible, deployable to common Linux platforms)
   - Matrix: Python 3.14
@@ -65,9 +69,18 @@ on:
 |---------|--------|----------|
 | 3.14 | **Required** | blocks PR merge |
 
-**Branch protection** requires: `test-and-validate (3.14)` and `integration-tests` status checks
+**Branch protection** requires: `dependency-audit`, `test-and-validate (3.14)`, and `integration-tests` status checks
 
 ## Execution Steps
+
+**dependency-audit**
+1. **Checkout code** (`actions/checkout@v4`)
+2. **Set up Python 3.14** (`actions/setup-python@v5`)
+3. **Install dependencies** (`poetry install --no-interaction`, includes `pip-audit`)
+4. **Run pip-audit**:
+   ```bash
+   poetry run pip-audit -r requirements.txt -r requirements-dev.txt
+   ```
 
 **test-and-validate**
 1. **Checkout code** (`actions/checkout@v4`)
@@ -165,7 +178,6 @@ permissions:
 
 - Weekly scheduled run bypassing cache (verify fresh installs work)
 - Codecov integration for coverage tracking over time
-- Dependency vulnerability scanning (Dependabot, Safety)
 
 ## Philosophy
 

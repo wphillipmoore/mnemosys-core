@@ -37,6 +37,7 @@ poetry-plugin-export = "*"
 pre-commit = "*"
 httpx = "*"
 testcontainers = "*"
+pip-audit = "*"
 
 [tool.ruff]
 line-length = 120
