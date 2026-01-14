@@ -4,7 +4,13 @@ This repository follows the canonical standards in the Standards and
 Conventions repository:
 https://github.com/wphillipmoore/standards-and-conventions
 
-This file records MNEMOSYS-specific terminology and any local deviations.
+This file records MNEMOSYS-specific terminology and any canonical standards
+incubated here before extraction to the Standards and Conventions repository.
+The Standards and Conventions repository remains the canonical source of truth,
+but MNEMOSYS Core is used to develop new standards that are finalized and
+merged upstream once stable. Differences between this repository and the
+Standards and Conventions repository should be treated as in-progress standards
+unless explicitly documented here as conventions.
 
 ## Table of Contents
 - [Canonical standards](#canonical-standards)
@@ -13,7 +19,7 @@ This file records MNEMOSYS-specific terminology and any local deviations.
   - [Deprecated names](#deprecated-names)
   - [Name rationale](#name-rationale)
   - [Usage in historical documents](#usage-in-historical-documents)
-- [Local deviations](#local-deviations)
+- [In-repo canonical standards](#in-repo-canonical-standards)
 
 ## Canonical standards
 
@@ -79,7 +85,14 @@ Early design documents (v0.1 snapshots) may reference deprecated names in their
 original context. When updating these documents, add a nomenclature note
 explaining the name evolution while preserving the historical snapshot.
 
-## Local deviations
+## In-repo canonical standards
 
-None. Add project-specific overrides here if this repository diverges from the
-canonical standards.
+### Dependency management
+
+Dependency management standards are canonical here and will be extracted to the
+Standards and Conventions repository once stable:
+
+- Default dependency specs in `pyproject.toml` use `"*"`.
+- Do not anchor to a major or minor series by default (including pre-1.0 dependencies).
+- Use constrained specs only when necessary, following the anchored dependency documentation rules.
+- Reevaluate constrained dependencies during each upgrade cycle, per the canonical workflow.

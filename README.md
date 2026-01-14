@@ -45,5 +45,5 @@ you plan to run the full local checks.
 
 - Canonical standards and conventions: https://github.com/wphillipmoore/standards-and-conventions
 - Branching and deployment model: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/branching-and-deployment.md
-- Local terminology and overrides: `docs/standards-and-conventions.md`
+- In-repo standards in development and MNEMOSYS terminology: `docs/standards-and-conventions.md`
 - Repository structure ADR: `docs/decisions/0001-repo-structure.md`
