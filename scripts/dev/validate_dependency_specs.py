@@ -28,65 +28,6 @@ def load_pyproject() -> dict[str, object]:
     with PYPROJECT_PATH.open("rb") as handle:
         return tomllib.load(handle)
 
-
-def parse_version(version_text: str) -> tuple[int, int | None, int | None] | None:
-    if not re.fullmatch(r"\d+(?:\.\d+){0,2}", version_text):
-        return None
-    parts = [int(part) for part in version_text.split(".")]
-    major = parts[0]
-    minor = parts[1] if len(parts) > 1 else None
-    patch = parts[2] if len(parts) > 2 else None
-    return major, minor, patch
-
-
-def parse_range_spec(spec_text: str) -> tuple[tuple[int, int | None, int | None], tuple[int, int | None, int | None]] | None:
-    parts = [part.strip() for part in spec_text.split(",") if part.strip()]
-    if len(parts) != 2:
-        return None
-
-    lower_part = next((part for part in parts if part.startswith(">=")), None)
-    upper_part = next((part for part in parts if part.startswith("<")), None)
-    if lower_part is None or upper_part is None:
-        return None
-
-    if lower_part.startswith(">") and not lower_part.startswith(">="):
-        return None
-    if upper_part.startswith("<="):
-        return None
-
-    lower_version = parse_version(lower_part[2:].strip())
-    upper_version = parse_version(upper_part[1:].strip())
-    if lower_version is None or upper_version is None:
-        return None
-
-    return lower_version, upper_version
-
-
-def is_standard_range(spec_text: str) -> bool:
-    parsed = parse_range_spec(spec_text)
-    if parsed is None:
-        return False
-    lower_version, upper_version = parsed
-    lower_major, lower_minor, lower_patch = lower_version
-    upper_major, upper_minor, upper_patch = upper_version
-
-    if lower_major == 0:
-        if upper_major != 0 or lower_minor is None or upper_minor is None:
-            return False
-        if upper_minor != lower_minor + 1:
-            return False
-        return lower_patch in (None, 0) and upper_patch in (None, 0)
-
-    if upper_major != lower_major + 1:
-        return False
-    return (
-        lower_minor in (None, 0)
-        and lower_patch in (None, 0)
-        and upper_minor in (None, 0)
-        and upper_patch in (None, 0)
-    )
-
-
 def collect_dependency_lines(lines: list[str]) -> dict[tuple[str, str], int]:
     current_section: str | None = None
     dependency_lines: dict[tuple[str, str], int] = {}
@@ -173,11 +114,7 @@ def validate_dependency_specs() -> None:
                 errors.append(f"{section_name}:{dependency_name} has no version specifier.")
                 continue
 
-            if "*" in spec_text:
-                errors.append(f"{section_name}:{dependency_name} uses '*' which is forbidden.")
-                continue
-
-            if is_standard_range(spec_text):
+            if spec_text == "*":
                 continue
 
             line_index = dependency_lines.get((section_name, dependency_name))
@@ -190,7 +127,8 @@ def validate_dependency_specs() -> None:
 
             if anchor_comment is None:
                 errors.append(
-                    f"{section_name}:{dependency_name} requires anchor comment '{ANCHOR_PREFIX}' with record reference."
+                    f"{section_name}:{dependency_name} uses a non-default spec and requires anchor comment "
+                    f"'{ANCHOR_PREFIX}' with record reference."
                 )
             elif f"docs/dependencies/{dependency_name}.md" not in anchor_comment:
                 errors.append(
