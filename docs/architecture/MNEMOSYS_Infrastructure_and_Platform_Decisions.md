@@ -20,10 +20,8 @@
 - Alembic is treated as sufficient for schema automation; provider-native migration workflows are not planned.
 - Migration tooling remains provider-neutral even though infrastructure is single-provider.
 - Database access will be mediated through an API layer; direct client access is not a supported model.
-- Temporary public database access is permitted only for controlled bootstrap or diagnostics and must be removed afterward.
-- Bootstrap exception: the development RDS instance may be made public with IP allowlisting to provision and use `mnemosys_sandbox`; local environments must store only sandbox credentials, and sandbox roles must be denied `CONNECT` on `mnemosys_dev`. Bootstrap ends when end-to-end automation updates `mnemosys_dev` and restarts the REST API service, at which point `mnemosys_dev` must be fully locked down.
-- Bootstrap non-production allocation: the development and test databases may share the existing non-production RDS instance during bootstrap, but test must move to a dedicated RDS instance before any external users are granted access.
-- AWS account model: all environments share a single AWS account during bootstrap, with a single console/CLI IAM user (`mnemosys-admin`). This can be split into separate non-prod and prod accounts later if scale or risk demands it.
+- Operational bootstrap exceptions and AWS account model details are documented in
+  https://github.com/wphillipmoore/mnemosys-operations/blob/main/docs/policies/aws-bootstrap-exceptions.md.
 
 ---
 
@@ -41,7 +39,9 @@
 - This selection reduces schema automation coupling without implying a multi-cloud strategy.
 - Past experience with schema tooling (SQLAlchemy + Alembic) shaped the desire to reuse familiar patterns and reduce execution risk.
 - The API-mediated access model is an implicit consequence of the database and security posture rather than a separately debated decision.
-- Security discussions emphasized minimizing blast radius and treating public exposure as a temporary exception.
+- Security discussions emphasized minimizing blast radius. Operational exceptions
+  are documented in mnemosys-operations:
+  https://github.com/wphillipmoore/mnemosys-operations/blob/main/docs/policies/aws-bootstrap-exceptions.md.
 
 Reasoning regarding some decisions (e.g., exact future criteria for abandoning AWS) was acknowledged as implicit rather than exhaustively specified.
 
