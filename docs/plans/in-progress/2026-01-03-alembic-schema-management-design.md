@@ -23,7 +23,6 @@
   - [When a separate database is required](#when-a-separate-database-is-required)
   - [Credentials and access model](#credentials-and-access-model)
   - [Sandbox role isolation (SQL)](#sandbox-role-isolation-sql)
-  - [Bootstrap exit checklist (lockdown)](#bootstrap-exit-checklist-lockdown)
   - [Standard revision workflow](#standard-revision-workflow)
   - [Workflow invariants](#workflow-invariants)
 - [Testing Strategy](#testing-strategy)
@@ -173,11 +172,9 @@ The sandbox database hosts:
 The goal is to avoid polluting the default schema when validating schema changes while keeping the deployed
 development environment aligned with production access constraints.
 
-Test environment notes:
-
-- **Test database** (`mnemosys_test`): API-only access, updated only by release automation; local environments do not store test credentials.
-- During bootstrap, `mnemosys_test` may share the non-production RDS instance with `mnemosys_dev` and `mnemosys_sandbox`.
-- Before any external users access test, `mnemosys_test` must move to a dedicated RDS instance with separate network access controls.
+Operational environment access constraints (including test database rules and
+bootstrap exceptions) are documented in mnemosys-operations:
+https://github.com/wphillipmoore/mnemosys-operations/blob/main/docs/policies/aws-db-bootstrap-constraints.md.
 
 ### Recommended database allocation
 
@@ -204,7 +201,8 @@ Default position: use the shared development sandbox database with per-branch sc
 - Admin credentials are provided via `MNEMOSYS_DB_ADMIN_*`; if unset, the tooling falls back to `MNEMOSYS_DB_*`.
 - The REST API uses a **non-admin** database user via `MNEMOSYS_DB_*`; application testing must never use admin credentials.
 - The development deployment database remains API-only; direct admin access is not assumed.
-- Bootstrap exception: the development RDS instance may be publicly accessible with IP allowlisting, but local environments must store only sandbox credentials and the sandbox role must be denied `CONNECT` on `mnemosys_dev`. Bootstrap ends when end-to-end automation updates `mnemosys_dev` and restarts the REST API service, at which point `mnemosys_dev` must be fully locked down.
+- Bootstrap constraints and lockdown requirements are documented in
+  https://github.com/wphillipmoore/mnemosys-operations/blob/main/docs/policies/aws-db-bootstrap-constraints.md.
 
 ### Sandbox role isolation (SQL)
 
@@ -236,14 +234,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE mnemosys_sandbox_admin IN SCHEMA mnemosys
 ALTER DEFAULT PRIVILEGES FOR ROLE mnemosys_sandbox_admin IN SCHEMA mnemosys
     GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO mnemosys_sandbox_user;
 ```
-
-### Bootstrap exit checklist (lockdown)
-
-- Disable public access on the development RDS instance.
-- Remove any temporary inbound rules (TCP 5432) from security groups.
-- Rotate admin credentials and store them outside local `.env`.
-- Ensure local environments only reference sandbox credentials.
-- Verify `mnemosys_dev` accepts connections only from the REST API runtime role.
 
 ### Standard revision workflow
 
