@@ -9,6 +9,7 @@ import subprocess
 from pathlib import Path
 
 COMMANDS: tuple[tuple[str, ...], ...] = (
+    ("python3", "scripts/dev/validate_venv.py"),
     ("python3", "scripts/dev/validate_dependency_specs.py"),
     ("python3", "scripts/dev/validate_version.py"),
     ("poetry", "check", "--lock"),

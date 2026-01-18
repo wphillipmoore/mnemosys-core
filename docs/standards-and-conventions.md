@@ -92,6 +92,15 @@ explaining the name evolution while preserving the historical snapshot.
 These entries supply project-specific values required by the canonical
 standards.
 
+### Local development preflight
+
+Before starting any new development effort, run the unit tests and confirm they
+pass. This guards against inheriting broken local artifacts from prior work.
+
+Use one of:
+- `pytest tests/`
+- `python scripts/dev/validate_local.py`
+
 ### AI co-author identities
 
 Approved AI co-author trailers for this repository:

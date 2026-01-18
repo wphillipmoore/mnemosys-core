@@ -27,6 +27,13 @@ pip install -e .
 
 ## Development
 
+Before starting any new development effort, run the unit tests and confirm they
+pass. This avoids inheriting broken local artifacts from prior work.
+
+```bash
+pytest tests/
+```
+
 ```bash
 # Full local validation (tests, coverage, lint, type check)
 python scripts/dev/validate_local.py
