@@ -51,7 +51,7 @@ Start with these sources of truth:
 
 ### Official project name
 
-**MNEMOSYS** (pronounced "NEE-moss")
+**MNEMOSYS** (pronounced /ˈniːməˌsɪs/)
 
 This is the canonical name for the project and must be used consistently across
 all:
