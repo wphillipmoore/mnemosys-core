@@ -1,5 +1,7 @@
 # MNEMOSYS Core
 
+**MNEMOSYS** (pronounced "NEE-moss")
+
 Core backend for the MNEMOSYS system.
 
 ## Table of Contents
