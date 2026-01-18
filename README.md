@@ -25,6 +25,9 @@ source .venv/bin/activate
 pip install -e .
 ```
 
+Use the virtual environment for all Python invocations. On macOS, `python`
+may not exist outside the venv.
+
 ## Development
 
 Before starting any new development effort, run the unit tests and confirm they

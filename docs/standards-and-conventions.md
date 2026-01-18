@@ -97,6 +97,9 @@ standards.
 Before starting any new development effort, run the unit tests and confirm they
 pass. This guards against inheriting broken local artifacts from prior work.
 
+All Python commands must run inside the project venv (use `poetry run ...` or
+the `.venv/bin/python` interpreter). Do not rely on a system `python` binary.
+
 Use one of:
 - `pytest tests/`
 - `python scripts/dev/validate_local.py`
