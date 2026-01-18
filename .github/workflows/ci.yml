@@ -29,7 +29,7 @@ jobs:
           python-version: "3.14"
 
       - name: Cache Poetry installation
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.local/share/pypoetry
@@ -45,7 +45,7 @@ jobs:
           poetry --version
 
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: poetry-${{ runner.os }}-py3.14-${{ hashFiles('poetry.lock') }}
@@ -82,7 +82,7 @@ jobs:
         run: python3 scripts/dev/validate_version.py
 
       - name: Cache Poetry installation
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.local/share/pypoetry
@@ -103,7 +103,7 @@ jobs:
         run: poetry check --lock
 
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: poetry-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
@@ -149,7 +149,7 @@ jobs:
           python-version: "3.14"
 
       - name: Cache Poetry installation
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.local/share/pypoetry
@@ -165,7 +165,7 @@ jobs:
           poetry --version
 
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: poetry-${{ runner.os }}-py3.14-${{ hashFiles('poetry.lock') }}
