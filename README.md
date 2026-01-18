@@ -1,6 +1,6 @@
 # MNEMOSYS Core
 
-**MNEMOSYS** (pronounced /ˈniːməˌsɪs/)
+**MNEMOSYS** (pronounced /ˈniːməˌsɪs/, or "NEE-muh-sis")
 
 Core backend for the MNEMOSYS system.
 
