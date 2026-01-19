@@ -104,8 +104,12 @@ rm /tmp/pr-body.txt
 
 ### Required Reading Before Common Operations
 
+If any required canonical standard cannot be retrieved, treat it as a fatal
+exception: stop and notify the user. Do not proceed with assumptions or
+alternate sources.
+
 **Git Operations (commit, push, branch, merge)**
-- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/branching-and-deployment.md
+- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/branching-and-deployment.md
 - **Key Rules**:
   - NEVER push directly to develop/main/release (eternal branches)
   - ALL changes to eternal branches MUST go through pull requests
@@ -113,8 +117,8 @@ rm /tmp/pr-body.txt
   - NEVER reuse old branch names
 
 **Pull Request Operations (creating, submitting, merging)**
-- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/pull-request-workflow.md#pre-submission-requirements
-- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/pull-request-workflow.md#pull-request-finalization
+- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/pull-request-workflow.md#pre-submission-requirements
+- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/pull-request-workflow.md#pull-request-finalization
 - **Key Rules**:
   - 100% test success required before PR creation
   - 100% line AND branch coverage required
@@ -122,7 +126,7 @@ rm /tmp/pr-body.txt
   - Follow three-step finalization process after merge
 
 **Code Quality and Standards**
-- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/development/python/overview.md
+- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/overview.md
 - **Key Rules**:
   - PEP-compliant code only
   - Complete type hints for all public functions
@@ -130,7 +134,7 @@ rm /tmp/pr-body.txt
   - No abbreviations in variable names (minimum 3 characters)
 
 **Database Changes (models, migrations, schema)**
-- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/development/database/conventions.md
+- **MUST READ**: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/database/conventions.md
 - **Key Rules**:
   - Table names are singular, not plural
   - Follow model file organization rules
@@ -154,7 +158,7 @@ The 30 seconds spent reading documentation prevents hours of cleanup work.
 **Docs-Only Exception**: If the diff includes **only** documentation files (anything under `docs/` plus top-level
 `README.md` or `CHANGELOG.md`), skip both confirmation checkpoints and proceed directly through PR creation
 and finalization. Local validation is optional per the docs-only rule in
-https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/pull-request-workflow.md.
+https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/pull-request-workflow.md.
 If any non-documentation file changes, the checkpoints remain mandatory.
 
 **Finalize Override**: If the user explicitly says **"Finalize PR"**, treat that as approval to submit and

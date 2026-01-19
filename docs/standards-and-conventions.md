@@ -2,7 +2,7 @@
 
 This repository follows the canonical standards in the Standards and
 Conventions repository:
-https://github.com/wphillipmoore/standards-and-conventions
+https://github.com/wphillipmoore/standards-and-conventions/tree/develop
 
 This file records MNEMOSYS-specific terminology and any canonical standards
 incubated here before extraction to the Standards and Conventions repository.
@@ -14,6 +14,7 @@ unless explicitly documented here as conventions.
 
 ## Table of Contents
 - [Canonical standards](#canonical-standards)
+  - [Access requirements](#access-requirements)
 - [Project terminology](#project-terminology)
   - [Official project name](#official-project-name)
   - [Deprecated names](#deprecated-names)
@@ -27,25 +28,35 @@ unless explicitly documented here as conventions.
 
 Start with these sources of truth:
 
-- Code management overview: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/overview.md
-- Pull request workflow: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/pull-request-workflow.md
-- Commit messages and authorship: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/commit-messages-and-authorship.md
-- Branching and deployment: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/branching-and-deployment.md
-- Release versioning: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/release-versioning.md
-- Hotfix policy: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/code-management/hotfix-policy.md
-- Development overview: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/development/overview.md
-- Environment and tooling: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/development/environment-and-tooling.md
-- Python standards overview: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/development/python/overview.md
-- Python naming conventions: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/development/python/naming-conventions.md
-- Python import-time side effects: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/development/python/import-time-side-effects.md
-- Python type hints: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/development/python/type-hints.md
-- Python testing and coverage: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/development/python/testing-and-coverage.md
-- Database conventions: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/development/database/conventions.md
-- Repository standards overview: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/repository/overview.md
-- Markdown standards: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/foundation/markdown-standards.md
-- Architecture standards: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/foundation/architecture-standards.md
-- AI code review guidelines: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/foundation/ai-code-review-guidelines.md
-- AI-assisted development loop: https://github.com/wphillipmoore/standards-and-conventions/blob/main/docs/foundation/ai-assisted-development-loop.md
+### Access requirements
+
+When reading canonical standards, use the raw GitHub content endpoint for
+deterministic access:
+`https://raw.githubusercontent.com/wphillipmoore/standards-and-conventions/develop/<path>`
+
+If the canonical docs cannot be retrieved (network failure, access failure, or
+missing file), treat it as a fatal exception: stop and notify the user. Do not
+proceed with assumptions or alternate sources.
+
+- Code management overview: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/overview.md
+- Pull request workflow: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/pull-request-workflow.md
+- Commit messages and authorship: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/commit-messages-and-authorship.md
+- Branching and deployment: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/branching-and-deployment.md
+- Release versioning: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/release-versioning.md
+- Hotfix policy: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/hotfix-policy.md
+- Development overview: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/overview.md
+- Environment and tooling: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/environment-and-tooling.md
+- Python standards overview: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/overview.md
+- Python naming conventions: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/naming-conventions.md
+- Python import-time side effects: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/import-time-side-effects.md
+- Python type hints: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/type-hints.md
+- Python testing and coverage: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/testing-and-coverage.md
+- Database conventions: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/database/conventions.md
+- Repository standards overview: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/repository/overview.md
+- Markdown standards: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/foundation/markdown-standards.md
+- Architecture standards: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/foundation/architecture-standards.md
+- AI code review guidelines: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/foundation/ai-code-review-guidelines.md
+- AI-assisted development loop: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/foundation/ai-assisted-development-loop.md
 
 ## Project terminology
 
