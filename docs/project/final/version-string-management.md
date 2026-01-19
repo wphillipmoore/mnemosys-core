@@ -23,5 +23,3 @@ and notify the user.
   - `python scripts/dev/submit_develop_pr.py`
   - `python scripts/dev/submit_release_prs.py`
   - `python scripts/dev/submit_main_pr.py`
-- For `MAJOR` and `MINOR` releases, review Dependabot alerts and incorporate
-  remediation as part of the dependency update process.

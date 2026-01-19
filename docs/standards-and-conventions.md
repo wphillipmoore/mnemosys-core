@@ -22,8 +22,6 @@ unless explicitly documented here as conventions.
   - [Usage in historical documents](#usage-in-historical-documents)
 - [Project-specific overrides](#project-specific-overrides)
   - [AI co-author identities](#ai-co-author-identities)
-- [In-repo canonical standards](#in-repo-canonical-standards)
-  - [Dependency update workflow](#dependency-update-workflow)
 
 ## Canonical standards
 
@@ -124,9 +122,3 @@ Approved AI co-author trailers for this repository:
 Co-Authored-By: mnemosys-codex <252598091+mnemosys-codex@users.noreply.github.com>
 Co-Authored-By: mnemosys-claude <252602472+mnemosys-claude@users.noreply.github.com>
 ```
-
-## In-repo canonical standards
-
-### Dependency update workflow
-
-See `docs/project/final/dependency-update-workflow.md`.
