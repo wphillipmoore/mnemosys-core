@@ -68,7 +68,7 @@ def validate_venv() -> None:
     if not venv_path.is_dir():
         raise SystemExit("Missing .venv. Rebuild with: python3 -m venv .venv")
 
-    python_path = venv_path / "bin" / "python"
+    python_path = venv_path / "bin" / "python3"
     if not python_path.exists():
         raise SystemExit(f"Missing venv interpreter: {python_path}")
 

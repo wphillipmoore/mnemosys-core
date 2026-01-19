@@ -49,9 +49,9 @@ This plan extends `docs/plans/in-progress/2026-01-03-alembic-schema-management-d
 ## End-to-End Pipeline Validation
 
 1. Create a reversible dummy model change and generate a revision via
-   `python scripts/dev/alembic_revision.py <short_snake_case>`.
+   `python3 scripts/dev/alembic_revision.py <short_snake_case>`.
 2. Validate locally in the sandbox only:
-   `python scripts/dev/validate_migrations.py`.
+   `python3 scripts/dev/validate_migrations.py`.
 3. Open PR to `develop` and merge.
    - GitHub Actions deploys to development.
    - Migration gate runs via pipeline (no manual migration).

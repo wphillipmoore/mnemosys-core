@@ -22,18 +22,21 @@ are created explicitly.
 Requires Python 3.14+.
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
-pip install -e .
+python3 -m pip install -e .
 ```
 
-Use the virtual environment for all Python invocations. On macOS, `python`
-may not exist outside the venv.
+Use the virtual environment for all Python invocations and always call
+`python3` (never `python`). On macOS, `python` may not exist outside the venv.
 
 ## Development
 
 Before starting any new development effort, run the unit tests and confirm they
 pass. This avoids inheriting broken local artifacts from prior work.
+
+All commands below assume the `.venv` is active. Always use `python3` for
+Python invocations.
 
 ```bash
 pytest tests/
@@ -41,13 +44,13 @@ pytest tests/
 
 ```bash
 # Full local validation (tests, coverage, lint, type check)
-python scripts/dev/validate_local.py
+python3 scripts/dev/validate_local.py
 
 # Run tests only
 pytest tests/
 
 # Bootstrap a local database (if needed)
-python scripts/dev/bootstrap_db.py
+python3 scripts/dev/bootstrap_db.py
 ```
 
 Note: the validation script uses Poetry under the hood; install Poetry if

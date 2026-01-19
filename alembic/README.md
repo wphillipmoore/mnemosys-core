@@ -10,12 +10,15 @@ This directory contains Alembic database migration scripts for the mnemosys-core
 - [Migration History](#migration-history)
 - [Environment Configuration](#environment-configuration)
 
+All commands below assume the `.venv` is active and use `python3` for Python
+invocations.
+
 ## Generating Migrations
 
 Create a new migration after modifying models (message must be short `snake_case`, <= 60 chars):
 
 ```bash
-python scripts/dev/alembic_revision.py add_column_to_practice
+python3 scripts/dev/alembic_revision.py add_column_to_practice
 ```
 
 ## Applying Migrations
@@ -45,13 +48,13 @@ alembic downgrade <revision_id>
 Validate upgrade/downgrade in a temporary schema (PostgreSQL only):
 
 ```bash
-python scripts/dev/validate_migrations.py
+python3 scripts/dev/validate_migrations.py
 ```
 
 Optional seed script:
 
 ```bash
-python scripts/dev/validate_migrations.py --seed-script <path-to-seed-script>
+python3 scripts/dev/validate_migrations.py --seed-script <path-to-seed-script>
 ```
 
 ## Migration History

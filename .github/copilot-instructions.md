@@ -56,11 +56,13 @@ No implicit state or side effects at import time. The database engine, models, a
 ## Useful Commands
 
 ```bash
+# All commands assume the .venv is active. Always use python3 for Python invocations.
+
 # Run tests
 pytest tests/
 
 # Database bootstrap (local development only)
-python scripts/dev/bootstrap_db.py
+python3 scripts/dev/bootstrap_db.py
 
 # Type checking (setup if mypy is configured)
 # Check .github/workflows/ci.yml for current CI commands

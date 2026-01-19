@@ -61,7 +61,7 @@ jobs:
         env:
           AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
         run: |
-          python scripts/deploy/render_task_definition.py \
+          python3 scripts/deploy/render_task_definition.py \
             --template "${TASK_DEFINITION_TEMPLATE}" \
             --output "task-def.rendered.json" \
             --environment "${ENVIRONMENT}" \

@@ -9,7 +9,7 @@
 - If no issue exists, state why and open one before merge.
 
 ## Testing
-- `python scripts/dev/validate_local.py`
+- `python3 scripts/dev/validate_local.py`
 
 ## Notes
 - 

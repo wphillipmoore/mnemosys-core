@@ -240,16 +240,16 @@ ALTER DEFAULT PRIVILEGES FOR ROLE mnemosys_sandbox_admin IN SCHEMA mnemosys
 1. Update SQLAlchemy models.
 2. Generate a revision:
    ```bash
-   python scripts/dev/alembic_revision.py short_snake_case_message
+   python3 scripts/dev/alembic_revision.py short_snake_case_message
    ```
 3. Review the revision and edit by hand if needed.
 4. Run automated migration validation (temp schema upgrade/downgrade):
    ```bash
-   python scripts/dev/validate_migrations.py
+   python3 scripts/dev/validate_migrations.py
    ```
    Optional seed script:
    ```bash
-   python scripts/dev/validate_migrations.py --seed-script <path-to-seed-script>
+   python3 scripts/dev/validate_migrations.py --seed-script <path-to-seed-script>
    ```
 5. Commit the revision file and model changes.
 
@@ -378,7 +378,7 @@ Phase 5: Operational integration (pending)
 - Add observability hooks (logs/metrics) for migration steps.
 
 Phase 6: End-to-end validation (pending)
-- Run full local validation (`python scripts/dev/validate_local.py`) with migration checks included.
+- Run full local validation (`python3 scripts/dev/validate_local.py`) with migration checks included.
 - Dry-run the deployment sequence in a non-production environment.
 
 ## Open Questions
