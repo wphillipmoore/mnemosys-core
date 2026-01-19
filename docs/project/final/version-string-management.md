@@ -91,10 +91,12 @@ The PR author (human or AI) owns the bump; CI must reject missing increments.
    `release`.
 2. If `release` has diverged, merge `release` into the promotion branch and
    resolve conflicts in the promotion branch before PR merge.
-3. Immediately open a separate PR to `develop` that increments `PATCH` by 1 and
+3. For `MAJOR` or `MINOR` releases, review Dependabot alerts and address them
+   as part of the dependency update process before the release PR is merged.
+4. Immediately open a separate PR to `develop` that increments `PATCH` by 1 and
    resets `BUILD` to `0`.
-4. Merge the promotion PR after validation using a merge commit (no squash).
-5. Merge the `PATCH` bump PR to `develop` before the next feature merge.
+5. Merge the promotion PR after validation using a merge commit (no squash).
+6. Merge the `PATCH` bump PR to `develop` before the next feature merge.
 
 Promotion branch naming:
 - `promotion/release-<version>-<yyyymmddhhmmss>`
