@@ -92,7 +92,9 @@ The PR author (human or AI) owns the bump; CI must reject missing increments.
 2. If `release` has diverged, merge `release` into the promotion branch and
    resolve conflicts in the promotion branch before PR merge.
 3. For `MAJOR` or `MINOR` releases, review Dependabot alerts and address them
-   as part of the dependency update process before the release PR is merged.
+   as part of the dependency update process (see
+   `docs/project/final/dependency-update-workflow.md`) before the release PR is
+   merged.
 4. Immediately open a separate PR to `develop` that increments `PATCH` by 1 and
    resets `BUILD` to `0`.
 5. Merge the promotion PR after validation using a merge commit (no squash).
