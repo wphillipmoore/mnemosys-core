@@ -23,6 +23,7 @@ unless explicitly documented here as conventions.
 - [Project-specific overrides](#project-specific-overrides)
   - [AI co-author identities](#ai-co-author-identities)
 - [In-repo canonical standards](#in-repo-canonical-standards)
+  - [Dependency update workflow](#dependency-update-workflow)
 
 ## Canonical standards
 
@@ -132,3 +133,7 @@ Co-Authored-By: mnemosys-claude <252602472+mnemosys-claude@users.noreply.github.
 - JSON/JSONB is acceptable only when the data shape is unstable or evolving fast enough
   that normalization would churn.
 - Treat JSON storage as provisional; revisit and normalize once the schema stabilizes.
+
+### Dependency update workflow
+
+See `docs/project/final/dependency-update-workflow.md`.
