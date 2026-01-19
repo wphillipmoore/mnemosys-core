@@ -15,10 +15,8 @@ it using this search path (in order):
 2. Web URL: https://github.com/wphillipmoore/standards-and-conventions
 
 Replace `<standards-repo-path>` with the resolved local path when available.
-- summarize: <standards-repo-path>/skills/summarize/SKILL.md
-- pr-workflow: <standards-repo-path>/skills/pr-workflow/SKILL.md
-- dependency-update: <standards-repo-path>/skills/dependency-update/SKILL.md
-- deprecation-triage: <standards-repo-path>/skills/deprecation-triage/SKILL.md
+- Load all skills from: <standards-repo-path>/skills/**/SKILL.md
+- Treat every skill found under that directory as available and active.
 
 ## Architecture Overview
 
