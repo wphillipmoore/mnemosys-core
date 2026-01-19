@@ -20,6 +20,6 @@ and notify the user.
 - The canonical version string for MNEMOSYS Core lives in `pyproject.toml` under
   `project.version`.
 - Use the local helper scripts when available:
-  - `python scripts/dev/submit_develop_pr.py`
-  - `python scripts/dev/submit_release_prs.py`
-  - `python scripts/dev/submit_main_pr.py`
+  - `python3 scripts/dev/submit_develop_pr.py`
+  - `python3 scripts/dev/submit_release_prs.py`
+  - `python3 scripts/dev/submit_main_pr.py`

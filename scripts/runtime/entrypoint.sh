@@ -7,7 +7,7 @@ if [[ -z "${MNEMOSYS_ENV:-}" ]]; then
 fi
 
 echo "Running Alembic migration gate..."
-python /app/alembic/runner.py upgrade
+python3 /app/alembic/runner.py upgrade
 
 uvicorn_args=(
   "mnemosys_core.api.runtime:create_application"

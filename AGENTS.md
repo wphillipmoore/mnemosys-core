@@ -186,7 +186,7 @@ Before pushing the branch or submitting a PR, you MUST run and pass the full loc
 
 ```bash
 # Run local validation (mirrors CI hard gates)
-python scripts/dev/validate_local.py
+python3 scripts/dev/validate_local.py
 ```
 
 **All checks must pass with:**
@@ -309,11 +309,11 @@ git clone <repository-url>
 cd mnemosys-core
 
 # Create and activate virtual environment (recommended)
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install dependencies
-pip install -e .
+python3 -m pip install -e .
 ```
 
 ### Database Bootstrapping
@@ -321,7 +321,7 @@ pip install -e .
 For local development:
 
 ```bash
-python scripts/dev/bootstrap_db.py
+python3 scripts/dev/bootstrap_db.py
 ```
 
 ### Running Tests
