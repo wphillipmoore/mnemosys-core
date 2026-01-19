@@ -46,6 +46,7 @@ proceed with assumptions or alternate sources.
 - Development overview: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/overview.md
 - Environment and tooling: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/environment-and-tooling.md
 - Python standards overview: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/overview.md
+- Dependency update workflow: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/dependencies/dependency-update-workflow.md
 - Python naming conventions: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/naming-conventions.md
 - Python import-time side effects: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/import-time-side-effects.md
 - Python type hints: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/type-hints.md
