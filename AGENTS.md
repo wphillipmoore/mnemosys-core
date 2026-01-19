@@ -8,6 +8,18 @@ briefly and continue.
 
 Core backend for the MNEMOSYS system - a database-first Python backend with explicit structural invariants designed for long-term maintainability.
 
+## Shared skills
+Shared skills are defined in the `standards-and-conventions` repository. Find
+it using this search path (in order):
+1. `../standards-and-conventions` (when working with locally checked out repos)
+2. Web URL: https://github.com/wphillipmoore/standards-and-conventions
+
+Replace `<standards-repo-path>` with the resolved local path when available.
+- summarize: <standards-repo-path>/skills/summarize/SKILL.md
+- pr-workflow: <standards-repo-path>/skills/pr-workflow/SKILL.md
+- dependency-update: <standards-repo-path>/skills/dependency-update/SKILL.md
+- deprecation-triage: <standards-repo-path>/skills/deprecation-triage/SKILL.md
+
 ## Architecture Overview
 
 This project follows a **database-first architecture** with explicit structural invariants. The guiding principle is long-term survivability without original authorship - boring, explicit structure is preferred over cleverness.
