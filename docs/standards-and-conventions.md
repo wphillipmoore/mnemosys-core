@@ -20,6 +20,7 @@ unless explicitly documented here as conventions.
   - [Deprecated names](#deprecated-names)
   - [Name rationale](#name-rationale)
   - [Usage in historical documents](#usage-in-historical-documents)
+  - [CI gates](#ci-gates)
 - [Project-specific overrides](#project-specific-overrides)
   - [AI co-author identities](#ai-co-author-identities)
 
@@ -97,6 +98,31 @@ foundation.
 Early design documents (v0.1 snapshots) may reference deprecated names in their
 original context. When updating these documents, add a nomenclature note
 explaining the name evolution while preserving the historical snapshot.
+
+### CI gates
+
+Every CI check is classified as a hard gate or soft gate.
+
+Hard gate definition:
+- Merge-blocking. A required status check must be configured on the target
+  branch. Any failure blocks merge until a new commit passes.
+
+Soft gate definition:
+- Warning-only. The check can fail without blocking merge, but failures must be
+  surfaced with rationale and follow-up tracking when applicable.
+
+Hard gates (all are required status checks):
+- `test-and-validate (3.14)`
+- `integration-tests`
+- `dependency-audit`
+
+Soft gates:
+- None (default to hard gate until documented).
+
+Branch applicability:
+- develop: all hard gates required
+- release: all hard gates required
+- main: all hard gates required
 
 ## Project-specific overrides
 
