@@ -20,6 +20,7 @@ unless explicitly documented here as conventions.
   - [Deprecated names](#deprecated-names)
   - [Name rationale](#name-rationale)
   - [Usage in historical documents](#usage-in-historical-documents)
+  - [CI hard gate](#ci-hard-gate)
 - [Project-specific overrides](#project-specific-overrides)
   - [AI co-author identities](#ai-co-author-identities)
 
@@ -97,6 +98,14 @@ foundation.
 Early design documents (v0.1 snapshots) may reference deprecated names in their
 original context. When updating these documents, add a nomenclature note
 explaining the name evolution while preserving the historical snapshot.
+
+### CI hard gate
+
+A **CI hard gate** is a merge-blocking requirement enforced by branch rulesets
+or branch protection required status checks. A pull request must have all
+required checks passing for the target branch; any failed required check must
+block merge until a new commit passes. CI steps that are not listed as required
+status checks are informational only and do not constitute a hard gate.
 
 ## Project-specific overrides
 
