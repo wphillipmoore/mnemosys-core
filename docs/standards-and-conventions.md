@@ -143,6 +143,11 @@ use `python3` for all Python invocations.
 Use one of:
 - `pytest tests/`
 - `python3 scripts/dev/validate_local.py`
+- Docs-only changes: `python3 scripts/dev/validate_docs.py`
+
+Docs-only validation requires `markdownlint` `0.41.0` on the PATH. If it is not
+available, `npx` must be installed so the validation script can run the pinned
+version.
 
 ### AI co-author identities
 
