@@ -22,6 +22,8 @@ unless explicitly documented here as conventions.
   - [Usage in historical documents](#usage-in-historical-documents)
   - [CI gates](#ci-gates)
 - [Project-specific overrides](#project-specific-overrides)
+  - [Repository profile](#repository-profile)
+  - [Local development preflight](#local-development-preflight)
   - [AI co-author identities](#ai-co-author-identities)
 
 ## Canonical standards
@@ -120,6 +122,14 @@ Branch applicability:
 
 These entries supply project-specific values required by the canonical
 standards.
+
+### Repository profile
+
+- repository_type: application
+- versioning_scheme: application
+- branching_model: application-promotion
+- release_model: environment-promotion
+- supported_release_lines: single
 
 ### Local development preflight
 
