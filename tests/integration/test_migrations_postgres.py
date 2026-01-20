@@ -7,9 +7,11 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+import psycopg2
 import pytest
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.wait_strategies import LogMessageWaitStrategy
@@ -34,7 +36,10 @@ class PostgresTestContainer:
 
     def host(self) -> str:
         """Return the host for connecting to the container."""
-        return self.container.get_container_host_ip()
+        host = self.container.get_container_host_ip()
+        if host in {"localhost", "::1"}:
+            return "127.0.0.1"
+        return host
 
     def port(self) -> str:
         """Return the exposed port for connecting to the container."""
@@ -44,7 +49,7 @@ class PostgresTestContainer:
 @pytest.fixture(scope="session")
 def postgres_container() -> Iterator[PostgresTestContainer]:
     """Start a Postgres container for migration validation."""
-    container = (
+    docker_container = (
         DockerContainer(POSTGRES_IMAGE)
         .with_exposed_ports(5432)
         .with_env("POSTGRES_USER", POSTGRES_USERNAME)
@@ -52,16 +57,46 @@ def postgres_container() -> Iterator[PostgresTestContainer]:
         .with_env("POSTGRES_DB", POSTGRES_DBNAME)
         .waiting_for(LogMessageWaitStrategy("database system is ready to accept connections"))
     )
-    container.start()
+    docker_container.start()
+    postgres_container = PostgresTestContainer(
+        container=docker_container,
+        username=POSTGRES_USERNAME,
+        password=POSTGRES_PASSWORD,
+        dbname=POSTGRES_DBNAME,
+    )
     try:
-        yield PostgresTestContainer(
-            container=container,
-            username=POSTGRES_USERNAME,
-            password=POSTGRES_PASSWORD,
-            dbname=POSTGRES_DBNAME,
-        )
+        wait_for_postgres(postgres_container)
+        yield postgres_container
     finally:
-        container.stop()
+        docker_container.stop()
+
+
+def wait_for_postgres(
+    container: PostgresTestContainer,
+    timeout_seconds: float = 30.0,
+    interval_seconds: float = 0.5,
+) -> None:
+    """Wait for the Postgres container to accept connections."""
+    deadline = time.monotonic() + timeout_seconds
+    last_error: Exception | None = None
+    while time.monotonic() < deadline:
+        try:
+            connection = psycopg2.connect(
+                dbname=container.dbname,
+                user=container.username,
+                password=container.password,
+                host=container.host(),
+                port=container.port(),
+            )
+            connection.close()
+            return
+        except psycopg2.OperationalError as error:
+            last_error = error
+            time.sleep(interval_seconds)
+    raise RuntimeError(
+        "Postgres container did not become ready before timeout. "
+        f"Last error: {last_error}"
+    )
 
 
 def build_migration_environment(container: PostgresTestContainer) -> dict[str, str]:

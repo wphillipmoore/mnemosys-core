@@ -219,9 +219,12 @@ def merge_target_branch(branch_name: str, target_reference: str) -> None:
     )
 
 
-def run_validation() -> None:
+def run_validation(base_ref: str) -> None:
     """Run the canonical local validation."""
-    result = run_command((sys.executable, "scripts/dev/validate_local.py"), check=False)
+    result = run_command(
+        (sys.executable, "scripts/dev/validate_local.py", "--base-ref", base_ref),
+        check=False,
+    )
     if result.returncode != 0:
         raise SystemExit(result.returncode)
 
@@ -276,7 +279,7 @@ def main(argument_list: Sequence[str] | None = None) -> int:
     run_command(("git", "checkout", "-b", promotion_branch_name))
     if not arguments.no_target_merge:
         merge_target_branch(promotion_branch_name, f"{arguments.remote}/{arguments.main_branch}")
-    run_validation()
+    run_validation(arguments.main_branch)
     run_command(("git", "push", "--set-upstream", arguments.remote, promotion_branch_name))
     create_pull_request(arguments, promotion_branch_name, arguments.main_branch, version_label)
     run_command(("git", "checkout", arguments.release_branch))

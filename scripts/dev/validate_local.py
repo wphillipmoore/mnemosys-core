@@ -5,27 +5,20 @@ Local validation helper mirroring CI hard gates.
 
 from __future__ import annotations
 
+import argparse
 import subprocess
 from pathlib import Path
 
-COMMANDS: tuple[tuple[str, ...], ...] = (
-    ("python3", "scripts/dev/validate_venv.py"),
-    ("python3", "scripts/dev/validate_dependency_specs.py"),
-    ("python3", "scripts/dev/validate_version.py"),
-    ("poetry", "check", "--lock"),
-    ("poetry", "sync", "--dry-run"),
-    ("poetry", "run", "pip-audit", "-r", "requirements.txt", "-r", "requirements-dev.txt"),
-    ("poetry", "run", "ruff", "check"),
-    ("poetry", "run", "mypy", "src/"),
-    (
-        "poetry",
-        "run",
-        "pytest",
-        "--cov=mnemosys_core",
-        "--cov-report=term-missing",
-        "--cov-branch",
-    ),
-)
+
+def parse_arguments() -> argparse.Namespace:
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(description="Run local validation matching CI hard gates.")
+    parser.add_argument(
+        "--base-ref",
+        default=None,
+        help="Base branch for version validation (defaults to origin/HEAD).",
+    )
+    return parser.parse_args()
 
 
 def ensure_project_root() -> None:
@@ -34,15 +27,65 @@ def ensure_project_root() -> None:
         raise SystemExit("Run from the repository root (pyproject.toml missing).")
 
 
+def read_command_output(command: tuple[str, ...]) -> str:
+    """Run a command and return its stdout."""
+    result = subprocess.run(command, check=True, text=True, capture_output=True)
+    return result.stdout.strip()
+
+
+def resolve_default_base_ref() -> str | None:
+    """Resolve the default base ref from origin/HEAD."""
+    try:
+        reference = read_command_output(("git", "symbolic-ref", "--quiet", "refs/remotes/origin/HEAD"))
+    except subprocess.CalledProcessError:
+        return None
+    return reference.rsplit("/", maxsplit=1)[-1] if reference else None
+
+
+def build_commands(base_ref: str) -> tuple[tuple[str, ...], ...]:
+    """Build validation commands matching CI hard gates."""
+    return (
+        ("python3", "scripts/dev/validate_venv.py"),
+        ("python3", "scripts/dev/validate_dependency_specs.py"),
+        ("python3", "scripts/dev/validate_version.py", "--base-ref", base_ref),
+        ("poetry", "check", "--lock"),
+        ("poetry", "sync", "--dry-run"),
+        ("poetry", "run", "pip-audit", "-r", "requirements.txt", "-r", "requirements-dev.txt"),
+        ("poetry", "run", "ruff", "check"),
+        ("poetry", "run", "mypy", "src/"),
+        (
+            "poetry",
+            "run",
+            "pytest",
+            "-m",
+            "not integration",
+            "--cov=mnemosys_core",
+            "--cov-report=term-missing",
+            "--cov-branch",
+            "--cov-report=xml",
+            "--cov-fail-under=100",
+        ),
+        ("poetry", "run", "pytest", "-m", "integration"),
+    )
+
+
 def run_command(command: tuple[str, ...]) -> int:
     """Run a command and return its exit code."""
     return subprocess.run(command).returncode
 
 
 def main() -> int:
+    arguments = parse_arguments()
     ensure_project_root()
 
-    for command in COMMANDS:
+    base_ref = arguments.base_ref or resolve_default_base_ref()
+    if not base_ref:
+        raise SystemExit(
+            "Base ref required for version validation. "
+            "Pass --base-ref or ensure refs/remotes/origin/HEAD exists."
+        )
+
+    for command in build_commands(base_ref):
         print(f"Running: {' '.join(command)}")
         exit_code = run_command(command)
         if exit_code != 0:
