@@ -145,6 +145,8 @@ Use one of:
 - `python3 scripts/dev/validate_local.py`
 - Docs-only changes: `python3 scripts/dev/validate_docs.py`
 
+Docs-only validation requires `markdownlint` to be available on the PATH.
+
 ### AI co-author identities
 
 Approved AI co-author trailers for this repository:

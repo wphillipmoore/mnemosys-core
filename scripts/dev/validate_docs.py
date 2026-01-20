@@ -49,8 +49,10 @@ def run_markdownlint(paths: list[str]) -> int:
     """Run markdownlint if available."""
     markdownlint = shutil.which("markdownlint")
     if not markdownlint:
-        print("warning: markdownlint not found; skipping markdown lint")
-        return 0
+        raise SystemExit(
+            "markdownlint is required for docs-only validation. "
+            "Install markdownlint and retry."
+        )
 
     if not paths:
         print("No markdown files found to validate.")
