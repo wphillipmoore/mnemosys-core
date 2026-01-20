@@ -389,9 +389,12 @@ def build_documentation_only_body(changed_files: list[str], existing_body: str |
     return "\n".join(lines).strip() + "\n"
 
 
-def run_validation() -> None:
+def run_validation(base_ref: str) -> None:
     """Run the canonical local validation."""
-    result = run_command((sys.executable, "scripts/dev/validate_local.py"), check=False)
+    result = run_command(
+        (sys.executable, "scripts/dev/validate_local.py", "--base-ref", base_ref),
+        check=False,
+    )
     if result.returncode != 0:
         raise SystemExit(result.returncode)
 
@@ -472,7 +475,7 @@ def main(argument_list: Sequence[str] | None = None) -> int:
     changed_files = collect_changed_files(base_reference)
     documentation_only = determine_documentation_only(changed_files, base_reference)
     if not documentation_only or arguments.force_validation:
-        run_validation()
+        run_validation(arguments.base)
 
     create_pull_request(arguments, base_reference, changed_files, current_branch, documentation_only)
     return 0
