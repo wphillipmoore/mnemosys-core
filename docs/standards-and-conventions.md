@@ -143,6 +143,7 @@ use `python3` for all Python invocations.
 Use one of:
 - `pytest tests/`
 - `python3 scripts/dev/validate_local.py`
+- Docs-only changes: `python3 scripts/dev/validate_docs.py`
 
 ### AI co-author identities
 

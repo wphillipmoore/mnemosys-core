@@ -10,6 +10,7 @@
 
 ## Testing
 - `python3 scripts/dev/validate_local.py`
+- Docs-only: `python3 scripts/dev/validate_docs.py`
 
 ## Notes
 - 
