@@ -20,23 +20,20 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-VERSION_PATTERN = re.compile(
-    r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$"
-)
+VERSION_PATTERN = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
 
 
 @dataclass(frozen=True)
 class Version:
-    """Semantic version with build component."""
+    """Semantic version without a build component."""
 
     major: int
     minor: int
     patch: int
-    build: int
 
     def as_string(self) -> str:
-        """Return the version formatted as MAJOR.MINOR.PATCH.BUILD."""
-        return f"{self.major}.{self.minor}.{self.patch}.{self.build}"
+        """Return the version formatted as MAJOR.MINOR.PATCH."""
+        return f"{self.major}.{self.minor}.{self.patch}"
 
     def as_branch_label(self) -> str:
         """Return the version formatted for use in branch names."""
@@ -48,7 +45,7 @@ def parse_arguments(argument_list: Sequence[str] | None = None) -> argparse.Name
     parser = argparse.ArgumentParser(
         description=(
             "Create a develop->release PR via a promotion branch and a patch-bump PR to develop. "
-            "The patch bump increments PATCH and resets BUILD to 0."
+            "The patch bump increments PATCH."
         )
     )
     parser.add_argument(
@@ -226,8 +223,8 @@ def parse_version(version_value: str) -> Version:
     match = VERSION_PATTERN.match(version_value)
     if not match:
         raise SystemExit(f"Invalid version format: {version_value}")
-    major, minor, patch, build = (int(part) for part in match.groups())
-    return Version(major=major, minor=minor, patch=patch, build=build)
+    major, minor, patch = (int(part) for part in match.groups())
+    return Version(major=major, minor=minor, patch=patch)
 
 
 def load_version_from_toml_text(toml_text: str) -> Version:
@@ -258,12 +255,11 @@ def load_develop_version(develop_branch: str) -> Version:
 
 
 def bump_patch_version(version: Version) -> Version:
-    """Return the next patch version with build reset."""
+    """Return the next patch version."""
     return Version(
         major=version.major,
         minor=version.minor,
         patch=version.patch + 1,
-        build=0,
     )
 
 

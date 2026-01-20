@@ -4,6 +4,7 @@ FastAPI application factory.
 
 from __future__ import annotations
 
+from importlib import metadata
 from typing import TYPE_CHECKING
 
 from fastapi import FastAPI
@@ -32,7 +33,7 @@ def create_app(engine: Engine) -> FastAPI:
     app = FastAPI(
         title="Mnemosys Core API",
         description="MNEMOSYS practice tracking API",
-        version="0.1.0",
+        version=metadata.version("mnemosys-core"),
     )
 
     # Configure dependency injection
