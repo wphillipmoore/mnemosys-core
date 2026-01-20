@@ -17,8 +17,10 @@ and notify the user.
 
 ## Local deviations
 
-- The canonical version string for MNEMOSYS Core lives in `pyproject.toml` under
-  `project.version`.
+- The base version for MNEMOSYS Core lives in `pyproject.toml` under
+  `project.version` (`MAJOR.MINOR.PATCH`).
+- `BUILD` is derived from git history at build time and is not committed to
+  source control.
 - Use the local helper scripts when available:
   - `python3 scripts/dev/submit_develop_pr.py`
   - `python3 scripts/dev/submit_release_prs.py`

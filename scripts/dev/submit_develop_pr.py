@@ -1,54 +1,30 @@
 #!/usr/bin/env python3
 """
-Prepare a pull request by enforcing version bumps and pre-submission checks.
+Prepare a pull request with pre-submission checks.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import re
 import shutil
 import subprocess
 import sys
 import tempfile
-import tomllib
-from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-VERSION_PATTERN = re.compile(
-    r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$"
-)
-
 DOCUMENTATION_ONLY_FILENAMES = {"README.md", "CHANGELOG.md"}
 FORBIDDEN_BRANCHES = {"develop", "main", "release"}
-
-
-@dataclass(frozen=True)
-class Version:
-    """Semantic version with build component."""
-
-    major: int
-    minor: int
-    patch: int
-    build: int
-
-    def as_string(self) -> str:
-        """Return the version formatted as MAJOR.MINOR.PATCH.BUILD."""
-        return f"{self.major}.{self.minor}.{self.patch}.{self.build}"
 
 
 def parse_arguments(argument_list: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description=(
-            "Prepare a pull request by bumping BUILD, validating, pushing, "
-            "and creating the PR."
-        )
+        description="Prepare a pull request by validating, pushing, and creating the PR."
     )
     parser.add_argument(
         "--base",
@@ -213,95 +189,6 @@ def ensure_branch_divergence(base_reference: str) -> None:
         raise SystemExit("No commits found relative to base; nothing to submit.")
 
 
-def load_version_from_toml_text(toml_text: str) -> Version:
-    """Load the version from a pyproject.toml text block."""
-    data = tomllib.loads(toml_text)
-    version_value = None
-    project_section = data.get("project")
-    if isinstance(project_section, dict):
-        version_value = project_section.get("version")
-    if version_value is None:
-        tool_section = data.get("tool")
-        poetry_section = tool_section.get("poetry") if isinstance(tool_section, dict) else None
-        if isinstance(poetry_section, dict):
-            version_value = poetry_section.get("version")
-    if version_value is None:
-        raise SystemExit(
-            "Missing version in pyproject.toml (expected project.version or tool.poetry.version)."
-        )
-    if not isinstance(version_value, str):
-        raise SystemExit("Version value in pyproject.toml must be a string.")
-    return parse_version(version_value)
-
-
-def load_current_version() -> Version:
-    """Load the version from the working tree."""
-    pyproject_text = Path("pyproject.toml").read_text()
-    return load_version_from_toml_text(pyproject_text)
-
-
-def load_base_version(base_reference: str) -> Version:
-    """Load the version from the base branch."""
-    pyproject_text = read_command_output(("git", "show", f"{base_reference}:pyproject.toml"))
-    return load_version_from_toml_text(pyproject_text)
-
-
-def parse_version(version_value: str) -> Version:
-    """Parse and validate a version string."""
-    match = VERSION_PATTERN.match(version_value)
-    if not match:
-        raise SystemExit(f"Invalid version format: {version_value}")
-    major, minor, patch, build = (int(part) for part in match.groups())
-    return Version(major=major, minor=minor, patch=patch, build=build)
-
-
-def determine_build_bump(base_version: Version, current_version: Version) -> Version | None:
-    """Return the next build version, or None if already bumped."""
-    if (base_version.major, base_version.minor, base_version.patch) != (
-        current_version.major,
-        current_version.minor,
-        current_version.patch,
-    ):
-        raise SystemExit("Major, minor, and patch must match base. Use the release workflow to change them.")
-
-    if current_version.build == base_version.build:
-        return Version(
-            major=current_version.major,
-            minor=current_version.minor,
-            patch=current_version.patch,
-            build=current_version.build + 1,
-        )
-    if current_version.build == base_version.build + 1:
-        return None
-
-    raise SystemExit("Build number must be base BUILD or base BUILD + 1.")
-
-
-def update_pyproject_version(current_version: Version, new_version: Version) -> None:
-    """Update the version string in pyproject.toml."""
-    pyproject_path = Path("pyproject.toml")
-    content = pyproject_path.read_text()
-    version_pattern = re.compile(r'^(version\s*=\s*")([^"]+)(")\s*$', re.MULTILINE)
-    matches = list(version_pattern.finditer(content))
-    if len(matches) != 1:
-        raise SystemExit("Expected a single version entry in pyproject.toml.")
-
-    match = matches[0]
-    existing_version = match.group(2)
-    if existing_version != current_version.as_string():
-        raise SystemExit("pyproject.toml version does not match expected value.")
-
-    updated = content[: match.start(2)] + new_version.as_string() + content[match.end(2) :]
-    pyproject_path.write_text(updated)
-
-
-def commit_version_bump(new_version: Version) -> None:
-    """Commit the version bump."""
-    run_command(("git", "add", "pyproject.toml"))
-    commit_message = f"chore: bump build version to {new_version.as_string()}"
-    run_command(("git", "commit", "-m", commit_message))
-
-
 def collect_changed_files(base_reference: str) -> list[str]:
     """Collect changed files relative to the base reference."""
     output = read_command_output(("git", "diff", "--name-only", f"{base_reference}...HEAD"))
@@ -315,63 +202,16 @@ def is_documentation_path(file_path: str) -> bool:
     return Path(file_path).parts[:1] == ("docs",)
 
 
-def pyproject_only_version_change(base_reference: str) -> bool:
-    """Return True if pyproject.toml changes only the version."""
-    base_text = read_command_output(("git", "show", f"{base_reference}:pyproject.toml"))
-    current_text = Path("pyproject.toml").read_text()
-    base_data = tomllib.loads(base_text)
-    current_data = tomllib.loads(current_text)
-    current_path, current_version = find_version_path(current_data)
-    base_path, _ = find_version_path(base_data)
-    if current_path != base_path:
-        return False
-    set_nested_value(base_data, base_path, current_version)
-    return base_data == current_data
-
-
-def find_version_path(toml_data: dict[str, object]) -> tuple[tuple[str, ...], str]:
-    """Return the version key path and value."""
-    project_section = toml_data.get("project")
-    if isinstance(project_section, dict):
-        project_version = project_section.get("version")
-        if isinstance(project_version, str):
-            return ("project", "version"), project_version
-    tool_section = toml_data.get("tool")
-    poetry_section = tool_section.get("poetry") if isinstance(tool_section, dict) else None
-    if isinstance(poetry_section, dict):
-        poetry_version = poetry_section.get("version")
-        if isinstance(poetry_version, str):
-            return ("tool", "poetry", "version"), poetry_version
-    raise SystemExit("Missing version in pyproject.toml (expected project.version or tool.poetry.version).")
-
-
-def set_nested_value(toml_data: dict[str, object], path: tuple[str, ...], value: str) -> None:
-    """Set a nested TOML value by path."""
-    cursor: dict[str, object] = toml_data
-    for key in path[:-1]:
-        next_value = cursor.get(key)
-        if not isinstance(next_value, dict):
-            raise SystemExit("Version path missing from pyproject.toml.")
-        cursor = next_value
-    cursor[path[-1]] = value
-
-
-def determine_documentation_only(changed_files: list[str], base_reference: str) -> bool:
-    """Return True if changes are documentation-only plus a version bump."""
-    remaining_files = [path for path in changed_files if path != "pyproject.toml"]
-    if not all(is_documentation_path(path) for path in remaining_files):
-        return False
-    return not (
-        "pyproject.toml" in changed_files and not pyproject_only_version_change(base_reference)
-    )
+def determine_documentation_only(changed_files: list[str]) -> bool:
+    """Return True if changes are documentation-only."""
+    return bool(changed_files) and all(is_documentation_path(path) for path in changed_files)
 
 
 def build_default_title(base_reference: str, current_branch: str) -> str:
     """Derive a default pull request title."""
     commit_messages = read_command_output(("git", "log", "--format=%s", f"{base_reference}..HEAD"))
     for message in commit_messages.splitlines():
-        if not message.startswith("chore: bump build version to"):
-            return message
+        return message
     return current_branch.replace("-", " ")
 
 
@@ -465,15 +305,8 @@ def main(argument_list: Sequence[str] | None = None) -> int:
     ensure_branch_allowed(current_branch, arguments.base)
     ensure_branch_divergence(base_reference)
 
-    base_version = load_base_version(base_reference)
-    current_version = load_current_version()
-    new_version = determine_build_bump(base_version, current_version)
-    if new_version is not None:
-        update_pyproject_version(current_version, new_version)
-        commit_version_bump(new_version)
-
     changed_files = collect_changed_files(base_reference)
-    documentation_only = determine_documentation_only(changed_files, base_reference)
+    documentation_only = determine_documentation_only(changed_files)
     if not documentation_only or arguments.force_validation:
         run_validation(arguments.base)
 

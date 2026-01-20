@@ -33,15 +33,6 @@ def read_command_output(command: tuple[str, ...]) -> str:
     return result.stdout.strip()
 
 
-def current_branch_name() -> str | None:
-    """Return the current branch name, or None if detached."""
-    try:
-        reference = read_command_output(("git", "symbolic-ref", "--quiet", "HEAD"))
-    except subprocess.CalledProcessError:
-        return None
-    return reference.rsplit("/", maxsplit=1)[-1] if reference else None
-
-
 def resolve_default_base_ref() -> str | None:
     """Resolve the default base ref from origin/HEAD."""
     try:
@@ -51,11 +42,12 @@ def resolve_default_base_ref() -> str | None:
     return reference.rsplit("/", maxsplit=1)[-1] if reference else None
 
 
-def build_commands(base_ref: str, skip_version_check: bool) -> tuple[tuple[str, ...], ...]:
+def build_commands(base_ref: str) -> tuple[tuple[str, ...], ...]:
     """Build validation commands matching CI hard gates."""
     commands: list[tuple[str, ...]] = [
         ("python3", "scripts/dev/validate_venv.py"),
         ("python3", "scripts/dev/validate_dependency_specs.py"),
+        ("python3", "scripts/dev/validate_version.py", "--base-ref", base_ref),
         ("poetry", "check", "--lock"),
         ("poetry", "sync", "--dry-run"),
         ("poetry", "run", "pip-audit", "-r", "requirements.txt", "-r", "requirements-dev.txt"),
@@ -75,8 +67,6 @@ def build_commands(base_ref: str, skip_version_check: bool) -> tuple[tuple[str, 
         ),
         ("poetry", "run", "pytest", "-m", "integration"),
     ]
-    if not skip_version_check:
-        commands.insert(2, ("python3", "scripts/dev/validate_version.py", "--base-ref", base_ref))
     return tuple(commands)
 
 
@@ -96,12 +86,7 @@ def main() -> int:
             "Pass --base-ref or ensure refs/remotes/origin/HEAD exists."
         )
 
-    current_branch = current_branch_name()
-    skip_version_check = current_branch == base_ref
-    if skip_version_check:
-        print("Skipping version validation (base ref matches current branch).")
-
-    for command in build_commands(base_ref, skip_version_check):
+    for command in build_commands(base_ref):
         print(f"Running: {' '.join(command)}")
         exit_code = run_command(command)
         if exit_code != 0:

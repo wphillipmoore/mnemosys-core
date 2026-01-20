@@ -17,27 +17,27 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-VERSION_PATTERN = re.compile(
-    r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$"
+VERSION_PATTERN = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
+VERSION_WITH_BUILD_PATTERN = re.compile(
+    r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:\.(0|[1-9][0-9]*))?$"
 )
 
 
 @dataclass(frozen=True)
 class Version:
-    """Semantic version with build component."""
+    """Semantic version without a build component."""
 
     major: int
     minor: int
     patch: int
-    build: int
 
     def as_string(self) -> str:
-        """Return the version formatted as MAJOR.MINOR.PATCH.BUILD."""
-        return f"{self.major}.{self.minor}.{self.patch}.{self.build}"
+        """Return the version formatted as MAJOR.MINOR.PATCH."""
+        return f"{self.major}.{self.minor}.{self.patch}"
 
-    def as_tuple(self) -> tuple[int, int, int, int]:
+    def as_tuple(self) -> tuple[int, int, int]:
         """Return the version as a comparison tuple."""
-        return (self.major, self.minor, self.patch, self.build)
+        return (self.major, self.minor, self.patch)
 
 
 def parse_arguments(argument_list: Sequence[str] | None = None) -> argparse.Namespace:
@@ -88,16 +88,17 @@ def resolve_base_reference(base_reference: str) -> str:
     )
 
 
-def parse_version(version_value: str) -> Version:
+def parse_version(version_value: str, allow_build: bool) -> Version:
     """Parse and validate a version string."""
-    match = VERSION_PATTERN.match(version_value)
+    pattern = VERSION_WITH_BUILD_PATTERN if allow_build else VERSION_PATTERN
+    match = pattern.match(version_value)
     if not match:
         raise SystemExit(f"Invalid version format: {version_value}")
-    major, minor, patch, build = (int(match.group(index)) for index in range(1, 5))
-    return Version(major=major, minor=minor, patch=patch, build=build)
+    major, minor, patch = (int(match.group(index)) for index in range(1, 4))
+    return Version(major=major, minor=minor, patch=patch)
 
 
-def load_version_from_toml_text(toml_text: str) -> Version:
+def load_version_from_toml_text(toml_text: str, allow_build: bool) -> Version:
     """Load the version from a pyproject.toml text block."""
     data = tomllib.loads(toml_text)
     version_value = None
@@ -115,59 +116,97 @@ def load_version_from_toml_text(toml_text: str) -> Version:
         )
     if not isinstance(version_value, str):
         raise SystemExit("Version value in pyproject.toml must be a string.")
-    return parse_version(version_value)
+    return parse_version(version_value, allow_build)
 
 
 def load_version_from_worktree() -> Version:
     """Load the version from the working tree."""
     pyproject_text = Path("pyproject.toml").read_text(encoding="utf-8")
-    return load_version_from_toml_text(pyproject_text)
+    return load_version_from_toml_text(pyproject_text, allow_build=False)
 
 
 def load_version_from_git(reference: str) -> Version:
     """Load the version from a git reference."""
     pyproject_text = read_command_output(("git", "show", f"{reference}:pyproject.toml"))
-    return load_version_from_toml_text(pyproject_text)
+    return load_version_from_toml_text(pyproject_text, allow_build=True)
 
 
-def ensure_version_is_greater(base_version: Version, head_version: Version, base_reference: str) -> None:
-    """Ensure the head version is greater than the base."""
-    if head_version.as_tuple() <= base_version.as_tuple():
+def find_base_version_commit(version: Version) -> str:
+    """Return the commit that introduced the base version."""
+    version_literal = f'version = "{version.as_string()}"'
+    output = read_command_output(
+        ("git", "log", "--format=%H", "-S", version_literal, "--", "pyproject.toml")
+    )
+    commits = [line for line in output.splitlines() if line]
+    if not commits:
         raise SystemExit(
-            "Version must advance relative to the base branch. "
-            f"Base ({base_reference}) is {base_version.as_string()}, "
-            f"head is {head_version.as_string()}."
+            "Unable to locate base version commit in history. "
+            "Ensure full git history is available."
+        )
+
+    for commit in commits:
+        try:
+            pyproject_text = read_command_output(("git", "show", f"{commit}:pyproject.toml"))
+        except subprocess.CalledProcessError:
+            continue
+        if load_version_from_toml_text(pyproject_text, allow_build=False).as_tuple() == version.as_tuple():
+            return commit
+
+    raise SystemExit(
+        "Unable to verify base version commit in history. "
+        "Ensure full git history is available."
+    )
+
+
+def derive_build_number(version: Version) -> int:
+    """Derive the build number from git history."""
+    base_commit = find_base_version_commit(version)
+    count_text = read_command_output(("git", "rev-list", "--count", f"{base_commit}..HEAD"))
+    try:
+        return int(count_text)
+    except ValueError as exc:
+        raise SystemExit("Derived build number is not numeric.") from exc
+
+
+def ensure_version_not_regressed(base_version: Version, head_version: Version) -> None:
+    """Ensure the head version does not regress from the base."""
+    if head_version.as_tuple() < base_version.as_tuple():
+        raise SystemExit(
+            "Base version regressed. "
+            f"Base is {base_version.as_string()}, head is {head_version.as_string()}."
         )
 
 
 def validate_develop_rules(base_version: Version, head_version: Version) -> None:
     """Validate develop-bound version rules."""
-    if (head_version.major, head_version.minor, head_version.patch) == (
-        base_version.major,
-        base_version.minor,
-        base_version.patch,
-    ):
-        expected_build = base_version.build + 1
-        if head_version.build != expected_build:
-            raise SystemExit(
-                "BUILD must increment by exactly 1 for develop PRs. "
-                f"Expected {expected_build}, got {head_version.build}."
-            )
-        return
-
     if (head_version.major, head_version.minor) == (base_version.major, base_version.minor):
-        expected_patch = base_version.patch + 1
-        if head_version.patch != expected_patch:
-            raise SystemExit(
-                "PATCH must increment by exactly 1 when MAJOR/MINOR are unchanged. "
-                f"Expected {expected_patch}, got {head_version.patch}."
-            )
-        if head_version.build != 0:
-            raise SystemExit("BUILD must reset to 0 when PATCH increments.")
+        if head_version.patch == base_version.patch:
+            return
+        if head_version.patch == base_version.patch + 1:
+            return
+        raise SystemExit(
+            "PATCH must remain the same for feature work or increment by 1 for a new cycle. "
+            f"Base is {base_version.as_string()}, head is {head_version.as_string()}."
+        )
+
+    if head_version.major == base_version.major and head_version.minor > base_version.minor:
+        if head_version.patch != 0:
+            raise SystemExit("PATCH must reset to 0 when MINOR changes.")
         return
 
-    if head_version.patch != 0 or head_version.build != 0:
-        raise SystemExit("PATCH and BUILD must reset to 0 when MAJOR or MINOR changes.")
+    if head_version.major > base_version.major:
+        if head_version.minor != 0 or head_version.patch != 0:
+            raise SystemExit("MINOR and PATCH must reset to 0 when MAJOR changes.")
+        return
+
+
+def validate_promotion_rules(base_branch: str, base_version: Version, head_version: Version) -> None:
+    """Validate promotion-bound version rules."""
+    if base_branch in {"release", "main"} and head_version.as_tuple() != base_version.as_tuple():
+        raise SystemExit(
+            "Promotion pull requests must not change the base version. "
+            f"Base is {base_version.as_string()}, head is {head_version.as_string()}."
+        )
 
 
 def main() -> int:
@@ -175,17 +214,20 @@ def main() -> int:
     ensure_project_root()
 
     head_version = load_version_from_worktree()
+    derive_build_number(head_version)
 
     base_reference = arguments.base_ref or os.environ.get("GITHUB_BASE_REF")
     event_name = arguments.event_name or os.environ.get("GITHUB_EVENT_NAME", "")
     if base_reference and (event_name == "pull_request" or arguments.base_ref is not None):
         resolved_base = resolve_base_reference(base_reference)
         base_version = load_version_from_git(resolved_base)
-        ensure_version_is_greater(base_version, head_version, resolved_base)
+        ensure_version_not_regressed(base_version, head_version)
 
         base_branch = resolved_base.split("/")[-1]
         if base_branch == "develop":
             validate_develop_rules(base_version, head_version)
+        else:
+            validate_promotion_rules(base_branch, base_version, head_version)
     return 0
 
 
