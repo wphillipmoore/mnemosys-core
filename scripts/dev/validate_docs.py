@@ -10,6 +10,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+MARKDOWNLINT_VERSION = "0.41.0"
+
 
 def parse_arguments() -> argparse.Namespace:
     """Parse command line arguments."""
@@ -45,20 +47,42 @@ def gather_default_paths() -> list[str]:
     return [str(path) for path in unique_paths]
 
 
-def run_markdownlint(paths: list[str]) -> int:
-    """Run markdownlint if available."""
+def resolve_markdownlint() -> tuple[str, str]:
+    """Resolve markdownlint binary and version."""
     markdownlint = shutil.which("markdownlint")
-    if not markdownlint:
+    if markdownlint:
+        version_output = subprocess.run(
+            (markdownlint, "--version"), check=True, text=True, capture_output=True
+        ).stdout.strip()
+        if version_output != MARKDOWNLINT_VERSION:
+            raise SystemExit(
+                "markdownlint version mismatch. "
+                f"Expected {MARKDOWNLINT_VERSION}, found {version_output}."
+            )
+        return markdownlint, version_output
+
+    npx = shutil.which("npx")
+    if not npx:
         raise SystemExit(
             "markdownlint is required for docs-only validation. "
-            "Install markdownlint and retry."
+            "Install markdownlint or ensure npx is available."
         )
+
+    return npx, MARKDOWNLINT_VERSION
+
+
+def run_markdownlint(paths: list[str]) -> int:
+    """Run markdownlint using the resolved toolchain."""
+    markdownlint_cmd, version = resolve_markdownlint()
 
     if not paths:
         print("No markdown files found to validate.")
         return 0
 
-    command = (markdownlint, *paths)
+    if markdownlint_cmd.endswith("markdownlint"):
+        command = (markdownlint_cmd, *paths)
+    else:
+        command = (markdownlint_cmd, "--yes", f"markdownlint-cli@{version}", *paths)
     print(f"Running: {' '.join(command)}")
     return subprocess.run(command).returncode
 
