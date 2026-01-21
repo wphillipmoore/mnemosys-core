@@ -48,13 +48,13 @@ def build_commands(base_ref: str) -> tuple[tuple[str, ...], ...]:
         ("python3", "scripts/dev/validate_venv.py"),
         ("python3", "scripts/dev/validate_dependency_specs.py"),
         ("python3", "scripts/dev/validate_version.py", "--base-ref", base_ref),
-        ("poetry", "check", "--lock"),
-        ("poetry", "sync", "--dry-run"),
-        ("poetry", "run", "pip-audit", "-r", "requirements.txt", "-r", "requirements-dev.txt"),
-        ("poetry", "run", "ruff", "check"),
-        ("poetry", "run", "mypy", "src/"),
+        ("uv", "lock", "--check"),
+        ("uv", "sync", "--check", "--frozen", "--group", "dev"),
+        ("uv", "run", "pip-audit", "-r", "requirements.txt", "-r", "requirements-dev.txt"),
+        ("uv", "run", "ruff", "check"),
+        ("uv", "run", "mypy", "src/"),
         (
-            "poetry",
+            "uv",
             "run",
             "pytest",
             "-m",
@@ -65,7 +65,7 @@ def build_commands(base_ref: str) -> tuple[tuple[str, ...], ...]:
             "--cov-report=xml",
             "--cov-fail-under=100",
         ),
-        ("poetry", "run", "pytest", "-m", "integration"),
+        ("uv", "run", "pytest", "-m", "integration"),
     ]
     return tuple(commands)
 

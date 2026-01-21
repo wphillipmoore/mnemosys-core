@@ -5,15 +5,38 @@ Validate that the local virtual environment is usable after moves or rebuilds.
 
 from __future__ import annotations
 
+import shutil
+import subprocess
 from pathlib import Path
 
 REQUIRED_TOOLS: tuple[str, ...] = ("pip-audit", "ruff", "mypy", "pytest")
+UV_VERSION = "0.9.26"
 
 
 def ensure_project_root() -> None:
     """Fail fast if invoked outside the repository root."""
     if not Path("pyproject.toml").is_file():
         raise SystemExit("Run from the repository root (pyproject.toml missing).")
+
+
+def validate_uv_version() -> None:
+    """Ensure uv is installed and matches the pinned version."""
+    uv_path = shutil.which("uv")
+    if not uv_path:
+        raise SystemExit(
+            "Missing uv executable. Install uv "
+            f"{UV_VERSION} (for example: python3 -m pip install uv=={UV_VERSION})."
+        )
+    result = subprocess.run((uv_path, "--version"), check=True, text=True, capture_output=True)
+    version_output = result.stdout.strip()
+    if not version_output.startswith("uv "):
+        raise SystemExit(f"Unexpected uv version output: {version_output}")
+    version_value = version_output.split()[1]
+    if version_value != UV_VERSION:
+        raise SystemExit(
+            "uv version mismatch. "
+            f"Expected {UV_VERSION}, found {version_value}."
+        )
 
 
 def read_shebang(script_path: Path) -> str | None:
@@ -64,6 +87,7 @@ def validate_shebang(script_path: Path, expected_python: Path) -> None:
 
 
 def validate_venv() -> None:
+    validate_uv_version()
     venv_path = Path(".venv").resolve()
     if not venv_path.is_dir():
         raise SystemExit("Missing .venv. Rebuild with: python3 -m venv .venv")
@@ -77,7 +101,7 @@ def validate_venv() -> None:
         tool_path = bin_dir / tool
         if not tool_path.exists():
             raise SystemExit(
-                f"Missing venv tool: {tool_path}. Run: poetry sync --with dev"
+                f"Missing venv tool: {tool_path}. Run: uv sync --group dev"
             )
         validate_shebang(tool_path, python_path)
 

@@ -76,33 +76,33 @@ on:
 **dependency-audit**
 1. **Checkout code** (`actions/checkout@v4`)
 2. **Set up Python 3.14** (`actions/setup-python@v5`)
-3. **Install dependencies** (`poetry install --no-interaction`, includes `pip-audit`)
+3. **Install dependencies** (`uv sync --frozen --group dev`, includes `pip-audit`)
 4. **Run pip-audit**:
    ```bash
-   poetry run pip-audit -r requirements.txt -r requirements-dev.txt
+   uv run pip-audit -r requirements.txt -r requirements-dev.txt
    ```
 
 **test-and-validate**
 1. **Checkout code** (`actions/checkout@v4`)
 2. **Set up Python** (`actions/setup-python@v5` with matrix version)
-3. **Cache Poetry installation** (cache `~/.local/share/pypoetry`, `~/.local/bin/poetry`)
-4. **Install Poetry** (official installer, skip if cached)
+3. **Install uv** (pinned version via `python3 -m pip install uv==0.9.26`)
+4. **Cache uv** (optional; cache `~/.cache/uv`)
 5. **Cache dependencies**
-   - Key: `poetry-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}`
-   - Restores virtualenv on cache hit
+   - Key: `uv-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('uv.lock') }}`
+   - Restores uv cache on cache hit
    - Falls back to fresh install on miss
-6. **Install dependencies** (`poetry install --no-interaction`)
+6. **Install dependencies** (`uv sync --frozen --group dev`)
 7. **Run ruff**:
    ```bash
-   poetry run ruff check
+   uv run ruff check
    ```
 8. **Run mypy**:
    ```bash
-   poetry run mypy src/
+   uv run mypy src/
    ```
 9. **Run tests with coverage (exclude integration)**:
    ```bash
-   poetry run pytest \
+   uv run pytest \
      -m "not integration" \
      --cov=mnemosys_core \
      --cov-report=term-missing \
@@ -117,13 +117,13 @@ on:
 **integration-tests**
 1. **Checkout code** (`actions/checkout@v4`)
 2. **Set up Python 3.14** (`actions/setup-python@v5`)
-3. **Cache Poetry installation**
-4. **Install Poetry**
+3. **Install uv** (pinned version via `python3 -m pip install uv==0.9.26`)
+4. **Cache uv**
 5. **Cache dependencies**
-6. **Install dependencies**
+6. **Install dependencies** (`uv sync --frozen --group dev`)
 7. **Run integration tests**:
    ```bash
-   poetry run pytest -m integration
+   uv run pytest -m integration
    ```
 
 ## Caching Strategy
@@ -134,13 +134,13 @@ on:
 - Reduced PyPI load and GitHub Actions compute time
 
 **Risk mitigation**:
-- Cache key includes `poetry.lock` hash (critical for cache invalidation)
+- Cache key includes `uv.lock` hash (critical for cache invalidation)
 - Includes Python version and OS in key
 - Auto-fallback to fresh install on cache miss
 
 **Cache key format**:
 ```
-poetry-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+uv-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('uv.lock') }}
 ```
 
 ## Concurrency Control

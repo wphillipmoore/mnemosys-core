@@ -194,7 +194,7 @@ python3 scripts/dev/validate_local.py
 - ✅ 100% line and branch coverage (includes all source files)
 - ✅ ruff check (zero violations)
 - ✅ mypy src/ (zero errors)
-- ✅ poetry sync --dry-run has zero changes
+- ✅ uv sync --check --frozen --group dev reports no changes
 
 **If any test fails:**
 1. Fix the issue
@@ -236,7 +236,7 @@ Finalize PR?
 **What "Finalize" means** (unless user specifies otherwise):
 1. Merge PR with squash merge and delete remote branch
 2. Update local develop branch (checkout and pull)
-3. Verify .venv is in sync with dependency specification (poetry sync)
+3. Verify .venv is in sync with dependency specification (uv sync --check --frozen --group dev)
 4. Run final validation (tests, coverage, quality checks)
 5. Ready for next iteration of changes
 

@@ -13,13 +13,13 @@ tests/test_code_compliance.py, and add a local validation script.
 1. Ensured working branch was `feature/ci-hard-gates` and clean.
 2. Deleted `tests/test_code_compliance.py`.
 3. Updated `.github/workflows/ci.yml` to add explicit hard-gate steps for:
-   - `poetry run ruff check`
-   - `poetry run mypy src/`
+   - `uv run ruff check`
+   - `uv run mypy src/`
 4. Added a local validation script that runs:
-   - `poetry sync --dry-run`
-   - `poetry run ruff check`
-   - `poetry run mypy src/`
-   - `poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch`
+   - `uv sync --check --frozen --group dev`
+   - `uv run ruff check`
+   - `uv run mypy src/`
+   - `uv run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch`
 5. Updated docs to remove `test_code_compliance.py` references and point to new gates:
    - `AGENTS.md`
    - `docs/standards-and-conventions.md`

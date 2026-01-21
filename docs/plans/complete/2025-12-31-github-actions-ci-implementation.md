@@ -6,7 +6,7 @@
 
 **Architecture:** GitHub Actions workflow with a unit/coverage gate and a separate integration-test job. Unit coverage runs on Python 3.14; integration tests run on Python 3.14.
 
-**Tech Stack:** GitHub Actions, Poetry, pytest, pytest-cov, ruff, mypy, Testcontainers
+**Tech Stack:** GitHub Actions, uv, pytest, pytest-cov, ruff, mypy, Testcontainers
 
 ---
 
@@ -63,42 +63,29 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Cache Poetry installation
+      - name: Install uv
+        run: python3 -m pip install uv==0.9.26
+
+      - name: Cache uv
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.local/share/pypoetry
-            ~/.local/bin/poetry
-          key: poetry-install-${{ runner.os }}-${{ matrix.python-version }}
-
-      - name: Install Poetry
-        run: |
-          if ! command -v poetry &> /dev/null; then
-            curl -sSL https://install.python-poetry.org | python3 -
-            echo "$HOME/.local/bin" >> $GITHUB_PATH
-          fi
-          poetry --version
-
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pypoetry/virtualenvs
-          key: poetry-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('uv.lock') }}
           restore-keys: |
-            poetry-${{ runner.os }}-py${{ matrix.python-version }}-
+            uv-${{ runner.os }}-py${{ matrix.python-version }}-
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: uv sync --frozen --group dev
 
       - name: Run ruff check
-        run: poetry run ruff check
+        run: uv run ruff check
 
       - name: Run mypy
-        run: poetry run mypy src/
+        run: uv run mypy src/
 
       - name: Run tests with coverage
         run: |
-          poetry run pytest \
+          uv run pytest \
             -m "not integration" \
             --cov=mnemosys_core \
             --cov-report=term-missing \
@@ -125,35 +112,22 @@ jobs:
         with:
           python-version: "3.14"
 
-      - name: Cache Poetry installation
+      - name: Install uv
+        run: python3 -m pip install uv==0.9.26
+
+      - name: Cache uv
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.local/share/pypoetry
-            ~/.local/bin/poetry
-          key: poetry-install-${{ runner.os }}-3.14
-
-      - name: Install Poetry
-        run: |
-          if ! command -v poetry &> /dev/null; then
-            curl -sSL https://install.python-poetry.org | python3 -
-            echo "$HOME/.local/bin" >> $GITHUB_PATH
-          fi
-          poetry --version
-
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pypoetry/virtualenvs
-          key: poetry-${{ runner.os }}-py3.14-${{ hashFiles('poetry.lock') }}
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-py3.14-${{ hashFiles('uv.lock') }}
           restore-keys: |
-            poetry-${{ runner.os }}-py3.14-
+            uv-${{ runner.os }}-py3.14-
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: uv sync --frozen --group dev
 
       - name: Run integration tests
-        run: poetry run pytest -m integration
+        run: uv run pytest -m integration
 ```
 
 **Step 2: Verify YAML syntax**
@@ -176,7 +150,7 @@ Replace placeholder CI workflow with full implementation that enforces:
 
 Workflow features:
 - Triggers on PRs and pushes to eternal branches (develop, main, release/*)
-- Poetry dependency caching for 10-20x speedup
+- uv dependency caching for 10-20x speedup
 - Single-version testing on Python 3.14
 - Concurrency control (cancel stale runs)
 - Coverage XML artifact upload for future integrations
@@ -225,7 +199,7 @@ Expected: Review logs, identify issue, fix locally, commit, push again
 **Note:** This step may require iteration. Common issues:
 - Docker/Testcontainers availability in GitHub Actions runners
 - Cache key issues (workflow should fallback gracefully)
-- Poetry installation issues (verify installer script)
+- uv installation issues (verify pinned version install)
 
 ---
 
@@ -293,7 +267,7 @@ Expected: Draft PR closed (keep branch for actual PR creation later)
 
 **Step 1: Run full test suite locally one final time**
 
-Run: `poetry run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch --cov-fail-under=100`
+Run: `uv run pytest --cov=mnemosys_core --cov-report=term-missing --cov-branch --cov-fail-under=100`
 Expected: All tests pass, 100% coverage achieved
 
 **Step 2: Verify all commits follow conventions**
@@ -324,7 +298,7 @@ Next: Submit PR following standard process (validation → user approval → pus
 - ✅ Workflow triggers on PRs and eternal branch pushes
 - ✅ Unit testing on Python 3.14
 - ✅ Python 3.14 failures block PR merges
-- ✅ Caching implemented for Poetry and dependencies
+- ✅ Caching implemented for uv and dependencies
 - ✅ Coverage enforcement at 100% (lines and branches)
 - ✅ Documentation updated to reference automated CI
 - ✅ Workflow runs successfully on feature branch
