@@ -87,8 +87,8 @@ class DatabaseEnum(TypeDecorator[enum.Enum]):
         if value is None:
             return None
         if isinstance(value, self.enum_class):
-            return value.value  # type: ignore[no-any-return]
-        return value  # type: ignore[return-value]
+            return cast("str", value.value)
+        return cast("str", value)
 
     def process_result_value(self, value: Any, dialect: Dialect) -> enum.Enum | None:
         if value is None:
