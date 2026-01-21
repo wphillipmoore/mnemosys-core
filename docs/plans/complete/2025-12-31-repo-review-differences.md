@@ -23,7 +23,7 @@ Scope: high-level scan of docs, config, CI, core modules, and tests. Not every f
    - Current: endpoints use `/api/v1/practices` and align with `Practice` models.
    - Status: addressed; no further change required.
 
-5. Keep ruff/mypy/poetry sync out of pytest
+5. Keep ruff/mypy/uv sync out of pytest
    - Current: tool checks run in CI as explicit steps; local validation lives in `scripts/dev/validate_local.py`.
    - Preferred: keep pytest behavioral; keep tooling gates explicit and scripted.
 

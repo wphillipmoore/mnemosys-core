@@ -1,6 +1,6 @@
 [build-system]
-requires = ["poetry-core>=2,<3"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "mnemosys-core"
@@ -10,34 +10,35 @@ readme = "README.md"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 authors = [{ name = "Phillip Moore", email = "w.phillip.moore@gmail.com" }]
+dependencies = [
+    "sqlalchemy",
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic",
+    "psycopg2-binary",
+    "alembic",
+]
 requires-python = ">=3.14,<4.0"
-dynamic = ["dependencies"]
 
-[tool.poetry]
-packages = [{ include = "mnemosys_core", from = "src" }]
+[dependency-groups]
+dev = [
+    "ruff",
+    "mypy",
+    "pytest",
+    "pytest-mock",
+    "pytest-cov",
+    "pytest-xdist",
+    "pre-commit",
+    "httpx",
+    "testcontainers",
+    "pip-audit",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.14,<4.0"
-sqlalchemy = "*"
-fastapi = "*"
-uvicorn = {extras = ["standard"], version = "*"}
-pydantic = "*"
-psycopg2-binary = "*"
-alembic = "*"
+[tool.setuptools]
+package-dir = {"" = "src"}
 
-[tool.poetry.group.dev.dependencies]
-ruff = "*"
-mypy = "*"
-pytest = "*"
-pytest-mock = "*"
-pytest-cov = "*"
-pytest-xdist = "*"
-poetry = "*"
-poetry-plugin-export = "*"
-pre-commit = "*"
-httpx = "*"
-testcontainers = "*"
-pip-audit = "*"
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.ruff]
 line-length = 120
