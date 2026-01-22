@@ -13,22 +13,23 @@ Standards and Conventions repository should be treated as in-progress standards
 unless explicitly documented here as conventions.
 
 ## Table of Contents
-- [Canonical standards](#canonical-standards)
+- [Canonical references](#canonical-references)
   - [Access requirements](#access-requirements)
+  - [Core references (always required)](#core-references-always-required)
+  - [Repository-type references (required for the declared type)](#repository-type-references-required-for-the-declared-type)
+  - [Additional required references](#additional-required-references)
 - [Project terminology](#project-terminology)
   - [Official project name](#official-project-name)
   - [Deprecated names](#deprecated-names)
   - [Name rationale](#name-rationale)
   - [Usage in historical documents](#usage-in-historical-documents)
   - [CI gates](#ci-gates)
-- [Project-specific overrides](#project-specific-overrides)
+- [Project-specific overlay](#project-specific-overlay)
   - [Repository profile](#repository-profile)
   - [Local development preflight](#local-development-preflight)
   - [AI co-author identities](#ai-co-author-identities)
 
-## Canonical standards
-
-Start with these sources of truth:
+## Canonical references
 
 ### Access requirements
 
@@ -40,26 +41,35 @@ If the canonical docs cannot be retrieved (network failure, access failure, or
 missing file), treat it as a fatal exception: stop and notify the user. Do not
 proceed with assumptions or alternate sources.
 
-- Code management overview: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/overview.md
-- Pull request workflow: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/pull-request-workflow.md
-- Commit messages and authorship: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/commit-messages-and-authorship.md
-- Branching and deployment: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/branching-and-deployment.md
-- Release versioning: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/release-versioning.md
-- Hotfix policy: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/hotfix-policy.md
-- Development overview: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/overview.md
-- Environment and tooling: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/environment-and-tooling.md
-- Python standards overview: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/overview.md
-- Dependency update workflow: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/dependencies/dependency-update-workflow.md
-- Python naming conventions: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/naming-conventions.md
-- Python import-time side effects: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/import-time-side-effects.md
-- Python type hints: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/type-hints.md
-- Python testing and coverage: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/testing-and-coverage.md
-- Database conventions: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/database/conventions.md
-- Repository standards overview: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/repository/overview.md
-- Markdown standards: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/foundation/markdown-standards.md
-- Architecture standards: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/foundation/architecture-standards.md
-- AI code review guidelines: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/foundation/ai-code-review-guidelines.md
-- AI-assisted development loop: https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/foundation/ai-assisted-development-loop.md
+### Core references (always required)
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/foundation/markdown-standards.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/repository-types-and-attributes.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/commit-messages-and-authorship.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/github-issues.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/pull-request-workflow.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/source-control-guidelines.md
+
+### Repository-type references (required for the declared type)
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/branching-and-deployment.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/application-versioning-scheme.md
+
+### Additional required references
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/overview.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/release-versioning.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/code-management/hotfix-policy.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/overview.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/environment-and-tooling.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/overview.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/dependencies/dependency-update-workflow.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/naming-conventions.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/import-time-side-effects.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/type-hints.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/python/testing-and-coverage.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/development/database/conventions.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/repository/overview.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/foundation/architecture-standards.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/foundation/ai-code-review-guidelines.md
+- https://github.com/wphillipmoore/standards-and-conventions/blob/develop/docs/foundation/ai-assisted-development-loop.md
 
 ## Project terminology
 
@@ -118,7 +128,7 @@ Branch applicability:
 - release: all hard gates required
 - main: all hard gates required
 
-## Project-specific overrides
+## Project-specific overlay
 
 These entries supply project-specific values required by the canonical
 standards.
