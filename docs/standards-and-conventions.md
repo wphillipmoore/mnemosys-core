@@ -12,4 +12,4 @@ https://github.com/wphillipmoore/standards-and-conventions/tree/develop
 #include ../standards-and-conventions/docs/standards-and-conventions.md
 
 ## Project-specific overlay
-#include repository-standards.md
+#include docs/repository-standards.md
