@@ -1,3 +1,11 @@
+# End-to-end validation (2026-01-13 13:33 UTC)
+
+## Table of Contents
+- [Actions Taken](#actions-taken)
+- [Outcomes and Status](#outcomes-and-status)
+- [Problems Encountered and Solved](#problems-encountered-and-solved)
+- [Problems Unresolved](#problems-unresolved)
+
 ## Actions Taken
 - Note: CLI command timestamps were not captured in the chat; filename timestamp is UTC 2026-01-13 13:33.
 - Created feature branch for the validation run.

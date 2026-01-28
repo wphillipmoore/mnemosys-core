@@ -99,6 +99,9 @@ All Python commands must run inside the project venv (use `uv run ...` or the
 `.venv/bin/python3` interpreter). Do not rely on a system `python` binary; use
 `python3` for all Python invocations.
 
+Enable repository git hooks before committing:
+- `git config core.hooksPath scripts/git-hooks`
+
 Use one of:
 - `pytest tests/`
 - `python3 scripts/dev/validate_local.py`
