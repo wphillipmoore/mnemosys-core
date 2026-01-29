@@ -6,11 +6,12 @@ Docs-only validation helper.
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import subprocess
 from pathlib import Path
 
-MARKDOWNLINT_VERSION = "0.41.0"
+MARKDOWNLINT_MIN_VERSION = "0.41.0"
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -47,6 +48,17 @@ def gather_default_paths() -> list[str]:
     return [str(path) for path in unique_paths]
 
 
+def parse_version(version_output: str) -> tuple[int, int, int]:
+    """Parse a semantic version string from tool output."""
+    match = re.search(r"\d+\.\d+\.\d+", version_output)
+    if not match:
+        raise SystemExit(
+            "Unable to parse markdownlint version from output: "
+            f"{version_output!r}."
+        )
+    return tuple(int(part) for part in match.group(0).split("."))
+
+
 def resolve_markdownlint() -> tuple[str, str]:
     """Resolve markdownlint binary and version."""
     markdownlint = shutil.which("markdownlint")
@@ -54,10 +66,12 @@ def resolve_markdownlint() -> tuple[str, str]:
         version_output = subprocess.run(
             (markdownlint, "--version"), check=True, text=True, capture_output=True
         ).stdout.strip()
-        if version_output != MARKDOWNLINT_VERSION:
+        version = parse_version(version_output)
+        minimum_version = parse_version(MARKDOWNLINT_MIN_VERSION)
+        if version < minimum_version:
             raise SystemExit(
-                "markdownlint version mismatch. "
-                f"Expected {MARKDOWNLINT_VERSION}, found {version_output}."
+                "markdownlint version too old. "
+                f"Expected >= {MARKDOWNLINT_MIN_VERSION}, found {version_output}."
             )
         return markdownlint, version_output
 
@@ -68,7 +82,7 @@ def resolve_markdownlint() -> tuple[str, str]:
             "Install markdownlint or ensure npx is available."
         )
 
-    return npx, MARKDOWNLINT_VERSION
+    return npx, MARKDOWNLINT_MIN_VERSION
 
 
 def run_markdownlint(paths: list[str]) -> int:

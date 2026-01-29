@@ -9,7 +9,7 @@ https://github.com/wphillipmoore/standards-and-conventions/tree/develop
 - [Project-specific overlay](#project-specific-overlay)
 
 ## Canonical references
-#include ../standards-and-conventions/docs/standards-and-conventions.md
+<!-- include: ../standards-and-conventions/docs/standards-and-conventions.md -->
 
 ## Project-specific overlay
-#include docs/repository-standards.md
+<!-- include: docs/repository-standards.md -->
