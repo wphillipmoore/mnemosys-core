@@ -1,6 +1,6 @@
 # MNEMOSYS Core
 
-#include standards-and-conventions.md
+<!-- include: standards-and-conventions.md -->
 
 ## User Overrides (Optional)
 

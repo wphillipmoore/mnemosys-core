@@ -107,9 +107,9 @@ Use one of:
 - `python3 scripts/dev/validate_local.py`
 - Docs-only changes: `python3 scripts/dev/validate_docs.py`
 
-Docs-only validation requires `markdownlint` `0.41.0` on the PATH. If it is not
-available, `npx` must be installed so the validation script can run the pinned
-version.
+Docs-only validation requires `markdownlint` `0.41.0` or newer on the PATH. If
+it is not available, `npx` must be installed so the validation script can run
+the minimum supported version.
 
 Tooling requirement:
 - `uv` `0.9.26` (install with `python3 -m pip install uv==0.9.26`).
