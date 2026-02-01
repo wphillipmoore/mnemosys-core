@@ -22,39 +22,34 @@ are created explicitly.
 Requires Python 3.14+.
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python3 -m pip install -e .
+python3 -m pip install uv==0.9.26
+uv sync --group dev
 ```
 
-Use the virtual environment for all Python invocations and always call
-`python3` (never `python`). On macOS, `python` may not exist outside the venv.
+Use the uv-managed environment for all Python invocations and always call
+`uv run python3` (never `python`). On macOS, `python` may not exist outside the venv.
 
 ## Development
 
 Before starting any new development effort, run the unit tests and confirm they
 pass. This avoids inheriting broken local artifacts from prior work.
 
-All commands below assume the `.venv` is active. Always use `python3` for
-Python invocations.
+All commands below use `uv run python3` to ensure the uv environment is active.
 
 ```bash
-pytest tests/
+uv run pytest tests/
 ```
 
 ```bash
 # Full local validation (tests, coverage, lint, type check)
-python3 scripts/dev/validate_local.py
+uv run python3 scripts/dev/validate_local.py
 
 # Run tests only
-pytest tests/
+uv run pytest tests/
 
 # Bootstrap a local database (if needed)
-python3 scripts/dev/bootstrap_db.py
+uv run python3 scripts/dev/bootstrap_db.py
 ```
-
-Note: the validation script uses Poetry under the hood; install Poetry if
-you plan to run the full local checks.
 
 ## Where the Rules Live
 

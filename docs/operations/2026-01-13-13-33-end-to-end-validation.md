@@ -23,7 +23,7 @@
   - `docker stop mnemosys-migrations-postgres`
   Output: migration validation succeeded (no output).
 - Ran full local validation.
-  Command: `python3 scripts/dev/validate_local.py`
+  Command: `uv run python3 scripts/dev/validate_local.py`
   Output: `All checks passed`, `184 passed in 23.74s`, coverage 100%.
 
 ## Outcomes and Status

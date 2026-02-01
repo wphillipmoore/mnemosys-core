@@ -22,6 +22,6 @@ and notify the user.
 - `BUILD` is derived from git history at build time and is not committed to
   source control.
 - Use the local helper scripts when available:
-  - `python3 scripts/dev/submit_develop_pr.py`
-  - `python3 scripts/dev/submit_release_prs.py`
-  - `python3 scripts/dev/submit_main_pr.py`
+  - `uv run python3 scripts/dev/submit_develop_pr.py`
+  - `uv run python3 scripts/dev/submit_release_prs.py`
+  - `uv run python3 scripts/dev/submit_main_pr.py`

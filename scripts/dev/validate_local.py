@@ -45,9 +45,9 @@ def resolve_default_base_ref() -> str | None:
 def build_commands(base_ref: str) -> tuple[tuple[str, ...], ...]:
     """Build validation commands matching CI hard gates."""
     commands: list[tuple[str, ...]] = [
-        ("python3", "scripts/dev/validate_venv.py"),
-        ("python3", "scripts/dev/validate_dependency_specs.py"),
-        ("python3", "scripts/dev/validate_version.py", "--base-ref", base_ref),
+        ("uv", "run", "python3", "scripts/dev/validate_venv.py"),
+        ("uv", "run", "python3", "scripts/dev/validate_dependency_specs.py"),
+        ("uv", "run", "python3", "scripts/dev/validate_version.py", "--base-ref", base_ref),
         ("bash", "scripts/lint/repo-profile.sh"),
         ("bash", "scripts/lint/markdown-standards.sh"),
         ("bash", "scripts/lint/commit-messages.sh", base_ref, "HEAD"),

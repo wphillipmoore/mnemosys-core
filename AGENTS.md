@@ -188,7 +188,7 @@ Before pushing the branch or submitting a PR, you MUST run and pass the full loc
 
 ```bash
 # Run local validation (mirrors CI hard gates)
-python3 scripts/dev/validate_local.py
+uv run python3 scripts/dev/validate_local.py
 ```
 
 **All checks must pass with:**
@@ -238,7 +238,7 @@ Finalize PR?
 **What "Finalize" means** (unless user specifies otherwise):
 1. Merge PR with squash merge and delete remote branch
 2. Update local develop branch (checkout and pull)
-3. Verify .venv is in sync with dependency specification (uv sync --check --frozen --group dev)
+3. Verify the uv environment is in sync (uv sync --check --frozen --group dev)
 4. Run final validation (tests, coverage, quality checks)
 5. Ready for next iteration of changes
 
@@ -257,7 +257,7 @@ Finalize PR?
 4. ⏸️ **PAUSE #1** - Ask: "Submit PR?" (unless Finalize Override is active)
 5. If approved: Push branch and submit PR
 6. ⏸️ **PAUSE #2** - Ask: "Finalize PR?" (unless Finalize Override is active)
-7. If approved: Execute finalization (merge, update develop, verify .venv, validate)
+7. If approved: Execute finalization (merge, update develop, verify uv environment, validate)
 8. If not approved: Wait for user to review/request changes
 
 ## Project Structure
@@ -310,12 +310,11 @@ Currently minimal - avoid adding heavy dependencies without justification.
 git clone <repository-url>
 cd mnemosys-core
 
-# Create and activate virtual environment (recommended)
-python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+# Install uv if missing
+python3 -m pip install uv==0.9.26
 
 # Install dependencies
-python3 -m pip install -e .
+uv sync --group dev
 ```
 
 ### Database Bootstrapping
@@ -323,21 +322,21 @@ python3 -m pip install -e .
 For local development:
 
 ```bash
-python3 scripts/dev/bootstrap_db.py
+uv run python3 scripts/dev/bootstrap_db.py
 ```
 
 ### Running Tests
 
 ```bash
 # Run all tests
-pytest tests/
+uv run pytest tests/
 
 # Run specific test directory
-pytest tests/db/
-pytest tests/util/
+uv run pytest tests/db/
+uv run pytest tests/util/
 
 # Run with coverage (if configured)
-pytest --cov=mnemosys_core tests/
+uv run pytest --cov=mnemosys_core tests/
 ```
 
 ## Coding Conventions

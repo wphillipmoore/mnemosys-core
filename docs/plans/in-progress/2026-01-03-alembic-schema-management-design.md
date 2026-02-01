@@ -240,16 +240,16 @@ ALTER DEFAULT PRIVILEGES FOR ROLE mnemosys_sandbox_admin IN SCHEMA mnemosys
 1. Update SQLAlchemy models.
 2. Generate a revision:
    ```bash
-   python3 scripts/dev/alembic_revision.py short_snake_case_message
+   uv run python3 scripts/dev/alembic_revision.py short_snake_case_message
    ```
 3. Review the revision and edit by hand if needed.
 4. Run automated migration validation (temp schema upgrade/downgrade):
    ```bash
-   python3 scripts/dev/validate_migrations.py
+   uv run python3 scripts/dev/validate_migrations.py
    ```
    Optional seed script:
    ```bash
-   python3 scripts/dev/validate_migrations.py --seed-script <path-to-seed-script>
+   uv run python3 scripts/dev/validate_migrations.py --seed-script <path-to-seed-script>
    ```
 5. Commit the revision file and model changes.
 
@@ -269,7 +269,7 @@ Implemented validation steps (local and CI):
 - Integration tests spin up Postgres via Testcontainers.
 - `scripts/dev/validate_migrations.py` creates a temporary schema, runs upgrade and downgrade, and cleans up.
 - Optional seed scripts can populate minimal data before validation.
-- CI runs `pytest -m integration` in a dedicated job to enforce migration safety.
+- CI runs `uv run pytest -m integration` in a dedicated job to enforce migration safety.
 
 ## Observability and Audit
 
@@ -378,7 +378,7 @@ Phase 5: Operational integration (pending)
 - Add observability hooks (logs/metrics) for migration steps.
 
 Phase 6: End-to-end validation (pending)
-- Run full local validation (`python3 scripts/dev/validate_local.py`) with migration checks included.
+- Run full local validation (`uv run python3 scripts/dev/validate_local.py`) with migration checks included.
 - Dry-run the deployment sequence in a non-production environment.
 
 ## Open Questions

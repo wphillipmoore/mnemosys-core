@@ -61,7 +61,7 @@ on:
 - `integration-tests` (migration + Postgres fidelity)
   - Runs on: `ubuntu-latest`
   - Python 3.14 only
-  - Executes `pytest -m integration` (Testcontainers; Docker required)
+  - Executes `uv run pytest -m integration` (Testcontainers; Docker required)
 
 ## Python Version Strategy
 

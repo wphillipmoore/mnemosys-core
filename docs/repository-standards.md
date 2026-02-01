@@ -95,17 +95,17 @@ standards.
 Before starting any new development effort, run the unit tests and confirm they
 pass. This guards against inheriting broken local artifacts from prior work.
 
-All Python commands must run inside the project venv (use `uv run ...` or the
-`.venv/bin/python3` interpreter). Do not rely on a system `python` binary; use
-`python3` for all Python invocations.
+All Python commands must run inside the uv environment. Use
+`uv run python3 ...` for every Python invocation and do not rely on a system
+`python` binary.
 
 Enable repository git hooks before committing:
 - `git config core.hooksPath scripts/git-hooks`
 
 Use one of:
-- `pytest tests/`
-- `python3 scripts/dev/validate_local.py`
-- Docs-only changes: `python3 scripts/dev/validate_docs.py`
+- `uv run pytest tests/`
+- `uv run python3 scripts/dev/validate_local.py`
+- Docs-only changes: `uv run python3 scripts/dev/validate_docs.py`
 
 Docs-only validation requires `markdownlint` `0.41.0` or newer on the PATH. If
 it is not available, `npx` must be installed so the validation script can run
