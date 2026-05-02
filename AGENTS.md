@@ -1,6 +1,8 @@
 # MNEMOSYS Core
 
-<!-- include: standards-and-conventions.md -->
+**Standards reference**: <https://github.com/wphillipmoore/standards-and-conventions>
+— active standards documentation lives in the standard-tooling repository under `docs/`.
+Repository profile: `standard-tooling.toml`.
 
 ## User Overrides (Optional)
 
