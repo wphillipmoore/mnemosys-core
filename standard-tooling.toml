@@ -1,0 +1,13 @@
+[project]
+repository-type = "application"
+versioning-scheme = "application"
+branching-model = "application-promotion"
+release-model = "environment-promotion"
+primary-language = "none"
+
+[project.co-authors]
+claude = "Co-Authored-By: mnemosys-claude <252602472+mnemosys-claude@users.noreply.github.com>"
+codex = "Co-Authored-By: mnemosys-codex <252598091+mnemosys-codex@users.noreply.github.com>"
+
+[dependencies]
+standard-tooling = "v1.4"
